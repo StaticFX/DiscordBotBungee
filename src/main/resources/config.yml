@@ -1,9 +1,12 @@
-UseSQL: true
+#DiscordBot Bungee Config Version 1.0.2
+
 #sql
+UseSQL: true
 SQL_USER: "root"
 SQL_PASSWORD: ""
 SQL_DATABASE: "discordbot"
 
+#settings
 prefix: "&8[&6DiscordBot&8] "
 bot-token: ""
 discordBotActivityType: "listening"
@@ -11,6 +14,7 @@ discordBotActivity: "!help"
 streamingLink: ""
 verifycommand: "discord"
 
+#ranks
 useIDS: false
 verifiedName: verified
 vipName: vip
@@ -20,6 +24,7 @@ staffName: staff
 discord-staffName: discord-staff
 adminName: admin
 
+#discord messaging
 VerifyDiscordSyntax: "Use !verify [name] "
 AlreadyLinked: "This discord account is already linked "
 SearchingForPlayer: "Searching for player '%name%' on the network... "
@@ -33,7 +38,8 @@ NotVerifiedYet: "You are not verified yet "
 UpdatedRank: "You successfully updated your rank "
 UnlinkDiscordSyntax: "Please use !unlink "
 SuccessfullyUnlinked: "You successfully unlinked yourself"
-#Minecraft
+
+#minecraft messaging
 NoInquiries: "&cYou don´t have any pending inquiries."
 InternalError: "&cInternal Error. Please contact an admin!"
 PendingInquiry: "&7You got an verify-inquiry. Please §aaccept §7or §cdecline §7it. You §7have 20 seconds to accept it. §7Discord User: §a%user%"
