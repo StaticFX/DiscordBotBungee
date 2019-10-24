@@ -6,6 +6,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -42,13 +44,23 @@ public class UpdateCommandExecutor {
             return;
         }
 
-
+        ProxiedPlayer target = null;
         try {
-            Main.INSTANCE.updateRoles(m,Main.getInstance().getProxy().getPlayer(UUID.fromString(VerifyDAO.INSTANCE.getUUIDByDiscordID(m.getId()))));
+            target = Main.getInstance().getProxy().getPlayer(UUID.fromString(VerifyDAO.INSTANCE.getUUIDByDiscordID(m.getId())));
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        if(target == null) {
+            embedBuilder.setDescription("Error. Please be on the server to update your rank!");
+            embedBuilder.setColor(Color.green);
+            tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
+            command.delete().queueAfter(10,TimeUnit.SECONDS);
             return;
         }
+
+        Main.getInstance().removeAllRolesFromMember(m);
+        Main.getInstance().updateRoles(m,target);
 
         embedBuilder.setDescription(Main.getInstance().getStringFromConfig("UpdatedRank",false) + m.getAsMention());
         embedBuilder.setColor(Color.green);
