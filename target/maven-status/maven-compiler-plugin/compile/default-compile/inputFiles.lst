@@ -1,0 +1,15 @@
+D:\IdeaProjects\DiscordBotBungee\src\main\java\de\staticred\discordbot\discordcommands\HelpCommandExecutor.java
+D:\IdeaProjects\DiscordBotBungee\src\main\java\de\staticred\discordbot\discordevents\GuildJoinEvent.java
+D:\IdeaProjects\DiscordBotBungee\src\main\java\de\staticred\discordbot\bungeeevents\JoinEvent.java
+D:\IdeaProjects\DiscordBotBungee\src\main\java\de\staticred\discordbot\bungeeevents\LeaveEvent.java
+D:\IdeaProjects\DiscordBotBungee\src\main\java\de\staticred\discordbot\db\DataBaseConnection.java
+D:\IdeaProjects\DiscordBotBungee\src\main\java\de\staticred\discordbot\files\VerifyFileManager.java
+D:\IdeaProjects\DiscordBotBungee\src\main\java\de\staticred\discordbot\bungeecommands\MCVerifyCommandExecutor.java
+D:\IdeaProjects\DiscordBotBungee\src\main\java\de\staticred\discordbot\db\VerifyDAO.java
+D:\IdeaProjects\DiscordBotBungee\src\main\java\de\staticred\discordbot\discordevents\MessageEvent.java
+D:\IdeaProjects\DiscordBotBungee\src\main\java\de\staticred\discordbot\discordcommands\UnlinkCommandExecutor.java
+D:\IdeaProjects\DiscordBotBungee\src\main\java\de\staticred\discordbot\discordevents\GuildLeftEvent.java
+D:\IdeaProjects\DiscordBotBungee\src\main\java\de\staticred\discordbot\discordcommands\UpdateCommandExecutor.java
+D:\IdeaProjects\DiscordBotBungee\src\main\java\de\staticred\discordbot\Main.java
+D:\IdeaProjects\DiscordBotBungee\src\main\java\de\staticred\discordbot\discordcommands\VerifyCommandExecutor.java
+D:\IdeaProjects\DiscordBotBungee\src\main\java\de\staticred\discordbot\files\ConfigFileManager.java

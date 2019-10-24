@@ -1,0 +1,16 @@
+de\staticred\discordbot\discordevents\GuildJoinEvent.class
+de\staticred\discordbot\bungeecommands\MCVerifyCommandExecutor.class
+de\staticred\discordbot\db\DataBaseConnection.class
+de\staticred\discordbot\db\VerifyDAO.class
+de\staticred\discordbot\bungeeevents\LeaveEvent.class
+de\staticred\discordbot\discordcommands\VerifyCommandExecutor$1.class
+de\staticred\discordbot\discordevents\MessageEvent.class
+de\staticred\discordbot\discordcommands\UnlinkCommandExecutor.class
+de\staticred\discordbot\files\ConfigFileManager.class
+de\staticred\discordbot\discordcommands\UpdateCommandExecutor.class
+de\staticred\discordbot\bungeeevents\JoinEvent.class
+de\staticred\discordbot\Main.class
+de\staticred\discordbot\discordcommands\HelpCommandExecutor.class
+de\staticred\discordbot\discordevents\GuildLeftEvent.class
+de\staticred\discordbot\discordcommands\VerifyCommandExecutor.class
+de\staticred\discordbot\files\VerifyFileManager.class

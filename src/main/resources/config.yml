@@ -1,0 +1,55 @@
+UseSQL: true
+#sql
+SQL_USER: "root"
+SQL_PASSWORD: ""
+SQL_DATABASE: "discordbot"
+
+prefix: "&8[&6DiscordBot&8] "
+bot-token: ""
+discordBotActivityType: "listening"
+discordBotActivity: "!help"
+streamingLink: ""
+verifycommand: "discord"
+
+useIDS: false
+verifiedName: verified
+vipName: vip
+youtuberName: youtuber
+friendName: friend
+staffName: staff
+discord-staffName: discord-staff
+adminName: admin
+
+VerifyDiscordSyntax: "Use !verify [name] "
+AlreadyLinked: "This discord account is already linked "
+SearchingForPlayer: "Searching for player '%name%' on the network... "
+PlayerNotFound: "The player '%name%' was not found on the network "
+AlreadyVerified: "The player '%name%' is already verified "
+SendInquiry: "The player '%name%' got an inquiry "
+AlreadyInquiry: "The player '%name%' got already an inquiry "
+FoundPlayer: "The player '%name%' was found, please accept the ingame message "
+UpdateDiscordSyntax: "Please use !update "
+NotVerifiedYet: "You are not verified yet "
+UpdatedRank: "You successfully updated your rank "
+UnlinkDiscordSyntax: "Please use !unlink "
+SuccessfullyUnlinked: "You successfully unlinked yourself"
+#Minecraft
+NoInquiries: "&cYou don´t have any pending inquiries."
+InternalError: "&cInternal Error. Please contact an admin!"
+PendingInquiry: "&7You got an verify-inquiry. Please §aaccept §7or §cdecline §7it. You §7have 20 seconds to accept it. §7Discord User: §a%user%"
+AcceptInquiry: "&aAccept the verify-inquiry"
+DenyInquiry: "&cAccept the verify-inquiry"
+CanceledDueToTimeLimit: "&cYou inquiry has been canceled due to the time limit."
+JoinOurDiscordMainText: "&7You are not synchronized with the discord yet.
+                         &7Join our Discord Server to verify yourself.
+                         &7Discord: "
+JoinOurDiscord: "&aJoin our discord!"
+DiscordLinkColored: "&ahttps://discord.gg/yourDiscord"
+DiscordLinkRaw: "https://discord.gg/yourDiscord"
+Verified: "&aYou have been successfully verified."
+Declined: "&aYou have successfully &cdeclined &athe inquiry."
+NotLinkedYet: "&cYou are not linked yet."
+UpdatedRankMC: "&aYou have successfully updated your rank."
+CantUnlink: "&cYou can´t unlink yourself because you are the owner of the server!"
+UnlinkedYourSelf: "&aYou successfully unlinked yourself."
+VerifyPrefix: "&cUse /discord ACCEPT/DECLINE/UPDATE/UNLINK"
