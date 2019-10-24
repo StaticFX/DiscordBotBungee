@@ -21,7 +21,6 @@ import net.md_5.bungee.api.plugin.Plugin;
 import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 
 public class Main extends Plugin {
 
@@ -88,6 +87,13 @@ public class Main extends Plugin {
 
 
 
+    }
+
+    @Override
+    public void onDisable() {
+        DataBaseConnection.INSTANCE.closeConnection();
+        ConfigFileManager.INSTANCE.saveFile();
+        VerifyFileManager.INSTANCE.saveFile();
     }
 
     public void loadBungeeCommands(String command) {

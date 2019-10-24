@@ -39,7 +39,7 @@ public class ConfigFileManager {
     }
 
 
-    private void saveFile() {
+    public void saveFile() {
         try {
             ConfigurationProvider.getProvider(YamlConfiguration.class).save(conf,file);
         } catch (IOException e) {
