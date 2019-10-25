@@ -47,7 +47,12 @@ public class JoinEvent implements Listener {
             if(VerifyDAO.INSTANCE.isPlayerVerified(player)) {
                 Member m = Main.getInstance().getMemberFromPlayer(player);
                 Main.INSTANCE.updateRoles(m,player);
-                if(Main.INSTANCE.syncNickname) m.getGuild().modifyNickname(m, player.getName()).queue();
+
+                if(Main.INSTANCE.syncNickname) {
+                    if(!m.isOwner()) {
+                        m.getGuild().modifyNickname(m, player.getName()).queue();
+                    }
+                }
             }
 
         } catch(
