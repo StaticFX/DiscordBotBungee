@@ -17,7 +17,6 @@ public class DBCommandExecutor extends Command {
     @Override
     public void execute(CommandSender commandSender, String[] strings) {
 
-
         if(commandSender instanceof ProxiedPlayer) {
             ProxiedPlayer p = (ProxiedPlayer) commandSender;
             if(!p.hasPermission("db.reload")) {
@@ -25,15 +24,11 @@ public class DBCommandExecutor extends Command {
             }
         }
 
-
-
         ConfigFileManager.INSTANCE.saveFile();
         ConfigFileManager.INSTANCE.loadFile();
         VerifyFileManager.INSTANCE.saveFile();
         VerifyFileManager.INSTANCE.loadFile();
 
         commandSender.sendMessage(new TextComponent("§aReloaded!"));
-
-
     }
 }
