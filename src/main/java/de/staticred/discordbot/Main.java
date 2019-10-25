@@ -1,5 +1,6 @@
 package de.staticred.discordbot;
 
+import de.staticred.discordbot.bungeecommands.DBCommandExecutor;
 import de.staticred.discordbot.bungeecommands.MCVerifyCommandExecutor;
 import de.staticred.discordbot.bungeeevents.JoinEvent;
 import de.staticred.discordbot.bungeeevents.LeaveEvent;
@@ -97,6 +98,7 @@ public class Main extends Plugin {
 
     public void loadBungeeCommands(String command) {
         getProxy().getPluginManager().registerCommand(this,new MCVerifyCommandExecutor(command));
+        getProxy().getPluginManager().registerCommand(this,new DBCommandExecutor("dbreload"));
     }
 
     public void loadBungeeEvents() {
