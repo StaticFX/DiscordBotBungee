@@ -12,6 +12,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
+import javax.swing.plaf.metal.MetalMenuBarUI;
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
@@ -49,7 +50,23 @@ public class MCVerifyCommandExecutor extends Command {
             TextChannel tc = Main.playerChannelHashMap.get(p);
 
 
-            Main.getInstance().updateRoles(m,p);
+
+
+            Main.INSTANCE.updateRoles(m,p);
+
+            if(Main.INSTANCE.syncNickname) {
+                if(m.isOwner()) {
+                    p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("MemberIsOwner",false)));
+                }else {
+                    m.getGuild().modifyNickname(m,p.getName()).queue();
+                }
+            }
+
+            try {
+                VerifyDAO.INSTANCE.updateRank(p);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
             try {
                 VerifyDAO.INSTANCE.setPlayerAsVerified(p);
@@ -100,28 +117,16 @@ public class MCVerifyCommandExecutor extends Command {
                 return;
             }
 
+            Member m;
 
-
-            User u;
             try {
-                u = Main.jda.getUserById(Long.parseLong(VerifyDAO.INSTANCE.getDiscordID(p)));
-            } catch (Exception e) {
+                m = Main.INSTANCE.getMemberFromPlayer(p);
+            } catch (SQLException e) {
+                p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
                 e.printStackTrace();
-                p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
                 return;
             }
 
-            Member m = null;
-
-            if (!Main.jda.getGuilds().isEmpty()) {
-                for (Guild guild : Main.jda.getGuilds()) {
-                    if (u != null)
-                        m = guild.getMember(u);
-                }
-            } else {
-                p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
-                return;
-            }
 
 
             if (m == null) {
@@ -129,14 +134,25 @@ public class MCVerifyCommandExecutor extends Command {
                 return;
             }
 
+
+
             Main.INSTANCE.removeAllRolesFromMember(m);
             Main.INSTANCE.updateRoles(m,p);
+
+            if(Main.INSTANCE.syncNickname)
+
+                if(m.isOwner()) {
+                    p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("MemberIsOwner",false)));
+                }else{
+                    m.getGuild().modifyNickname(m,p.getName()).queue();
+                }
 
             try {
                 VerifyDAO.INSTANCE.updateRank(p);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+
             p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("UpdatedRankMC",true)));
             return;
         }else if(args[0].equalsIgnoreCase("unlink")) {
@@ -196,6 +212,8 @@ public class MCVerifyCommandExecutor extends Command {
                 e.printStackTrace();
                 return;
             }
+
+
 
             p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("UnlinkedYourSelf",true)));
             return;

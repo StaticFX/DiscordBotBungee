@@ -39,6 +39,29 @@ public class VerifyDAO {
     }
 
 
+    public String getName(String discordID) throws SQLException {
+        if(!sql) return VerifyFileManager.INSTANCE.getName(discordID);
+
+        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        con.connect();
+        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify WHERE DiscordID = ?");
+        ps.setString(1,discordID);
+
+        ResultSet rs = ps.executeQuery();
+
+        if(rs.next()) {
+            String name = rs.getString("Name");
+            rs.close();
+            ps.close();
+            con.closeConnection();
+            return name;
+        }
+        con.closeConnection();
+        ps.close();
+        rs.close();
+        return null;
+    }
+
     public void addPlayerAsUnverified(ProxiedPlayer player) throws SQLException {
 
         if(!sql) {

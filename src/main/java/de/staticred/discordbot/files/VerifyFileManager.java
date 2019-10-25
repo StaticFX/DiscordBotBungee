@@ -17,6 +17,10 @@ public class VerifyFileManager {
     private File file = new File(Main.getInstance().getDataFolder().getAbsolutePath(), "verify.yml");
     private Configuration conf;
 
+    public String getName(String discordID) {
+        String uuid = getUUIDFromDiscordID(discordID);
+        return conf.getString(uuid + ".name");
+    }
 
     public void loadFile() {
 

@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.awt.*;
@@ -59,8 +60,23 @@ public class UpdateCommandExecutor {
             return;
         }
 
+
         Main.getInstance().removeAllRolesFromMember(m);
         Main.getInstance().updateRoles(m,target);
+
+        if(Main.INSTANCE.syncNickname) {
+            if(m.isOwner()) {
+                embedBuilder.setDescription(Main.getInstance().getStringFromConfig("NoInquiries",false));
+                embedBuilder.setColor(Color.RED);
+                tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
+                command.delete().queueAfter(10,TimeUnit.SECONDS);
+            }else {
+                m.getGuild().modifyNickname(m,target.getName()).queue();
+            }
+        }
+
+        if(Main.INSTANCE.syncNickname)
+            m.getGuild().modifyNickname(m,target.getName()).queue();
 
         embedBuilder.setDescription(Main.getInstance().getStringFromConfig("UpdatedRank",false) + m.getAsMention());
         embedBuilder.setColor(Color.green);

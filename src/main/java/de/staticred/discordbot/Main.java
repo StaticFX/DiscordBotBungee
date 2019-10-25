@@ -4,6 +4,7 @@ import de.staticred.discordbot.bungeecommands.MCVerifyCommandExecutor;
 import de.staticred.discordbot.bungeeevents.JoinEvent;
 import de.staticred.discordbot.bungeeevents.LeaveEvent;
 import de.staticred.discordbot.db.DataBaseConnection;
+import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.discordevents.GuildJoinEvent;
 import de.staticred.discordbot.discordevents.GuildLeftEvent;
 import de.staticred.discordbot.discordevents.MessageEvent;
@@ -11,10 +12,7 @@ import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.VerifyFileManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.*;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -28,7 +26,7 @@ public class Main extends Plugin {
     public static HashMap<ProxiedPlayer, Member> playerMemberHashMap = new HashMap<>();
     public static HashMap<ProxiedPlayer, TextChannel> playerChannelHashMap = new HashMap<>();
     public boolean useSQL;
-
+    public boolean syncNickname;
 
     public  static JDA jda;
 
@@ -73,6 +71,7 @@ public class Main extends Plugin {
 
         String command = ConfigFileManager.INSTANCE.getString("verifycommand");
 
+        syncNickname = ConfigFileManager.INSTANCE.getSyncName();
         loadBungeeCommands(command);
 
 
@@ -150,6 +149,7 @@ public class Main extends Plugin {
                 m.getGuild().addRoleToMember(m, ConfigFileManager.INSTANCE.getRoleByName("verifiedName")).queue();
             }
         }
+
 
 
         if (p.hasPermission("db.admin")) {
@@ -255,4 +255,25 @@ public class Main extends Plugin {
             m.getGuild().removeRoleFromMember(m,role).queue();
         }
     }
+
+    public Member getMemberFromPlayer(ProxiedPlayer p) throws SQLException {
+        User u;
+
+        u = Main.jda.getUserById(Long.parseLong(VerifyDAO.INSTANCE.getDiscordID(p)));
+
+
+        Member m = null;
+
+        if (!Main.jda.getGuilds().isEmpty()) {
+            for (Guild guild : Main.jda.getGuilds()) {
+                if (u != null)
+                    m = guild.getMember(u);
+            }
+        } else {
+            throw new SQLException("There was an internal error! But may not found") ;
+        }
+
+        return m;
+    }
+
 }

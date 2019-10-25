@@ -82,4 +82,5 @@ public class ConfigFileManager {
         return conf.getBoolean("useIDS");
     }
 
+    public boolean getSyncName() { return conf.getBoolean("syncNickName");}
 }

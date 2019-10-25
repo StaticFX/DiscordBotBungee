@@ -133,10 +133,6 @@ public class VerifyCommandExecutor {
                 }
             }
         },20, TimeUnit.SECONDS);
-        return;
-
-
-
     }
 
 }

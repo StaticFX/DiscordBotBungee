@@ -1,4 +1,4 @@
-#DiscordBot Bungee Config Version 1.0.2
+#DiscordBot Bungee Config Version 1.0.4
 
 #sql
 UseSQL: true
@@ -13,6 +13,7 @@ discordBotActivityType: "listening"
 discordBotActivity: "!help"
 streamingLink: ""
 verifycommand: "discord"
+syncNickName: true
 
 #ranks
 useIDS: false
@@ -25,6 +26,7 @@ discord-staffName: discord-staff
 adminName: admin
 
 #discord messaging
+DCMemberIsOwner: "You can´t update your name because you are the server owner "
 VerifyDiscordSyntax: "Use !verify [name] "
 AlreadyLinked: "This discord account is already linked "
 SearchingForPlayer: "Searching for player '%name%' on the network... "
@@ -38,8 +40,11 @@ NotVerifiedYet: "You are not verified yet "
 UpdatedRank: "You successfully updated your rank "
 UnlinkDiscordSyntax: "Please use !unlink "
 SuccessfullyUnlinked: "You successfully unlinked yourself"
+#leave empty for no
+JoinMessage: "Welcome to our network! Use !verify [ingameName] to verify yourself!"
 
 #minecraft messaging
+MemberIsOwner: "&8[&4WARNING&8] &cYour discord account is the owner of the &cdiscord server. &cThe bot can´t edit your name to sync it."
 NoInquiries: "&cYou don´t have any pending inquiries."
 InternalError: "&cInternal Error. Please contact an admin!"
 PendingInquiry: "&7You got an verify-inquiry. Please §aaccept §7or §cdecline §7it. You §7have 20 seconds to accept it. §7Discord User: §a%user%"
