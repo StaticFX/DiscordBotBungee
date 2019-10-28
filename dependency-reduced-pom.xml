@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.staticred.plugins.bungeecord</groupId>
   <artifactId>DiscordBot-Bungee</artifactId>
-  <version>1.0.5</version>
+  <version>1.0.6</version>
   <build>
     <plugins>
       <plugin>
@@ -39,6 +39,10 @@
     <repository>
       <id>bungeecord-repo</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </repository>
+    <repository>
+      <id>CodeMC</id>
+      <url>https://repo.codemc.org/repository/maven-public</url>
     </repository>
   </repositories>
   <dependencies>

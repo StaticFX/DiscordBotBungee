@@ -83,4 +83,14 @@ public class ConfigFileManager {
     }
 
     public boolean getSyncName() { return conf.getBoolean("syncNickName");}
+
+    public boolean isMetrcisEnabled() {
+        if(!conf.getKeys().contains("useMetrics")) {
+            conf.set("useMetrcis",true);
+            saveFile();
+        }
+        return conf.getBoolean("useMetrics");
+    }
+
+
 }

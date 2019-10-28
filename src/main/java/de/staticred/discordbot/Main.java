@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
+import org.bstats.bungeecord.Metrics;
 
 import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
@@ -56,6 +57,8 @@ public class Main extends Plugin {
         String link = ConfigFileManager.INSTANCE.getString("streamingLink");
         Activity activity1;
 
+        loadMetrcis();
+
 
 
         if(activity.equalsIgnoreCase("listening")) {
@@ -88,6 +91,15 @@ public class Main extends Plugin {
 
 
     }
+
+
+
+    void loadMetrcis() {
+        if(ConfigFileManager.INSTANCE.isMetrcisEnabled()) {
+            Metrics metrics = new Metrics(this);
+        }
+    }
+
 
     @Override
     public void onDisable() {

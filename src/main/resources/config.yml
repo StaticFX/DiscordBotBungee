@@ -64,3 +64,4 @@ UpdatedRankMC: "&aYou have successfully updated your rank."
 CantUnlink: "&cYou can´t unlink yourself because you are the owner of the server!"
 UnlinkedYourSelf: "&aYou successfully unlinked yourself."
 VerifyPrefix: "&cUse /discord ACCEPT/DECLINE/UPDATE/UNLINK"
+useMetrcis: false
