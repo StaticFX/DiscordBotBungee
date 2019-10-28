@@ -97,8 +97,8 @@ public class Main extends Plugin {
 
 
     void loadMetrcis() {
-        if(ConfigFileManager.INSTANCE.isMetrcisEnabled()) {
-        }
+        MetricsLite metrcis = new MetricsLite(this);
+        System.out.println(metrcis.isEnabled());
     }
 
 

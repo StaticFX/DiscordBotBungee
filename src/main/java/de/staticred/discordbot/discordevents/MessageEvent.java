@@ -18,7 +18,7 @@ public class MessageEvent extends ListenerAdapter {
         Member m = e.getMember();
 
 
-        if(args[0].equalsIgnoreCase("!verify")) {
+        if(args[0].equalsIgnoreCase("!verify") || args[0].equalsIgnoreCase("!sync")) {
             new VerifyCommandExecutor(m,e.getChannel(),message,args);
             return;
         }else if(args[0].equalsIgnoreCase("!unlink")) {
