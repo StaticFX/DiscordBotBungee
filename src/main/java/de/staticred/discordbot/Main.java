@@ -5,6 +5,7 @@ import de.staticred.discordbot.bungeecommands.MCVerifyCommandExecutor;
 import de.staticred.discordbot.bungeeevents.JoinEvent;
 import de.staticred.discordbot.bungeeevents.LeaveEvent;
 import de.staticred.discordbot.db.DataBaseConnection;
+import de.staticred.discordbot.db.MetricsLite;
 import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.discordevents.GuildJoinEvent;
 import de.staticred.discordbot.discordevents.GuildLeftEvent;
@@ -16,7 +17,6 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
-import org.bstats.bungeecord.Metrics;
 
 import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
@@ -56,6 +56,8 @@ public class Main extends Plugin {
         String type = ConfigFileManager.INSTANCE.getString("discordBotActivity");
         String link = ConfigFileManager.INSTANCE.getString("streamingLink");
         Activity activity1;
+        MetricsLite metrics = new MetricsLite(this);
+        System.out.println(metrics.isEnabled());
 
         loadMetrcis();
 
@@ -96,7 +98,6 @@ public class Main extends Plugin {
 
     void loadMetrcis() {
         if(ConfigFileManager.INSTANCE.isMetrcisEnabled()) {
-            Metrics metrics = new Metrics(this);
         }
     }
 
