@@ -17,7 +17,7 @@ public class DataBaseConnection {
     private DataBaseConnection() {
         user = ConfigFileManager.INSTANCE.getUser();
         password = ConfigFileManager.INSTANCE.getPassword();
-        url = "jdbc:mysql://localhost/" + ConfigFileManager.INSTANCE.getDataBase();
+        url = ConfigFileManager.INSTANCE.getDataBase();
     }
 
     public void connect() {
