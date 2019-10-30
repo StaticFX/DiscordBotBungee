@@ -61,7 +61,7 @@ public class ConfigFileManager {
     }
 
     public String getDataBase() {
-        return conf.getString("SQL_DATABASE");
+        return conf.getString("SQL_IP");
     }
 
 
