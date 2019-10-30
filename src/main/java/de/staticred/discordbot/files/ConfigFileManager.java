@@ -61,7 +61,7 @@ public class ConfigFileManager {
     }
 
     public String getDataBase() {
-        return conf.getString("SQL_IP");
+        return conf.getString("SQL_DATABASE");
     }
 
 
@@ -90,6 +90,14 @@ public class ConfigFileManager {
             saveFile();
         }
         return conf.getBoolean("useMetrics");
+    }
+
+    public String getHost() {
+        return conf.getString("SQL_HOST");
+    }
+
+    public String getPort() {
+        return conf.getString("SQL_PORT");
     }
 
 

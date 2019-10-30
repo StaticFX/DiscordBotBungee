@@ -4,7 +4,9 @@
 UseSQL: true
 SQL_USER: "root"
 SQL_PASSWORD: ""
-SQL_IP: "discordbot"
+SQL_DATABASE: "discordbot"
+SQL_HOST: ""
+SQL_PORT: ""
 
 #settings
 prefix: "&8[&6DiscordBot&8] "
