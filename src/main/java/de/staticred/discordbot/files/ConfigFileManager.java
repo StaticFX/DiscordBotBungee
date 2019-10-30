@@ -75,7 +75,7 @@ public class ConfigFileManager {
     }
 
     public Role getRoleById(String name) {
-        return Main.jda.getRoleById(conf.getString(name));
+        return Main.jda.getRoleById(conf.getLong(name));
     }
 
     public boolean useTokens() {
