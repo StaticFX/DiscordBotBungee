@@ -1,6 +1,7 @@
 package de.staticred.discordbot.discordcommands;
 
 import de.staticred.discordbot.Main;
+import de.staticred.discordbot.db.SRVDAO;
 import de.staticred.discordbot.db.VerifyDAO;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -50,6 +51,7 @@ public class UnlinkCommandExecutor {
         try {
             VerifyDAO.INSTANCE.setPlayerAsUnverified(m.getId());
             VerifyDAO.INSTANCE.removeDiscordIDByDiscordID(m);
+            SRVDAO.INSTANCE.unlink(m.getId());
         } catch (SQLException e) {
             e.printStackTrace();
             return;

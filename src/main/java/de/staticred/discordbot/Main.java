@@ -2,6 +2,7 @@ package de.staticred.discordbot;
 
 import de.staticred.discordbot.bungeecommands.DBCommandExecutor;
 import de.staticred.discordbot.bungeecommands.MCVerifyCommandExecutor;
+import de.staticred.discordbot.bungeecommands.SetupCommandExecutor;
 import de.staticred.discordbot.bungeeevents.JoinEvent;
 import de.staticred.discordbot.bungeeevents.LeaveEvent;
 import de.staticred.discordbot.db.DataBaseConnection;
@@ -11,15 +12,17 @@ import de.staticred.discordbot.discordevents.GuildJoinEvent;
 import de.staticred.discordbot.discordevents.GuildLeftEvent;
 import de.staticred.discordbot.discordevents.MessageEvent;
 import de.staticred.discordbot.files.ConfigFileManager;
+import de.staticred.discordbot.files.DiscordFileManager;
+import de.staticred.discordbot.files.MessagesFileManager;
 import de.staticred.discordbot.files.VerifyFileManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
-
 import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Main extends Plugin {
@@ -29,69 +32,59 @@ public class Main extends Plugin {
     public static HashMap<ProxiedPlayer, TextChannel> playerChannelHashMap = new HashMap<>();
     public boolean useSQL;
     public boolean syncNickname;
-
     public  static JDA jda;
+    public static boolean setuped;
+    public static boolean useSRV;
+    public static ArrayList<ProxiedPlayer> settingUp = new ArrayList<>();
+    public String token;
+    public Activity activity;
 
     @Override
     public void onEnable() {
 
         INSTANCE = this;
 
-
         ConfigFileManager.INSTANCE.loadFile();
         VerifyFileManager.INSTANCE.loadFile();
-
+        MessagesFileManager.INSTANCE.loadFile();
+        DiscordFileManager.INSTANCE.loadFile();
         if(ConfigFileManager.INSTANCE.useSQL()) {
-            loadDataBase();
+           // loadDataBase();
         }
 
+        useSRV = ConfigFileManager.INSTANCE.useSRV();
+        setuped = ConfigFileManager.INSTANCE.isSetuped();
+
         useSQL = ConfigFileManager.INSTANCE.useSQL();
-        String token = ConfigFileManager.INSTANCE.getString("bot-token");
+        token = ConfigFileManager.INSTANCE.getString("bot-token");
         loadBungeeEvents();
-
-
-
 
         String activity = ConfigFileManager.INSTANCE.getString("discordBotActivityType");
         String type = ConfigFileManager.INSTANCE.getString("discordBotActivity");
         String link = ConfigFileManager.INSTANCE.getString("streamingLink");
-        Activity activity1;
         MetricsLite metrics = new MetricsLite(this);
         System.out.println(metrics.isEnabled());
 
         loadMetrcis();
 
-
-
         if(activity.equalsIgnoreCase("listening")) {
-            activity1 = Activity.listening(type);
+            this.activity = Activity.listening(type);
         }else if(activity.equalsIgnoreCase("playing")) {
-            activity1 = Activity.playing(type);
+            this.activity = Activity.playing(type);
         }else if(activity.equalsIgnoreCase("streaming")) {
-            activity1 = Activity.streaming(type,link);
+            this.activity = Activity.streaming(type,link);
         }else if(activity.equalsIgnoreCase("watching")) {
-            activity1 = Activity.watching(type);
+            this.activity = Activity.watching(type);
         }else {
-            activity1 = Activity.playing(type);
+            this.activity = Activity.playing(type);
         }
 
         String command = ConfigFileManager.INSTANCE.getString("verifycommand");
 
         syncNickname = ConfigFileManager.INSTANCE.getSyncName();
         loadBungeeCommands(command);
-
-
-        try {
-            initBot(token,activity1);
-        } catch (LoginException e) {
-            e.printStackTrace();
-            System.out.println("[DiscordVerify] Bot can´t connect!");
-            return;
-        }
-
-
-
-
+        getProxy().registerChannel("verify-channel");
+        getLogger().info("Success");
     }
 
 
@@ -112,6 +105,7 @@ public class Main extends Plugin {
     public void loadBungeeCommands(String command) {
         getProxy().getPluginManager().registerCommand(this,new MCVerifyCommandExecutor(command));
         getProxy().getPluginManager().registerCommand(this,new DBCommandExecutor("dbreload"));
+        getProxy().getPluginManager().registerCommand(this,new SetupCommandExecutor());
     }
 
     public void loadBungeeEvents() {
@@ -134,8 +128,8 @@ public class Main extends Plugin {
 
     public String getStringFromConfig(String string, boolean prefix) {
         if(prefix)
-            return ConfigFileManager.INSTANCE.getString("prefix").replaceAll("&","§") + ConfigFileManager.INSTANCE.getString(string).replaceAll("&","§");
-        return ConfigFileManager.INSTANCE.getString(string).replaceAll("&","§");
+            return ConfigFileManager.INSTANCE.getString("prefix").replaceAll("&","§") + MessagesFileManager.INSTANCE.getString(string).replaceAll("&","§");
+        return MessagesFileManager.INSTANCE.getString(string).replaceAll("&","§");
     }
 
     public void initBot(String token, Activity activity) throws LoginException {
@@ -147,123 +141,111 @@ public class Main extends Plugin {
         System.out.println("[DiscordVerify] Bot Started!");
     }
 
-
     public static Main getInstance() {
         return INSTANCE;
     }
 
-
     public void updateRoles(Member m, ProxiedPlayer p) {
-
-        boolean ids = ConfigFileManager.INSTANCE.useTokens();
-
+        /*
         if (p.hasPermission("db.verified")) {
-            if (ids) {
-                m.getGuild().addRoleToMember(m, ConfigFileManager.INSTANCE.getRoleById("verifiedName")).queue();
-            } else {
-                m.getGuild().addRoleToMember(m, ConfigFileManager.INSTANCE.getRoleByName("verifiedName")).queue();
-            }
+            m.getGuild().addRoleToMember(m,jda.getRoleById("638323778069200896")).queue();
         }
 
+        if (p.hasPermission("db.newbie")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("638323933673947166")).queue();
+        }
 
+        if (p.hasPermission("db.builder")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("638323831819337728")).queue();
+        }
+
+        if (p.hasPermission("db.donator")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("610959219440484362")).queue();
+        }
+
+        if (p.hasPermission("db.donator2")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("638323592932622356")).queue();
+        }
+
+        if (p.hasPermission("db.donator3")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("638323514671104030")).queue();
+        }
+
+        if (p.hasPermission("db.serverbuilder")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("610958782931140629")).queue();
+        }
+
+        if (p.hasPermission("db.moderator")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("610958861506969631")).queue();
+        }
+
+        if (p.hasPermission("db.headserverbuilder")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("638895774633164830")).queue();
+        }
+
+        if (p.hasPermission("db.headmoderator")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("638323386896089090")).queue();
+        }
 
         if (p.hasPermission("db.admin")) {
-            if (ids) {
-                m.getGuild().addRoleToMember(m, ConfigFileManager.INSTANCE.getRoleById("adminName")).queue();
-            } else {
-                m.getGuild().addRoleToMember(m, ConfigFileManager.INSTANCE.getRoleByName("adminName")).queue();
-            }
-            return;
+            m.getGuild().addRoleToMember(m,jda.getRoleById("638323706418167829")).queue();
         }
 
-        if (p.hasPermission("db.discordstaff")) {
-            if (ids) {
-                m.getGuild().addRoleToMember(m, ConfigFileManager.INSTANCE.getRoleById("discord-staffName")).queue();
-            } else {
-                m.getGuild().addRoleToMember(m, ConfigFileManager.INSTANCE.getRoleByName("discord-staffName")).queue();
-            }
-            return;
+        if (p.hasPermission("db.owner")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("612620557191479296")).queue();
         }
 
-        if (p.hasPermission("db.staff")) {
-            if (ids) {
-                m.getGuild().addRoleToMember(m, ConfigFileManager.INSTANCE.getRoleById("friendName")).queue();
-            } else {
-                m.getGuild().addRoleToMember(m, ConfigFileManager.INSTANCE.getRoleByName("friendName")).queue();
-            }
-            return;
+        if (p.hasPermission("db.bedwarsrank1")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("639171418633797642")).queue();
         }
 
-        if (p.hasPermission("db.friend")) {
-            if (ids) {
-                m.getGuild().addRoleToMember(m, ConfigFileManager.INSTANCE.getRoleById("friendName")).queue();
-            } else {
-                m.getGuild().addRoleToMember(m, ConfigFileManager.INSTANCE.getRoleByName("friendName")).queue();
-            }
-            return;
+        if (p.hasPermission("db.bedwarsrank2")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("639171440263954438")).queue();
         }
 
-
-        if (p.hasPermission("db.youtuber")) {
-            if (ids) {
-                m.getGuild().addRoleToMember(m, ConfigFileManager.INSTANCE.getRoleById("youtuberName")).queue();
-            } else {
-                m.getGuild().addRoleToMember(m, ConfigFileManager.INSTANCE.getRoleByName("youtuberName")).queue();
-            }
-            return;
+        if (p.hasPermission("db.bedwarsrank3")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("639171443552288788")).queue();
         }
 
-
-        if (p.hasPermission("db.vip")) {
-            if (ids) {
-                m.getGuild().addRoleToMember(m, ConfigFileManager.INSTANCE.getRoleById("vipName")).queue();
-            } else {
-                m.getGuild().addRoleToMember(m, ConfigFileManager.INSTANCE.getRoleByName("vipName")).queue();
-            }
+        if (p.hasPermission("db.bedwarsrank4")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("639171447251533834")).queue();
         }
+
+        if (p.hasPermission("db.bedwarsrank5")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("639171450380484608")).queue();
+        }
+
+        if (p.hasPermission("db.creative1")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("639171456873398284")).queue();
+        }
+
+        if (p.hasPermission("db.creative2")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("639172105266528306")).queue();
+        }
+
+        if (p.hasPermission("db.creative3")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("639172108399804456")).queue();
+        }
+
+        if (p.hasPermission("db.survival1")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("639172111902179359")).queue();
+        }
+
+        if (p.hasPermission("db.survival2")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("639172114548654090")).queue();
+        }
+
+        if (p.hasPermission("db.survival3")) {
+            m.getGuild().addRoleToMember(m,jda.getRoleById("639172225978597396")).queue();
+        }
+
+         */
 
     }
-
-
 
     public String getRank(ProxiedPlayer p) {
-
-        String rank = "";
-
-        if (p.hasPermission("db.admin")) {
-            rank = "admin";
-        } else
-
-        if (p.hasPermission("db.discordstaff")) {
-            rank = "dcstaff";
-        } else
-
-        if (p.hasPermission("db.staff")) {
-            rank = "staff";
-        } else
-
-        if (p.hasPermission("db.friend")) {
-            rank = "friend";
-        } else
-
-
-        if (p.hasPermission("db.youtuber")) {
-            rank = "youtuber";
-        }else
-
-
-        if (p.hasPermission("db.vip")) {
-            rank = "vip";
-        }else {
-            rank = "none";
-        }
-
-        return rank;
-
+        return "none";
     }
-
-
-
 
     public void removeAllRolesFromMember(Member m) {
         for(Role role : m.getRoles()) {
@@ -273,12 +255,8 @@ public class Main extends Plugin {
 
     public Member getMemberFromPlayer(ProxiedPlayer p) throws SQLException {
         User u;
-
         u = Main.jda.getUserById(Long.parseLong(VerifyDAO.INSTANCE.getDiscordID(p)));
-
-
         Member m = null;
-
         if (!Main.jda.getGuilds().isEmpty()) {
             for (Guild guild : Main.jda.getGuilds()) {
                 if (u != null)
@@ -287,8 +265,6 @@ public class Main extends Plugin {
         } else {
             throw new SQLException("There was an internal error! But may not found") ;
         }
-
         return m;
     }
-
 }

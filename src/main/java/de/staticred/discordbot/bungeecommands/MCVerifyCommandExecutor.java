@@ -1,6 +1,7 @@
 package de.staticred.discordbot.bungeecommands;
 
 import de.staticred.discordbot.Main;
+import de.staticred.discordbot.db.SRVDAO;
 import de.staticred.discordbot.db.VerifyDAO;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -71,6 +72,7 @@ public class MCVerifyCommandExecutor extends Command {
             try {
                 VerifyDAO.INSTANCE.setPlayerAsVerified(p);
                 VerifyDAO.INSTANCE.addDiscordID(p, m);
+                SRVDAO.INSTANCE.link(p,m.getId());
             } catch (SQLException e) {
                 p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
                 e.printStackTrace();
@@ -200,30 +202,22 @@ public class MCVerifyCommandExecutor extends Command {
                 return;
             }
 
-
             Main.INSTANCE.removeAllRolesFromMember(m);
-
 
             try {
                 VerifyDAO.INSTANCE.removeDiscordID(p);
                 VerifyDAO.INSTANCE.setPlayerAsUnVerified(p);
+                SRVDAO.INSTANCE.unlink(p);
             } catch (SQLException e) {
                 p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
                 e.printStackTrace();
                 return;
             }
 
-
-
             p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("UnlinkedYourSelf",true)));
             return;
         }
         p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("VerifyPrefix",true)));
-
-
-
-
-
     }
 
 

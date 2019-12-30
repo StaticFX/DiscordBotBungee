@@ -69,28 +69,7 @@ public class ConfigFileManager {
         return conf.getBoolean("UseSQL");
     }
 
-
-    public Role getRoleByName(String name) {
-        return Main.jda.getRolesByName(conf.getString(name),true).get(0);
-    }
-
-    public Role getRoleById(String name) {
-        return Main.jda.getRoleById(conf.getLong(name));
-    }
-
-    public boolean useTokens() {
-        return conf.getBoolean("useIDS");
-    }
-
     public boolean getSyncName() { return conf.getBoolean("syncNickName");}
-
-    public boolean isMetrcisEnabled() {
-        if(!conf.getKeys().contains("useMetrics")) {
-            conf.set("useMetrcis",true);
-            saveFile();
-        }
-        return conf.getBoolean("useMetrics");
-    }
 
     public String getHost() {
         return conf.getString("SQL_HOST");
@@ -99,6 +78,13 @@ public class ConfigFileManager {
     public String getPort() {
         return conf.getString("SQL_PORT");
     }
+    
+    public boolean useSRV() {
+        return conf.getBoolean("USE_DISCORDSRV");
+    }
 
+    public boolean isSetuped() {
+        return conf.getBoolean("Setuped");
+    }
 
 }

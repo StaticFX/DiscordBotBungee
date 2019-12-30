@@ -23,6 +23,12 @@ public class JoinEvent implements Listener {
 
         ProxiedPlayer player = e.getPlayer();
 
+        if(!Main.setuped && player.hasPermission("discord.setup")) {
+            player.sendMessage(new TextComponent("§aHey, looks like my plugin isn´t setup yet. \n§aMy wizard will guide you trough the process."));
+            player.sendMessage(new TextComponent("§aUse /setup to start now!"));
+        }
+
+        if(!Main.setuped) return;
 
         try {
 

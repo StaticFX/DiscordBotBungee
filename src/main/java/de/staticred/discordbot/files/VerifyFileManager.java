@@ -43,7 +43,6 @@ public class VerifyFileManager {
 
     }
 
-
     public void saveFile() {
         try {
             ConfigurationProvider.getProvider(YamlConfiguration.class).save(conf,file);
@@ -51,8 +50,6 @@ public class VerifyFileManager {
             e.printStackTrace();
         }
     }
-
-
 
     public boolean isPlayerInFile(ProxiedPlayer p) {
         return conf.getKeys().contains(p.getUniqueId().toString());

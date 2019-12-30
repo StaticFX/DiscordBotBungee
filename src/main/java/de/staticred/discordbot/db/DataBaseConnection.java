@@ -31,6 +31,18 @@ public class DataBaseConnection {
         }
     }
 
+    public boolean connectTest() {
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+            connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + url, user,password);
+            closeConnection();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     public void closeConnection() {
         try {

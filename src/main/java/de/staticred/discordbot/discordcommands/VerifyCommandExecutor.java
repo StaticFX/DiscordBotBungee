@@ -28,6 +28,8 @@ public class VerifyCommandExecutor {
 
     private void execute(Member m, TextChannel tc, Message command, String[] args) {
 
+        if(!Main.setuped) return;
+
         if(args.length != 2) {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setDescription(Main.getInstance().getStringFromConfig("VerifyDiscordSyntax",false) + m.getAsMention());
@@ -123,14 +125,11 @@ public class VerifyCommandExecutor {
         Main.playerMemberHashMap.put(player,m);
         Main.playerChannelHashMap.put(player,tc);
 
-        ProxyServer.getInstance().getScheduler().schedule(Main.INSTANCE, new Runnable() {
-            @Override
-            public void run() {
+        ProxyServer.getInstance().getScheduler().schedule(Main.INSTANCE, () -> {
                 if(Main.playerMemberHashMap.containsKey(player) && Main.playerChannelHashMap.containsKey(player)) {
                     Main.playerChannelHashMap.remove(player,tc);
                     Main.playerMemberHashMap.remove(player,m);
                     player.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("CanceledDueToTimeLimit",true)));
-                }
             }
         },20, TimeUnit.SECONDS);
     }
