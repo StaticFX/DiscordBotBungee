@@ -87,4 +87,17 @@ public class ConfigFileManager {
         return conf.getBoolean("Setuped");
     }
 
+    public void setSetuped(boolean setuped) {
+        conf.set("Setuped",setuped);
+        saveFile();
+    }
+
+    public boolean multiplayRanks(){
+        return conf.getBoolean("multiplyRanks");
+    }
+
+    public boolean useTokens() {
+        return conf.getBoolean("useTokens");
+    }
+
 }

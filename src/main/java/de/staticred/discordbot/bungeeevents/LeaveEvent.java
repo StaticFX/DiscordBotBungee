@@ -1,6 +1,7 @@
 package de.staticred.discordbot.bungeeevents;
 
 import de.staticred.discordbot.db.VerifyDAO;
+import de.staticred.discordbot.files.ConfigFileManager;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -14,6 +15,9 @@ public class LeaveEvent implements Listener {
     public void onLeave(PlayerDisconnectEvent e) {
 
         ProxiedPlayer p = e.getPlayer();
+
+
+        if(!ConfigFileManager.INSTANCE.isSetuped()) return;
 
         try {
             if(!VerifyDAO.INSTANCE.isPlayerInDataBase(p)) {

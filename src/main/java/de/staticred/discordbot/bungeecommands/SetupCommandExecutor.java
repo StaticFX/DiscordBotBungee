@@ -3,10 +3,13 @@ package de.staticred.discordbot.bungeecommands;
 import de.staticred.discordbot.Main;
 import de.staticred.discordbot.db.DataBaseConnection;
 import de.staticred.discordbot.db.VerifyDAO;
+import de.staticred.discordbot.files.ConfigFileManager;
+import de.staticred.discordbot.files.DiscordFileManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import sun.security.provider.ConfigFile;
 
 import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
@@ -80,8 +83,21 @@ public class SetupCommandExecutor extends Command {
             }
         }
 
-        p.sendMessage(new TextComponent("§aNow let´s set up the discord Groups."));
-        p.sendMessage(new TextComponent("§aFor this just type your wished groups in the chat."));
-        p.sendMessage(new TextComponent("§aWhen you´re finished with your settings, type 'FINISH'"));
+        p.sendMessage(new TextComponent("§aNow let´s check the discord Groups."));
+        int groups = DiscordFileManager.INSTANCE.getAllGroups().size();
+        if(groups == 0) {
+            p.sendMessage(new TextComponent("§cThere were 0 groups found, please recheck your discord.yml!"));
+            return;
+        }
+
+        p.sendMessage(new TextComponent("§aThere were §c" + groups + " §afound in the config."));
+        p.sendMessage(new TextComponent("The plugin will now generate the default values for each group."));
+
+        DiscordFileManager.INSTANCE.generateGroupConfig();
+
+        p.sendMessage(new TextComponent("Now go in the discord.yml file and edit the groups."));
+        p.sendMessage(new TextComponent("The setup is now finished, after you edited, be sure to restart your proxy."));
+        Main.settingUp.clear();
+        ConfigFileManager.INSTANCE.setSetuped(true);
     }
 }

@@ -22,4 +22,7 @@ discordBotActivity: "!help"
 streamingLink: ""
 verifycommand: "discord"
 syncNickName: true
+multiplyRanks: false
+useTokens: false
+#never edit!
 Setuped: false
