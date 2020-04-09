@@ -22,7 +22,9 @@ discordBotActivity: "!help"
 streamingLink: ""
 verifycommand: "discord"
 syncNickName: true
-multiplyRanks: false
 useTokens: false
+verifyRole: ""
+channelID: ""
 #never edit!
 Setuped: false
+configVersion: "1.1.0"

@@ -72,7 +72,7 @@ public class MCVerifyCommandExecutor extends Command {
             try {
                 VerifyDAO.INSTANCE.setPlayerAsVerified(p);
                 VerifyDAO.INSTANCE.addDiscordID(p, m);
-                SRVDAO.INSTANCE.link(p,m.getId());
+                if(Main.useSRV) SRVDAO.INSTANCE.link(p,m.getId());
             } catch (SQLException e) {
                 p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
                 e.printStackTrace();
@@ -207,6 +207,7 @@ public class MCVerifyCommandExecutor extends Command {
             try {
                 VerifyDAO.INSTANCE.removeDiscordID(p);
                 VerifyDAO.INSTANCE.setPlayerAsUnVerified(p);
+                if(Main.useSRV)
                 SRVDAO.INSTANCE.unlink(p);
             } catch (SQLException e) {
                 p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));

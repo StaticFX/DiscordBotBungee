@@ -10,7 +10,8 @@ import java.sql.SQLException;
 public class DataBaseConnection {
 
     private Connection connection;
-    String user, password,url, host, port;
+    String user, password,url, host;
+    int port;
 
     public final static DataBaseConnection INSTANCE = new DataBaseConnection();
 
@@ -24,7 +25,6 @@ public class DataBaseConnection {
 
     public void connect() {
         try {
-            Class.forName("org.mariadb.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + url, user,password);
         } catch (Exception e) {
             e.printStackTrace();
@@ -33,7 +33,6 @@ public class DataBaseConnection {
 
     public boolean connectTest() {
         try {
-            Class.forName("org.mariadb.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + url, user,password);
             closeConnection();
             return true;

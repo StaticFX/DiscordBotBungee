@@ -38,6 +38,7 @@ public class Main extends Plugin {
     public static ArrayList<ProxiedPlayer> settingUp = new ArrayList<>();
     public String token;
     public Activity activity;
+    public static String configVersion = "1.1.0";
 
     @Override
     public void onEnable() {
@@ -48,13 +49,14 @@ public class Main extends Plugin {
         VerifyFileManager.INSTANCE.loadFile();
         MessagesFileManager.INSTANCE.loadFile();
         DiscordFileManager.INSTANCE.loadFile();
-        if(ConfigFileManager.INSTANCE.useSQL() && ConfigFileManager.INSTANCE.isSetuped()) {
-           // loadDataBase();
-        }
-
-        useSRV = ConfigFileManager.INSTANCE.useSRV();
         setuped = ConfigFileManager.INSTANCE.isSetuped();
 
+        if(ConfigFileManager.INSTANCE.useSQL() && setuped) {
+            loadDataBase();
+        }
+
+
+        useSRV = ConfigFileManager.INSTANCE.useSRV();
         useSQL = ConfigFileManager.INSTANCE.useSQL();
         token = ConfigFileManager.INSTANCE.getString("bot-token");
         loadBungeeEvents();
@@ -79,11 +81,19 @@ public class Main extends Plugin {
             this.activity = Activity.playing(type);
         }
 
+        if(setuped) {
+            try {
+                initBot(token, this.activity);
+            } catch (LoginException e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+
         String command = ConfigFileManager.INSTANCE.getString("verifycommand");
 
         syncNickname = ConfigFileManager.INSTANCE.getSyncName();
         loadBungeeCommands(command);
-        getProxy().registerChannel("verify-channel");
         getLogger().info("Success");
     }
 
@@ -148,34 +158,44 @@ public class Main extends Plugin {
     }
 
     public void updateRoles(Member m, ProxiedPlayer p) {
-        /*
-        if (p.hasPermission("db.verified")) {
-            m.getGuild().addRoleToMember(m,jda.getRoleById("638323778069200896")).queue();
-
-         */
-        if(ConfigFileManager.INSTANCE.multiplayRanks()) {
-            for(String group : DiscordFileManager.INSTANCE.getAllGroups()) {
-                if(p.hasPermission(DiscordFileManager.INSTANCE.getPermissionsForGroup(group))) {
+        if(!DiscordFileManager.INSTANCE.getVerifyRole().isEmpty() || m.getGuild().getRoleById(DiscordFileManager.INSTANCE.getVerifyRoleAsLong()) != null) {
+            if(ConfigFileManager.INSTANCE.useTokens())  {
+                m.getGuild().addRoleToMember(m,m.getGuild().getRoleById(DiscordFileManager.INSTANCE.getVerifyRoleAsLong())).queue();
+            }else {
+                m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(DiscordFileManager.INSTANCE.getVerifyRole(),true).get(0)).queue();
+            }
+        }
+        System.out.println(DiscordFileManager.INSTANCE.getVerifyRole());
+        for(String group : DiscordFileManager.INSTANCE.getAllGroups()) {
+            if(!DiscordFileManager.INSTANCE.isDynamicGroup(group)) {
+                if(!hasADynamicRole(m)) {
                     if(ConfigFileManager.INSTANCE.useTokens())  {
-                        m.getGuild().addRoleToMember(m,m.getGuild().getRoleById(DiscordFileManager.INSTANCE.getDiscordGroupIDForGroup(group)));
+                        m.getGuild().addRoleToMember(m,m.getGuild().getRoleById(DiscordFileManager.INSTANCE.getDiscordGroupIDForGroup(group))).queue();
                     }else {
-                        m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(DiscordFileManager.INSTANCE.getDiscordGrouNameForGroup(group),false).get(0));
+                        m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(group),true).get(0)).queue();
                     }
+                    continue;
                 }
             }
-        } else {
-            for(String group : DiscordFileManager.INSTANCE.getAllGroups()) {
-                if(p.hasPermission(DiscordFileManager.INSTANCE.getPermissionsForGroup(group))) {
-                    if(ConfigFileManager.INSTANCE.useTokens())  {
-                        m.getGuild().addRoleToMember(m,m.getGuild().getRoleById(DiscordFileManager.INSTANCE.getDiscordGroupIDForGroup(group)));
-                        return;
-                    }else {
-                        m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(DiscordFileManager.INSTANCE.getDiscordGrouNameForGroup(group),false).get(0));
-                        return;
-                    }
+            if(p.hasPermission(DiscordFileManager.INSTANCE.getPermissionsForGroup(group))) {
+                if(ConfigFileManager.INSTANCE.useTokens())  {
+                    m.getGuild().addRoleToMember(m,m.getGuild().getRoleById(DiscordFileManager.INSTANCE.getDiscordGroupIDForGroup(group))).queue();
+                }else {
+                    System.out.println(group);
+                    System.out.println(DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(group));
+                    m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(group),true).get(0)).queue();
                 }
             }
         }
+    }
+
+    boolean hasADynamicRole(Member m) {
+        for(Role role : m.getRoles()) {
+            if(!DiscordFileManager.INSTANCE.isDynamicGroup(DiscordFileManager.INSTANCE.discordGroupNameToConfigGroupName(role.getName()))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public String getRank(ProxiedPlayer p) {

@@ -24,7 +24,6 @@ public class SRVDBConnection {
 
     public void connect() {
         try {
-            Class.forName("org.mariadb.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + url, user,password);
         } catch (Exception e) {
             e.printStackTrace();

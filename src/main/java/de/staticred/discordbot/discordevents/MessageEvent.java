@@ -4,6 +4,7 @@ import de.staticred.discordbot.discordcommands.HelpCommandExecutor;
 import de.staticred.discordbot.discordcommands.UnlinkCommandExecutor;
 import de.staticred.discordbot.discordcommands.UpdateCommandExecutor;
 import de.staticred.discordbot.discordcommands.VerifyCommandExecutor;
+import de.staticred.discordbot.files.ConfigFileManager;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -16,6 +17,13 @@ public class MessageEvent extends ListenerAdapter {
         Message message = e.getMessage();
         String[] args = e.getMessage().getContentRaw().split(" ");
         Member m = e.getMember();
+
+
+        if(!ConfigFileManager.INSTANCE.getVerifyChannel().isEmpty()) {
+            if(!e.getChannel().getId().equals(ConfigFileManager.INSTANCE.getVerifyChannel())) {
+                e.getMessage().delete().queue();
+            }
+        }
 
         if(args[0].equalsIgnoreCase("!verify") || args[0].equalsIgnoreCase("!sync")) {
             new VerifyCommandExecutor(m,e.getChannel(),message,args);

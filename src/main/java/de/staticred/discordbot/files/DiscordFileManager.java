@@ -55,7 +55,9 @@ public class DiscordFileManager {
 
     public void generateGroupConfig() {
         for(String string : getAllGroups()) {
-            conf.set(string, Arrays.asList(string,"defaultPermission"));
+            conf.set(string + ".groupName", string);
+            conf.set(string + ".permission", "perm." + string);
+            conf.set(string + ".dynamicGroup",false);
         }
         saveFile();
     }
@@ -71,15 +73,44 @@ public class DiscordFileManager {
     }
 
     public String getPermissionsForGroup(String group) {
-        return conf.getStringList(group).get(1);
+        return conf.getString(group + ".permission");
     }
 
-    public String getDiscordGrouNameForGroup(String group) {
-        return conf.getStringList(group).get(0);
+    public String getDiscordGroupNameForGroup(String group) {
+        return conf.getString(group + ".groupName");
     }
 
     public Long getDiscordGroupIDForGroup(String group) {
-        return Long.parseLong(conf.getStringList(group).get(1));
+        return conf.getLong(group + ".groupName");
+    }
+
+    public boolean isDynamicGroup(String group) {
+        return conf.getBoolean(group + ".dynamicGroup");
+    }
+
+    public @Nullable String discordGroupNameToConfigGroupName(String name) {
+        for(String group : getAllGroups()) {
+            if(getDiscordGroupNameForGroup(group).equals(name)) return group;
+        }
+        return null;
+    }
+
+    public String getVerifyRole() {
+        return conf.getString("verifyRole");
+    }
+
+    public long getVerifyRoleAsLong() {
+        return conf.getLong("verifyRole");
+    }
+
+
+
+    public List<String> getDynamicGroups() {
+        List<String> list = new ArrayList<>();
+        for(String group : getAllGroups()) {
+            if(isDynamicGroup(group)) list.add(group);
+        }
+        return list;
     }
 
 

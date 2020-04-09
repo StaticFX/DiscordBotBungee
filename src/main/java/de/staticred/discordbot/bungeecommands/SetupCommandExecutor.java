@@ -5,6 +5,7 @@ import de.staticred.discordbot.db.DataBaseConnection;
 import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.DiscordFileManager;
+import net.dv8tion.jda.api.entities.Role;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -91,12 +92,13 @@ public class SetupCommandExecutor extends Command {
         }
 
         p.sendMessage(new TextComponent("§aThere were §c" + groups + " §afound in the config."));
-        p.sendMessage(new TextComponent("The plugin will now generate the default values for each group."));
+        p.sendMessage(new TextComponent("§aThe plugin will now generate the default values for each §agroup."));
 
         DiscordFileManager.INSTANCE.generateGroupConfig();
 
-        p.sendMessage(new TextComponent("Now go in the discord.yml file and edit the groups."));
-        p.sendMessage(new TextComponent("The setup is now finished, after you edited, be sure to restart your proxy."));
+        p.sendMessage(new TextComponent("§aNow go in the discord.yml file and edit the §agroups."));
+        p.sendMessage(new TextComponent("§aThe setup is now finished, after you edited, be sure to §arestart §ayour proxy."));
+
         Main.settingUp.clear();
         ConfigFileManager.INSTANCE.setSetuped(true);
     }

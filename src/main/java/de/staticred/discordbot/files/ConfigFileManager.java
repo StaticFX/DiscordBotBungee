@@ -75,8 +75,8 @@ public class ConfigFileManager {
         return conf.getString("SQL_HOST");
     }
 
-    public String getPort() {
-        return conf.getString("SQL_PORT");
+    public int getPort() {
+        return conf.getInt("SQL_PORT");
     }
     
     public boolean useSRV() {
@@ -92,8 +92,12 @@ public class ConfigFileManager {
         saveFile();
     }
 
-    public boolean multiplayRanks(){
-        return conf.getBoolean("multiplyRanks");
+    public String getConfigVersion() {
+        return conf.getString("configVersion") ;
+    }
+
+    public String getVerifyChannel() {
+        return conf.getString("channelID");
     }
 
     public boolean useTokens() {

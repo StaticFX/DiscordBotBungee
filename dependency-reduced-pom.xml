@@ -34,7 +34,7 @@
     <repository>
       <id>central</id>
       <name>bintray</name>
-      <url>http://jcenter.bintray.com</url>
+      <url>https://jcenter.bintray.com</url>
     </repository>
     <repository>
       <id>bungeecord-repo</id>
@@ -65,6 +65,14 @@
           <groupId>net.md-5</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>netty-transport-native-unix-common</artifactId>
+          <groupId>io.netty</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>snakeyaml</artifactId>
+          <groupId>org.yaml</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>guava</artifactId>
           <groupId>com.google.guava</groupId>
         </exclusion>
@@ -72,7 +80,7 @@
     </dependency>
   </dependencies>
   <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
   </properties>
 </project>

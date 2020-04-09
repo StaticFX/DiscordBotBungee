@@ -2,6 +2,7 @@ package de.staticred.discordbot.bungeeevents;
 
 import de.staticred.discordbot.Main;
 import de.staticred.discordbot.db.VerifyDAO;
+import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.VerifyFileManager;
 import net.dv8tion.jda.api.entities.Member;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -23,8 +24,15 @@ public class JoinEvent implements Listener {
 
         ProxiedPlayer player = e.getPlayer();
 
+        if(!Main.configVersion.equals(ConfigFileManager.INSTANCE.getConfigVersion())) {
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Your config version is not compatible with your §4plugin-config version."));
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Config version:" + ConfigFileManager.INSTANCE.getConfigVersion()));
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Plugin version:" + Main.configVersion));
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4It may come to errors."));
+        }
+
         if(!Main.setuped && player.hasPermission("discord.setup")) {
-            player.sendMessage(new TextComponent("§aHey, looks like my plugin isn´t setup yet. \n§aMy wizard will guide you trough the process."));
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §aHey, looks like my plugin isn´t setup yet. \n§aMy wizard will guide you trough the process."));
             player.sendMessage(new TextComponent("§aUse /setup to start now!"));
         }
 
