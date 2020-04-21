@@ -24,6 +24,7 @@ import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Main extends Plugin {
 
@@ -158,44 +159,43 @@ public class Main extends Plugin {
     }
 
     public void updateRoles(Member m, ProxiedPlayer p) {
-        if(!DiscordFileManager.INSTANCE.getVerifyRole().isEmpty() || m.getGuild().getRoleById(DiscordFileManager.INSTANCE.getVerifyRoleAsLong()) != null) {
-            if(ConfigFileManager.INSTANCE.useTokens())  {
-                m.getGuild().addRoleToMember(m,m.getGuild().getRoleById(DiscordFileManager.INSTANCE.getVerifyRoleAsLong())).queue();
-            }else {
-                m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(DiscordFileManager.INSTANCE.getVerifyRole(),true).get(0)).queue();
+
+        List<Member> addedNonDynamicGroups = new ArrayList<>();
+
+        if(!ConfigFileManager.INSTANCE.getVerifyRole().isEmpty()) {
+            if(ConfigFileManager.INSTANCE.useTokens()) {
+                m.getGuild().addRoleToMember(m,m.getGuild().getRoleById((ConfigFileManager.INSTANCE.getVerifyRoleAsLong()))).queue();
+            }else{
+                m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(ConfigFileManager.INSTANCE.getVerifyRole(),true).get(0)).queue();
             }
         }
-        System.out.println(DiscordFileManager.INSTANCE.getVerifyRole());
+
         for(String group : DiscordFileManager.INSTANCE.getAllGroups()) {
             if(!DiscordFileManager.INSTANCE.isDynamicGroup(group)) {
-                if(!hasADynamicRole(m)) {
-                    if(ConfigFileManager.INSTANCE.useTokens())  {
-                        m.getGuild().addRoleToMember(m,m.getGuild().getRoleById(DiscordFileManager.INSTANCE.getDiscordGroupIDForGroup(group))).queue();
-                    }else {
-                        m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(group),true).get(0)).queue();
-                    }
+                if(addedNonDynamicGroups.contains(m)) {
                     continue;
                 }
-            }
-            if(p.hasPermission(DiscordFileManager.INSTANCE.getPermissionsForGroup(group))) {
-                if(ConfigFileManager.INSTANCE.useTokens())  {
-                    m.getGuild().addRoleToMember(m,m.getGuild().getRoleById(DiscordFileManager.INSTANCE.getDiscordGroupIDForGroup(group))).queue();
-                }else {
-                    System.out.println(group);
-                    System.out.println(DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(group));
-                    m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(group),true).get(0)).queue();
+
+                if(p.hasPermission(DiscordFileManager.INSTANCE.getPermissionsForGroup(group))) {
+                    if(ConfigFileManager.INSTANCE.useTokens()) {
+                        m.getGuild().addRoleToMember(m,m.getGuild().getRoleById(DiscordFileManager.INSTANCE.getDiscordGroupIDForGroup(group))).queue();
+                    }else{
+                        m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(group),true).get(0)).queue();
+                    }
+                }
+
+                addedNonDynamicGroups.add(m);
+
+            }else{
+                if(p.hasPermission(DiscordFileManager.INSTANCE.getPermissionsForGroup(group))) {
+                    if(ConfigFileManager.INSTANCE.useTokens()) {
+                        m.getGuild().addRoleToMember(m,m.getGuild().getRoleById(DiscordFileManager.INSTANCE.getDiscordGroupIDForGroup(group))).queue();
+                    }else{
+                        m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(group),true).get(0)).queue();
+                    }
                 }
             }
         }
-    }
-
-    boolean hasADynamicRole(Member m) {
-        for(Role role : m.getRoles()) {
-            if(!DiscordFileManager.INSTANCE.isDynamicGroup(DiscordFileManager.INSTANCE.discordGroupNameToConfigGroupName(role.getName()))) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public String getRank(ProxiedPlayer p) {

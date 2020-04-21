@@ -69,12 +69,29 @@ public class JoinEvent implements Listener {
                 }
             }
 
-        } catch(
-                SQLException ex)
-
-        {
+        } catch(SQLException ex) {
             ex.printStackTrace();
         }
+
+        Member m;
+
+        try {
+            m = Main.INSTANCE.getMemberFromPlayer(player);
+        } catch (SQLException ex) {
+            player.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
+            ex.printStackTrace();
+            return;
+        }
+
+
+
+        if (m == null) {
+            player.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
+            return;
+        }
+
+        Main.getInstance().removeAllRolesFromMember(m);
+        Main.getInstance().updateRoles(m,player);
     }
 
 

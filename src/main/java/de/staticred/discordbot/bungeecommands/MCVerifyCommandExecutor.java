@@ -141,18 +141,20 @@ public class MCVerifyCommandExecutor extends Command {
             Main.INSTANCE.removeAllRolesFromMember(m);
             Main.INSTANCE.updateRoles(m,p);
 
-            if(Main.INSTANCE.syncNickname)
+            if(Main.INSTANCE.syncNickname) {
 
-                if(m.isOwner()) {
-                    p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("MemberIsOwner",false)));
-                }else{
-                    m.getGuild().modifyNickname(m,p.getName()).queue();
+
+                if (m.isOwner()) {
+                    p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("MemberIsOwner", false)));
+                } else {
+                    m.getGuild().modifyNickname(m, p.getName()).queue();
                 }
 
-            try {
-                VerifyDAO.INSTANCE.updateRank(p);
-            } catch (SQLException e) {
-                e.printStackTrace();
+                try {
+                    VerifyDAO.INSTANCE.updateRank(p);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
 
             p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("UpdatedRankMC",true)));

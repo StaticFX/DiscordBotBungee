@@ -100,6 +100,14 @@ public class ConfigFileManager {
         return conf.getString("channelID");
     }
 
+    public String getVerifyRole() {
+        return conf.getString("verifyRole");
+    }
+
+    public long getVerifyRoleAsLong() {
+        return conf.getLong("verifyRole");
+    }
+
     public boolean useTokens() {
         return conf.getBoolean("useTokens");
     }

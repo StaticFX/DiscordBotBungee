@@ -95,13 +95,8 @@ public class DiscordFileManager {
         return null;
     }
 
-    public String getVerifyRole() {
-        return conf.getString("verifyRole");
-    }
 
-    public long getVerifyRoleAsLong() {
-        return conf.getLong("verifyRole");
-    }
+
 
 
 

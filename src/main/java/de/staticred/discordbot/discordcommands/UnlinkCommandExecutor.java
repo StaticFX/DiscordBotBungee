@@ -51,7 +51,7 @@ public class UnlinkCommandExecutor {
         try {
             VerifyDAO.INSTANCE.setPlayerAsUnverified(m.getId());
             VerifyDAO.INSTANCE.removeDiscordIDByDiscordID(m);
-            SRVDAO.INSTANCE.unlink(m.getId());
+            if(Main.useSRV) SRVDAO.INSTANCE.unlink(m.getId());
         } catch (SQLException e) {
             e.printStackTrace();
             return;

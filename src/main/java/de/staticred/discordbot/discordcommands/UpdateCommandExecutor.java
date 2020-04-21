@@ -75,8 +75,6 @@ public class UpdateCommandExecutor {
             }
         }
 
-        if(Main.INSTANCE.syncNickname)
-            m.getGuild().modifyNickname(m,target.getName()).queue();
 
         embedBuilder.setDescription(Main.getInstance().getStringFromConfig("UpdatedRank",false) + m.getAsMention());
         embedBuilder.setColor(Color.green);
