@@ -59,8 +59,22 @@ public class JoinEvent implements Listener {
             VerifyDAO.INSTANCE.updateRank(player);
 
             if(VerifyDAO.INSTANCE.isPlayerVerified(player)) {
-                Member m = Main.getInstance().getMemberFromPlayer(player);
-                Main.INSTANCE.updateRoles(m,player);
+                Member m;
+
+                try {
+                    m = Main.INSTANCE.getMemberFromPlayer(player);
+                } catch (SQLException ex) {
+                    player.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
+                    ex.printStackTrace();
+                    return;
+                }
+                if (m == null) {
+                    player.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
+                    return;
+                }
+
+                Main.getInstance().removeAllRolesFromMember(m);
+                Main.getInstance().updateRoles(m,player);
 
                 if(Main.INSTANCE.syncNickname) {
                     if(!m.isOwner()) {
@@ -73,25 +87,7 @@ public class JoinEvent implements Listener {
             ex.printStackTrace();
         }
 
-        Member m;
 
-        try {
-            m = Main.INSTANCE.getMemberFromPlayer(player);
-        } catch (SQLException ex) {
-            player.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
-            ex.printStackTrace();
-            return;
-        }
-
-
-
-        if (m == null) {
-            player.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
-            return;
-        }
-
-        Main.getInstance().removeAllRolesFromMember(m);
-        Main.getInstance().updateRoles(m,player);
     }
 
 

@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.staticred.plugins.bungeecord</groupId>
   <artifactId>DiscordBot-Bungee</artifactId>
-  <version>1.0.9.1.9 BETA-Build</version>
+  <version>1.0.9.2.0 BETA-Build</version>
   <build>
     <plugins>
       <plugin>

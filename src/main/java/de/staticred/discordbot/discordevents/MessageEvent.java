@@ -19,22 +19,43 @@ public class MessageEvent extends ListenerAdapter {
         Member m = e.getMember();
 
 
-        if(!ConfigFileManager.INSTANCE.getVerifyChannel().isEmpty()) {
-            if(!e.getChannel().getId().equals(ConfigFileManager.INSTANCE.getVerifyChannel())) {
-                e.getMessage().delete().queue();
-            }
-        }
+
+
 
         if(args[0].equalsIgnoreCase("!verify") || args[0].equalsIgnoreCase("!sync")) {
+            if(!ConfigFileManager.INSTANCE.getVerifyChannel().isEmpty()) {
+                if(!e.getChannel().getId().equals(ConfigFileManager.INSTANCE.getVerifyChannel())) {
+                    e.getMessage().delete().queue();
+                    return;
+                }
+            }
             new VerifyCommandExecutor(m,e.getChannel(),message,args);
             return;
         }else if(args[0].equalsIgnoreCase("!unlink")) {
+            if(!ConfigFileManager.INSTANCE.getVerifyChannel().isEmpty()) {
+                if(!e.getChannel().getId().equals(ConfigFileManager.INSTANCE.getVerifyChannel())) {
+                    e.getMessage().delete().queue();
+                    return;
+                }
+            }
             new UnlinkCommandExecutor(m,e.getChannel(),message,args);
             return;
         }else if(args[0].equalsIgnoreCase("!help")) {
+            if(!ConfigFileManager.INSTANCE.getVerifyChannel().isEmpty()) {
+                if(!e.getChannel().getId().equals(ConfigFileManager.INSTANCE.getVerifyChannel())) {
+                    e.getMessage().delete().queue();
+                    return;
+                }
+            }
             new HelpCommandExecutor(m,e.getChannel(),message,args);
             return;
         } else if (args[0].equalsIgnoreCase("!update")) {
+            if(!ConfigFileManager.INSTANCE.getVerifyChannel().isEmpty()) {
+                if(!e.getChannel().getId().equals(ConfigFileManager.INSTANCE.getVerifyChannel())) {
+                    e.getMessage().delete().queue();
+                    return;
+                }
+            }
             new UpdateCommandExecutor(m,e.getChannel(),message,args);
             return;
         }

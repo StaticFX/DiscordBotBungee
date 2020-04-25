@@ -40,6 +40,7 @@ public class Main extends Plugin {
     public String token;
     public Activity activity;
     public static String configVersion = "1.1.0";
+    public static int timer = 0;
 
     @Override
     public void onEnable() {
@@ -158,6 +159,8 @@ public class Main extends Plugin {
         return INSTANCE;
     }
 
+
+
     public void updateRoles(Member m, ProxiedPlayer p) {
 
         List<Member> addedNonDynamicGroups = new ArrayList<>();
@@ -204,13 +207,14 @@ public class Main extends Plugin {
 
     public void removeAllRolesFromMember(Member m) {
         for(Role role : m.getRoles()) {
+
             m.getGuild().removeRoleFromMember(m,role).queue();
         }
     }
 
     public Member getMemberFromPlayer(ProxiedPlayer p) throws SQLException {
         User u;
-        u = Main.jda.getUserById(Long.parseLong(VerifyDAO.INSTANCE.getDiscordID(p)));
+        u = Main.jda.getUserById((VerifyDAO.INSTANCE.getDiscordID(p)));
         Member m = null;
         if (!Main.jda.getGuilds().isEmpty()) {
             for (Guild guild : Main.jda.getGuilds()) {
