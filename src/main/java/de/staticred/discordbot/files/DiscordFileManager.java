@@ -95,10 +95,17 @@ public class DiscordFileManager {
         return null;
     }
 
+    public @Nullable String getConfigGroupForPermission(String permission) {
 
+        Map<String, String> map = getAllGroupPermissions();
 
+        for(String groups : map.keySet()) {
+            if(DiscordFileManager.INSTANCE.getPermissionsForGroup(groups).equalsIgnoreCase(permission)) return (groups);
+        }
 
+        return null;
 
+    }
 
     public List<String> getDynamicGroups() {
         List<String> list = new ArrayList<>();

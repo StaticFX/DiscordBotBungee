@@ -205,10 +205,37 @@ public class Main extends Plugin {
         return "none";
     }
 
-    public void removeAllRolesFromMember(Member m) {
-        for(Role role : m.getRoles()) {
+    public void removeAllRolesFromMember(Member m, ProxiedPlayer p) {
 
-            m.getGuild().removeRoleFromMember(m,role).queue();
+        boolean roleUpdate = false;
+
+        for(String perm : DiscordFileManager.INSTANCE.getAllGroupPermissions().values()) {
+            if(p.hasPermission(perm)) {
+                if(ConfigFileManager.INSTANCE.useTokens()) {
+                    Role role = m.getGuild().getRoleById(DiscordFileManager.INSTANCE.getDiscordGroupIDForGroup(DiscordFileManager.INSTANCE.getConfigGroupForPermission(perm)));
+                    if(!m.getRoles().contains(role)) {
+                        roleUpdate = true;
+                        break;
+                    }
+                }else{
+                    Role role = m.getGuild().getRolesByName(DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(DiscordFileManager.INSTANCE.getConfigGroupForPermission(perm)),true).get(0);
+                    if(!m.getRoles().contains(role)) {
+                        roleUpdate = true;
+                        break;
+                    }
+                }
+            }
+            roleUpdate = false;
+        }
+
+
+        if(roleUpdate) {
+            for(Role role : m.getRoles()) {
+                for(String group : DiscordFileManager.INSTANCE.getAllGroups()) {
+                    if(role.getName().equalsIgnoreCase(group))
+                        m.getGuild().removeRoleFromMember(m,role).queue();
+                }
+            }
         }
     }
 
