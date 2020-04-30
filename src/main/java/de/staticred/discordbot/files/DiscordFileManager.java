@@ -107,6 +107,20 @@ public class DiscordFileManager {
 
     }
 
+    public List<String> getAllDiscordGroups() {
+
+        List<String> string = new ArrayList<>();
+
+        for(String group : getAllGroups()) {
+            if(ConfigFileManager.INSTANCE.useTokens()) {
+                string.add(Long.toString(getDiscordGroupIDForGroup(group)));
+            }else{
+                string.add(getDiscordGroupNameForGroup(group));
+            }
+        }
+        return string;
+    }
+
     public List<String> getDynamicGroups() {
         List<String> list = new ArrayList<>();
         for(String group : getAllGroups()) {

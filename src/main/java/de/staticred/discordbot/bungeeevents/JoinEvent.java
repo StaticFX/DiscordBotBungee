@@ -58,7 +58,11 @@ public class JoinEvent implements Listener {
             VerifyDAO.INSTANCE.updateUserName(player);
             VerifyDAO.INSTANCE.updateRank(player);
 
+            System.out.println(player.getName());
+            System.out.println(VerifyDAO.INSTANCE.isPlayerVerified(player));
+
             if(VerifyDAO.INSTANCE.isPlayerVerified(player)) {
+
                 Member m;
 
                 try {
@@ -73,6 +77,8 @@ public class JoinEvent implements Listener {
                     return;
                 }
 
+                System.out.println("here1");
+
                 Main.getInstance().removeAllRolesFromMember(m);
                 Main.getInstance().updateRoles(m,player);
 
@@ -86,13 +92,5 @@ public class JoinEvent implements Listener {
         } catch(SQLException ex) {
             ex.printStackTrace();
         }
-
-
     }
-
-
-
-
-
-
 }

@@ -50,9 +50,7 @@ public class MCVerifyCommandExecutor extends Command {
             Member m = Main.playerMemberHashMap.get(p);
             TextChannel tc = Main.playerChannelHashMap.get(p);
 
-
-
-
+            Main.INSTANCE.removeAllRolesFromMember(m);
             Main.INSTANCE.updateRoles(m,p);
 
             if(Main.INSTANCE.syncNickname) {

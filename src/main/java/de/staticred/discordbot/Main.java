@@ -109,6 +109,7 @@ public class Main extends Plugin {
 
     @Override
     public void onDisable() {
+        jda.shutdownNow();
         if(ConfigFileManager.INSTANCE.isSetuped()) {
             DataBaseConnection.INSTANCE.closeConnection();
         }
@@ -185,9 +186,8 @@ public class Main extends Plugin {
                     }else{
                         m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(group),true).get(0)).queue();
                     }
+                    addedNonDynamicGroups.add(m);
                 }
-
-                addedNonDynamicGroups.add(m);
 
             }else{
                 if(p.hasPermission(DiscordFileManager.INSTANCE.getPermissionsForGroup(group))) {
@@ -205,34 +205,14 @@ public class Main extends Plugin {
         return "none";
     }
 
-    public void removeAllRolesFromMember(Member m, ProxiedPlayer p) {
-
-        boolean roleUpdate = false;
-
-        for(String perm : DiscordFileManager.INSTANCE.getAllGroupPermissions().values()) {
-            if(p.hasPermission(perm)) {
+    public void removeAllRolesFromMember(Member m) {
+        for(Role role : m.getRoles()) {
                 if(ConfigFileManager.INSTANCE.useTokens()) {
-                    Role role = m.getGuild().getRoleById(DiscordFileManager.INSTANCE.getDiscordGroupIDForGroup(DiscordFileManager.INSTANCE.getConfigGroupForPermission(perm)));
-                    if(!m.getRoles().contains(role)) {
-                        roleUpdate = true;
-                        break;
+                    if(DiscordFileManager.INSTANCE.getAllDiscordGroups().contains(role.getId())) {
+                        m.getGuild().removeRoleFromMember(m,role).queue();
                     }
                 }else{
-                    Role role = m.getGuild().getRolesByName(DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(DiscordFileManager.INSTANCE.getConfigGroupForPermission(perm)),true).get(0);
-                    if(!m.getRoles().contains(role)) {
-                        roleUpdate = true;
-                        break;
-                    }
-                }
-            }
-            roleUpdate = false;
-        }
-
-
-        if(roleUpdate) {
-            for(Role role : m.getRoles()) {
-                for(String group : DiscordFileManager.INSTANCE.getAllGroups()) {
-                    if(role.getName().equalsIgnoreCase(group))
+                    if(DiscordFileManager.INSTANCE.getAllDiscordGroups().contains(role.getName())) {
                         m.getGuild().removeRoleFromMember(m,role).queue();
                 }
             }
