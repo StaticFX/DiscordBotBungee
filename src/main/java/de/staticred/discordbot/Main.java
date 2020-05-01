@@ -67,7 +67,9 @@ public class Main extends Plugin {
         String type = ConfigFileManager.INSTANCE.getString("discordBotActivity");
         String link = ConfigFileManager.INSTANCE.getString("streamingLink");
         MetricsLite metrics = new MetricsLite(this);
-        System.out.println(metrics.isEnabled());
+
+
+        System.out.println("[DiscordVerify] Using metrics: " + metrics.isEnabled());
 
         loadMetrcis();
 
@@ -96,14 +98,15 @@ public class Main extends Plugin {
 
         syncNickname = ConfigFileManager.INSTANCE.getSyncName();
         loadBungeeCommands(command);
-        getLogger().info("Success");
+
+        System.out.println("[DiscordVerify] Plugin loaded.");
+
     }
 
 
 
     void loadMetrcis() {
         MetricsLite metrcis = new MetricsLite(this);
-        System.out.println(metrcis.isEnabled());
     }
 
 
@@ -131,12 +134,12 @@ public class Main extends Plugin {
     public void loadDataBase() {
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
-        System.out.println("[DiscordVerify] Connect test success!");
+        System.out.println("[DiscordVerify] SQL Connect test success!");
         try {
             con.executeUpdate("CREATE TABLE IF NOT EXISTS verify(UUID VARCHAR(36) PRIMARY KEY, Name VARCHAR(16), Rank VARCHAR(20), Verified BOOLEAN, DiscordID VARCHAR(100))");
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("[DiscordVerify] Connect test failed!");
+            System.out.println("[DiscordVerify] SQL Connect test failed! Please check your SQL Connection settings.");
         }
         con.closeConnection();
     }
@@ -229,7 +232,7 @@ public class Main extends Plugin {
                     m = guild.getMember(u);
             }
         } else {
-            throw new SQLException("There was an internal error! But may not found") ;
+            throw new SQLException("There was an internal error! The member of the player can´t be found. Please contact the developer of this plugin.") ;
         }
         return m;
     }
