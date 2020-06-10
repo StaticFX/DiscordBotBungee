@@ -1,8 +1,12 @@
 package de.staticred.discordbot.bungeecommands;
 
 import de.staticred.discordbot.Main;
+import de.staticred.discordbot.api.EventManager;
 import de.staticred.discordbot.db.SRVDAO;
 import de.staticred.discordbot.db.VerifyDAO;
+import de.staticred.discordbot.event.UserClickedMessageEvent;
+import de.staticred.discordbot.event.UserUnverifiedEvent;
+import de.staticred.discordbot.event.UserVerifiedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -50,6 +54,9 @@ public class MCVerifyCommandExecutor extends Command {
             Member m = Main.playerMemberHashMap.get(p);
             TextChannel tc = Main.playerChannelHashMap.get(p);
 
+            EventManager.instance.fireEvent(new UserClickedMessageEvent(m,p,true));
+
+
             Main.INSTANCE.removeAllRolesFromMember(m);
             Main.INSTANCE.updateRoles(m,p);
 
@@ -68,6 +75,7 @@ public class MCVerifyCommandExecutor extends Command {
             }
 
             try {
+                EventManager.instance.fireEvent(new UserVerifiedEvent(m,p,tc));
                 VerifyDAO.INSTANCE.setPlayerAsVerified(p);
                 VerifyDAO.INSTANCE.addDiscordID(p, m);
                 if(Main.useSRV) SRVDAO.INSTANCE.link(p,m.getId());
@@ -95,7 +103,7 @@ public class MCVerifyCommandExecutor extends Command {
 
             TextChannel tc = Main.playerChannelHashMap.get(p);
             Member m = Main.playerMemberHashMap.get(p);
-
+            EventManager.instance.fireEvent(new UserClickedMessageEvent(m,p,false));
             Main.playerChannelHashMap.remove(p);
             Main.playerMemberHashMap.remove(p);
             p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("Declined",true)));
@@ -205,6 +213,7 @@ public class MCVerifyCommandExecutor extends Command {
             Main.INSTANCE.removeAllRolesFromMember(m);
 
             try {
+                EventManager.instance.fireEvent(new UserUnverifiedEvent(m,p));
                 VerifyDAO.INSTANCE.removeDiscordID(p);
                 VerifyDAO.INSTANCE.setPlayerAsUnVerified(p);
                 if(Main.useSRV)

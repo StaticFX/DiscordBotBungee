@@ -1,5 +1,7 @@
 package de.staticred.discordbot;
 
+import de.staticred.discordbot.api.EventManager;
+import de.staticred.discordbot.api.VerifyAPI;
 import de.staticred.discordbot.bungeecommands.DBCommandExecutor;
 import de.staticred.discordbot.bungeecommands.MCVerifyCommandExecutor;
 import de.staticred.discordbot.bungeecommands.SetupCommandExecutor;
@@ -11,10 +13,12 @@ import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.discordevents.GuildJoinEvent;
 import de.staticred.discordbot.discordevents.GuildLeftEvent;
 import de.staticred.discordbot.discordevents.MessageEvent;
+import de.staticred.discordbot.event.UserUpdatedRolesEvent;
 import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.DiscordFileManager;
 import de.staticred.discordbot.files.MessagesFileManager;
 import de.staticred.discordbot.files.VerifyFileManager;
+import de.staticred.discordbot.test.TestUserVerifiedEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -46,7 +50,7 @@ public class Main extends Plugin {
     public void onEnable() {
 
         INSTANCE = this;
-
+        VerifyAPI.instance = new VerifyAPI();
         ConfigFileManager.INSTANCE.loadFile();
         VerifyFileManager.INSTANCE.loadFile();
         MessagesFileManager.INSTANCE.loadFile();
@@ -62,6 +66,7 @@ public class Main extends Plugin {
         useSQL = ConfigFileManager.INSTANCE.useSQL();
         token = ConfigFileManager.INSTANCE.getString("bot-token");
         loadBungeeEvents();
+        VerifyAPI.getInstance().registerEvent(new TestUserVerifiedEvent());
 
         String activity = ConfigFileManager.INSTANCE.getString("discordBotActivityType");
         String type = ConfigFileManager.INSTANCE.getString("discordBotActivity");
@@ -168,6 +173,7 @@ public class Main extends Plugin {
     public void updateRoles(Member m, ProxiedPlayer p) {
 
         List<Member> addedNonDynamicGroups = new ArrayList<>();
+        List<String> roles = new ArrayList<>();
 
         if(!ConfigFileManager.INSTANCE.getVerifyRole().isEmpty()) {
             if(ConfigFileManager.INSTANCE.useTokens()) {
@@ -189,6 +195,7 @@ public class Main extends Plugin {
                     }else{
                         m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(group),true).get(0)).queue();
                     }
+                    roles.add(group);
                     addedNonDynamicGroups.add(m);
                 }
 
@@ -199,9 +206,11 @@ public class Main extends Plugin {
                     }else{
                         m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(group),true).get(0)).queue();
                     }
+                    roles.add(group);
                 }
             }
         }
+        EventManager.instance.fireEvent(new UserUpdatedRolesEvent(m,p,roles));
     }
 
     public String getRank(ProxiedPlayer p) {
