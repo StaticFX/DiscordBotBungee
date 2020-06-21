@@ -18,6 +18,11 @@ public class UserUpdatedRolesEvent extends Event {
         this.newRanks = newRanks;
     }
 
+    @Override
+    public Class<?> getEventSubClass() {
+        return this.getClass();
+    }
+
     public Member getMember() {
         return member;
     }

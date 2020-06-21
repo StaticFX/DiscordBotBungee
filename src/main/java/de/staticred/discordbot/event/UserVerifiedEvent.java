@@ -10,11 +10,26 @@ public class UserVerifiedEvent extends Event {
     private Member member;
     private ProxiedPlayer player;
     private TextChannel textChannel;
+    private boolean canceled;
 
     public UserVerifiedEvent(Member member, ProxiedPlayer player, TextChannel textChannel) {
         this.member = member;
         this.player = player;
         this.textChannel = textChannel;
+        canceled = false;
+    }
+
+    @Override
+    public Class<?> getEventSubClass() {
+        return this.getClass();
+    }
+
+    public boolean isCanceled() {
+        return canceled;
+    }
+
+    public void setCanceled(boolean canceled) {
+        this.canceled = canceled;
     }
 
     public Member getMember() {

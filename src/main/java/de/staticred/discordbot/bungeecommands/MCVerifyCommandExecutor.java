@@ -45,6 +45,9 @@ public class MCVerifyCommandExecutor extends Command {
         }
 
         if (args[0].equalsIgnoreCase("accept")) {
+            UserClickedMessageEvent event = new UserClickedMessageEvent(p,true);
+            EventManager.instance.fireEvent(event);
+            if(event.isCanceled()) return;
 
             if (!Main.playerMemberHashMap.containsKey(p) && !Main.playerChannelHashMap.containsKey(p)) {
                 p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("NoInquiries",true)));
@@ -54,7 +57,9 @@ public class MCVerifyCommandExecutor extends Command {
             Member m = Main.playerMemberHashMap.get(p);
             TextChannel tc = Main.playerChannelHashMap.get(p);
 
-            EventManager.instance.fireEvent(new UserClickedMessageEvent(m,p,true));
+
+
+
 
 
             Main.INSTANCE.removeAllRolesFromMember(m);
@@ -75,7 +80,11 @@ public class MCVerifyCommandExecutor extends Command {
             }
 
             try {
-                EventManager.instance.fireEvent(new UserVerifiedEvent(m,p,tc));
+
+                UserVerifiedEvent event2 = new UserVerifiedEvent(m,p,tc);
+                EventManager.instance.fireEvent(event2);
+                if(event2.isCanceled()) return;
+
                 VerifyDAO.INSTANCE.setPlayerAsVerified(p);
                 VerifyDAO.INSTANCE.addDiscordID(p, m);
                 if(Main.useSRV) SRVDAO.INSTANCE.link(p,m.getId());
@@ -96,6 +105,9 @@ public class MCVerifyCommandExecutor extends Command {
             return;
 
         } else if (args[0].equalsIgnoreCase("decline")) {
+            UserClickedMessageEvent event = new UserClickedMessageEvent(p,true);
+            EventManager.instance.fireEvent(event);
+            if(event.isCanceled()) return;
             if (!Main.playerMemberHashMap.containsKey(p) && !Main.playerChannelHashMap.containsKey(p)) {
                 p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("NoInquiries",true)));
                 return;
@@ -103,7 +115,6 @@ public class MCVerifyCommandExecutor extends Command {
 
             TextChannel tc = Main.playerChannelHashMap.get(p);
             Member m = Main.playerMemberHashMap.get(p);
-            EventManager.instance.fireEvent(new UserClickedMessageEvent(m,p,false));
             Main.playerChannelHashMap.remove(p);
             Main.playerMemberHashMap.remove(p);
             p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("Declined",true)));
@@ -213,7 +224,9 @@ public class MCVerifyCommandExecutor extends Command {
             Main.INSTANCE.removeAllRolesFromMember(m);
 
             try {
-                EventManager.instance.fireEvent(new UserUnverifiedEvent(m,p));
+                UserUnverifiedEvent event = new UserUnverifiedEvent(m,p);
+                EventManager.instance.fireEvent(event);
+                if(event.isCanceled()) return;
                 VerifyDAO.INSTANCE.removeDiscordID(p);
                 VerifyDAO.INSTANCE.setPlayerAsUnVerified(p);
                 if(Main.useSRV)

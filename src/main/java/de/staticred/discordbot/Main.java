@@ -61,7 +61,6 @@ public class Main extends Plugin {
             loadDataBase();
         }
 
-
         useSRV = ConfigFileManager.INSTANCE.useSRV();
         useSQL = ConfigFileManager.INSTANCE.useSQL();
         token = ConfigFileManager.INSTANCE.getString("bot-token");

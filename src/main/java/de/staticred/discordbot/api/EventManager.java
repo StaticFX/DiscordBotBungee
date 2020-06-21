@@ -1,6 +1,7 @@
 package de.staticred.discordbot.api;
 
 import de.staticred.discordbot.util.Debugger;
+import sun.jvm.hotspot.debugger.DebuggerBase;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -31,16 +32,25 @@ public class EventManager {
         for(Listener listener : eventList) {
             for(final Method method : listener.getClass().getMethods()) {
                  if(method.isAnnotationPresent(BotEvent.class)) {
-                    for(final Parameter parameter : method.getParameters()) {
+                     if(method.getParameters().length != 1) {
+                         Debugger.debugMessage("Illegal Event structure. Only use 1 argument per Event Method.");
+                         return;
+                     }
+                     for(final Parameter parameter : method.getParameters()) {
                         if(Event.class.isAssignableFrom(parameter.getType())) {
-                            try {
-                                method.invoke(listener,event);
-                            } catch (IllegalAccessException e) {
-                                Debugger.debugMessage("Method is inaccessible, please check the following lines.");
-                                e.printStackTrace();
-                            } catch (InvocationTargetException e) {
-                                Debugger.debugMessage("Invalid method structure, please check the following lines.");
-                                e.printStackTrace();
+                            System.out.println("here");
+                            if(parameter.getClass().getName().equals(event.getClass().getName())) {
+                                System.out.println("here1");
+                                try {
+                                    method.invoke(listener,event);
+                                    Debugger.debugMessage("Method " + Event.class.getName() + " fired!");
+                                } catch (IllegalAccessException e) {
+                                    Debugger.debugMessage("Method is inaccessible, please check the following lines.");
+                                    e.printStackTrace();
+                                } catch (InvocationTargetException e) {
+                                    Debugger.debugMessage("Invalid method structure, please check the following lines.");
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }
