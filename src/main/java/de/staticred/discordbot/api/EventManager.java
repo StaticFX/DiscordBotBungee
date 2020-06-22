@@ -1,9 +1,6 @@
 package de.staticred.discordbot.api;
 
 import de.staticred.discordbot.util.Debugger;
-import sun.jvm.hotspot.debugger.DebuggerBase;
-
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
