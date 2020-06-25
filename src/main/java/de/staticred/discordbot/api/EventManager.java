@@ -35,12 +35,10 @@ public class EventManager {
                      }
                      for(final Parameter parameter : method.getParameters()) {
                         if(Event.class.isAssignableFrom(parameter.getType())) {
-                            System.out.println("here");
-                            if(parameter.getClass().getName().equals(event.getClass().getName())) {
-                                System.out.println("here1");
+                            if(parameter.getType().getName().equalsIgnoreCase(event.getClass().getName())) {
                                 try {
                                     method.invoke(listener,event);
-                                    Debugger.debugMessage("Method " + Event.class.getName() + " fired!");
+                                    Debugger.debugMessage("Method " + method.getName() + " fired!");
                                 } catch (IllegalAccessException e) {
                                     Debugger.debugMessage("Method is inaccessible, please check the following lines.");
                                     e.printStackTrace();
