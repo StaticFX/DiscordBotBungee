@@ -51,6 +51,9 @@ public class MessagesFileManager {
         return conf.getString(path);
     }
 
+    public String getVersion() {
+        return conf.getString("version");
+    }
 
 
 }

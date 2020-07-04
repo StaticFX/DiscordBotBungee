@@ -2,7 +2,7 @@ package de.staticred.discordbot;
 
 import de.staticred.discordbot.api.EventManager;
 import de.staticred.discordbot.api.VerifyAPI;
-import de.staticred.discordbot.bungeecommands.DBCommandExecutor;
+import de.staticred.discordbot.bungeecommands.dbcommand.DBCommandExecutor;
 import de.staticred.discordbot.bungeecommands.MCVerifyCommandExecutor;
 import de.staticred.discordbot.bungeecommands.SetupCommandExecutor;
 import de.staticred.discordbot.bungeeevents.JoinEvent;
@@ -19,6 +19,7 @@ import de.staticred.discordbot.files.DiscordFileManager;
 import de.staticred.discordbot.files.MessagesFileManager;
 import de.staticred.discordbot.files.VerifyFileManager;
 import de.staticred.discordbot.test.TestUserVerifiedEvent;
+import de.staticred.discordbot.util.Debugger;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -29,6 +30,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class Main extends Plugin {
 
@@ -43,8 +45,10 @@ public class Main extends Plugin {
     public static ArrayList<ProxiedPlayer> settingUp = new ArrayList<>();
     public String token;
     public Activity activity;
-    public static String configVersion = "1.1.0";
+    public static String configVersion = "1.1.1";
+    public static String msgVersion = "1.0.0";
     public static int timer = 0;
+    public boolean debugMode = false;
 
     @Override
     public void onEnable() {
@@ -58,6 +62,12 @@ public class Main extends Plugin {
         setuped = ConfigFileManager.INSTANCE.isSetuped();
 
         if(ConfigFileManager.INSTANCE.useSQL() && setuped) {
+
+            if(!DataBaseConnection.INSTANCE.connectTest())  {
+                Debugger.debugMessage("Can't connect to database.");
+                return;
+            }
+
             loadDataBase();
         }
 
@@ -73,8 +83,7 @@ public class Main extends Plugin {
         MetricsLite metrics = new MetricsLite(this);
 
 
-        System.out.println("[DiscordVerify] Using metrics: " + metrics.isEnabled());
-
+        Debugger.debugMessage("Using metrics: " + metrics.isEnabled());
         loadMetrcis();
 
         if(activity.equalsIgnoreCase("listening")) {
@@ -103,8 +112,7 @@ public class Main extends Plugin {
         syncNickname = ConfigFileManager.INSTANCE.getSyncName();
         loadBungeeCommands(command);
 
-        System.out.println("[DiscordVerify] Plugin loaded.");
-
+        Debugger.debugMessage("Plugin loaded.");
     }
 
 
@@ -120,13 +128,12 @@ public class Main extends Plugin {
         if(ConfigFileManager.INSTANCE.isSetuped()) {
             DataBaseConnection.INSTANCE.closeConnection();
         }
-        ConfigFileManager.INSTANCE.saveFile();
-        VerifyFileManager.INSTANCE.saveFile();
+
     }
 
     public void loadBungeeCommands(String command) {
         getProxy().getPluginManager().registerCommand(this,new MCVerifyCommandExecutor(command));
-        getProxy().getPluginManager().registerCommand(this,new DBCommandExecutor("dbreload"));
+        getProxy().getPluginManager().registerCommand(this,new DBCommandExecutor("db"));
         getProxy().getPluginManager().registerCommand(this,new SetupCommandExecutor());
     }
 
@@ -138,9 +145,11 @@ public class Main extends Plugin {
     public void loadDataBase() {
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
-        System.out.println("[DiscordVerify] SQL Connect test success!");
+
+        Debugger.debugMessage("SQL Connect test success!");
+
         try {
-            con.executeUpdate("CREATE TABLE IF NOT EXISTS verify(UUID VARCHAR(36) PRIMARY KEY, Name VARCHAR(16), Rank VARCHAR(20), Verified BOOLEAN, DiscordID VARCHAR(100))");
+            con.executeUpdate("CREATE TABLE IF NOT EXISTS verify(UUID VARCHAR(36) PRIMARY KEY, Name VARCHAR(16), Verified BOOLEAN, DiscordID VARCHAR(100))");
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("[DiscordVerify] SQL Connect test failed! Please check your SQL Connection settings.");
@@ -160,17 +169,14 @@ public class Main extends Plugin {
         jda.addEventListener(new MessageEvent());
         jda.addEventListener(new GuildJoinEvent());
         jda.addEventListener(new GuildLeftEvent());
-        System.out.println("[DiscordVerify] Bot Started!");
+        Debugger.debugMessage("Bot Started!");
     }
 
     public static Main getInstance() {
         return INSTANCE;
     }
 
-
-
     public void updateRoles(Member m, ProxiedPlayer p) {
-
         List<Member> addedNonDynamicGroups = new ArrayList<>();
         List<String> roles = new ArrayList<>();
 
@@ -212,6 +218,31 @@ public class Main extends Plugin {
         EventManager.instance.fireEvent(new UserUpdatedRolesEvent(m,p,roles));
     }
 
+    public List<String> getTheoreticalRoles(Member m, ProxiedPlayer p) {
+        List<Member> addedNonDynamicGroups = new ArrayList<>();
+        List<String> roles = new ArrayList<>();
+
+        for(String group : DiscordFileManager.INSTANCE.getAllGroups()) {
+            if(!DiscordFileManager.INSTANCE.isDynamicGroup(group)) {
+                if(addedNonDynamicGroups.contains(m)) {
+                    continue;
+                }
+
+                if(p.hasPermission(DiscordFileManager.INSTANCE.getPermissionsForGroup(group))) {
+                    roles.add(group);
+                    addedNonDynamicGroups.add(m);
+                }
+
+            }else{
+                if(p.hasPermission(DiscordFileManager.INSTANCE.getPermissionsForGroup(group))) {
+                    roles.add(group);
+                }
+            }
+        }
+        EventManager.instance.fireEvent(new UserUpdatedRolesEvent(m,p,roles));
+        return roles;
+    }
+
     public String getRank(ProxiedPlayer p) {
         return "none";
     }
@@ -230,9 +261,9 @@ public class Main extends Plugin {
         }
     }
 
-    public Member getMemberFromPlayer(ProxiedPlayer p) throws SQLException {
+    public Member getMemberFromPlayer(UUID uuid) throws SQLException {
         User u;
-        u = Main.jda.getUserById((VerifyDAO.INSTANCE.getDiscordID(p)));
+        u = Main.jda.getUserById((VerifyDAO.INSTANCE.getDiscordID(uuid)));
         Member m = null;
         if (!Main.jda.getGuilds().isEmpty()) {
             for (Guild guild : Main.jda.getGuilds()) {

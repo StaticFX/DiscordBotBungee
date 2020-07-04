@@ -73,11 +73,6 @@ public class MCVerifyCommandExecutor extends Command {
                 }
             }
 
-            try {
-                VerifyDAO.INSTANCE.updateRank(p);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
 
             try {
 
@@ -85,7 +80,7 @@ public class MCVerifyCommandExecutor extends Command {
                 EventManager.instance.fireEvent(event2);
                 if(event2.isCanceled()) return;
 
-                VerifyDAO.INSTANCE.setPlayerAsVerified(p);
+                VerifyDAO.INSTANCE.setPlayerAsVerified(p.getUniqueId());
                 VerifyDAO.INSTANCE.addDiscordID(p, m);
                 if(Main.useSRV) SRVDAO.INSTANCE.link(p,m.getId());
             } catch (SQLException e) {
@@ -139,7 +134,7 @@ public class MCVerifyCommandExecutor extends Command {
             Member m;
 
             try {
-                m = Main.INSTANCE.getMemberFromPlayer(p);
+                m = Main.INSTANCE.getMemberFromPlayer(p.getUniqueId());
             } catch (SQLException e) {
                 p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
                 e.printStackTrace();
@@ -167,11 +162,6 @@ public class MCVerifyCommandExecutor extends Command {
                     m.getGuild().modifyNickname(m, p.getName()).queue();
                 }
 
-                try {
-                    VerifyDAO.INSTANCE.updateRank(p);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
             }
 
             p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("UpdatedRankMC",true)));
@@ -191,7 +181,7 @@ public class MCVerifyCommandExecutor extends Command {
 
             User u;
             try {
-                u = Main.jda.getUserById(VerifyDAO.INSTANCE.getDiscordID(p));
+                u = Main.jda.getUserById(VerifyDAO.INSTANCE.getDiscordID(p.getUniqueId()));
             } catch (SQLException e) {
                 e.printStackTrace();
                 p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
@@ -228,7 +218,7 @@ public class MCVerifyCommandExecutor extends Command {
                 EventManager.instance.fireEvent(event);
                 if(event.isCanceled()) return;
                 VerifyDAO.INSTANCE.removeDiscordID(p);
-                VerifyDAO.INSTANCE.setPlayerAsUnVerified(p);
+                VerifyDAO.INSTANCE.setPlayerAsUnVerified(p.getUniqueId());
                 if(Main.useSRV)
                 SRVDAO.INSTANCE.unlink(p);
             } catch (SQLException e) {

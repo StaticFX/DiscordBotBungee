@@ -19,6 +19,14 @@ JoinMessage: "Welcome to our network! Use !verify [ingameName] to verify yoursel
 #minecraft messaging
 MemberIsOwner: "&8[&4WARNING&8] &cYour discord account is the owner of the &cdiscord server. &cThe bot can´t edit your name to §csync it."
 NoInquiries: "&cYou don´t have any pending inquiries."
+NoPermissions: "§cYou don't have the permissions for this command."
+Reloaded: "§aFiles reloaded."
+DebugModeSwitched: "§aDebug mode switched to: %mode%"
+MCPlayerNotFound: "§cThe player is not online."
+UpdatedRoles: "§aRoles updated."
+UserNotFound: "§cThe given user cannot be found."
+UserNotVerifiedYet: "§cThe given user isn't verified yet."
+UnlinkedPlayer: "§aSuccessfully unlinked player."
 InternalError: "&cInternal Error. Please contact an admin!"
 PendingInquiry: "&7You got an verify-inquiry. Please §aaccept §7or §cdecline §7it. You §7have 20 seconds to accept it. §7Discord User: §a%user%"
 AcceptInquiry: "&aAccept the verify-inquiry"
@@ -37,4 +45,4 @@ UpdatedRankMC: "&aYou have successfully updated your rank."
 CantUnlink: "&cYou can´t unlink yourself because you are the §cowner of the server!"
 UnlinkedYourSelf: "&aYou successfully unlinked yourself."
 VerifyPrefix: "&cUse /discord ACCEPT/DECLINE/UPDATE/UNLINK"
-useMetrcis: false
+version: 1.0.0

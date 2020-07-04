@@ -24,7 +24,6 @@ public class LeaveEvent implements Listener {
                 VerifyDAO.INSTANCE.addPlayerAsUnverified(p);
             }
             VerifyDAO.INSTANCE.updateUserName(p);
-            VerifyDAO.INSTANCE.updateRank(p);
         } catch (SQLException ex) {
             ex.printStackTrace();
         }

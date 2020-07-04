@@ -112,4 +112,8 @@ public class ConfigFileManager {
         return conf.getBoolean("useTokens");
     }
 
+    public boolean forceCleanMode() {
+        return conf.getBoolean("forceCleanChannel");
+    }
+
 }

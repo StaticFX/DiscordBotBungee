@@ -31,6 +31,10 @@ public class SetupCommandExecutor extends Command {
         }
         ProxiedPlayer p = (ProxiedPlayer) sender;
 
+        if(!p.hasPermission("db.cmd.setup")) {
+            return;
+        }
+
         if(!Main.settingUp.isEmpty()) {
             p.sendMessage(new TextComponent("§cAnother player is already setting up the plugin."));
             return;

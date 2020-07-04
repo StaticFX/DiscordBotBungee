@@ -3,8 +3,10 @@ package de.staticred.discordbot.bungeeevents;
 import de.staticred.discordbot.Main;
 import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.files.ConfigFileManager;
+import de.staticred.discordbot.files.MessagesFileManager;
 import de.staticred.discordbot.files.VerifyFileManager;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -15,6 +17,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 import java.sql.SQLException;
+import java.text.MessageFormat;
 
 public class JoinEvent implements Listener {
 
@@ -25,7 +28,7 @@ public class JoinEvent implements Listener {
         ProxiedPlayer player = e.getPlayer();
 
         if(!Main.configVersion.equals(ConfigFileManager.INSTANCE.getConfigVersion())) {
-            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Your config version is not compatible with your §4plugin-config version."));
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Your config version is not compatible with the §4plugin-config version."));
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Config version:" + ConfigFileManager.INSTANCE.getConfigVersion()));
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Plugin version:" + Main.configVersion));
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4It may come to errors."));
@@ -36,7 +39,16 @@ public class JoinEvent implements Listener {
             player.sendMessage(new TextComponent("§aUse /setup to start now!"));
         }
 
+        if(!Main.msgVersion.equals(MessagesFileManager.getInstance().getVersion())) {
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Your message version is not compatible with the §4plugin-config version."));
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Config version:" + MessagesFileManager.INSTANCE.getVersion()));
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Plugin version:" + Main.msgVersion));
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4It may come to errors."));
+        }
+
         if(!Main.setuped) return;
+
+
 
         try {
 
@@ -44,7 +56,7 @@ public class JoinEvent implements Listener {
                 VerifyDAO.INSTANCE.addPlayerAsUnverified(player);
             }
 
-            if (!VerifyDAO.INSTANCE.isPlayerVerified(player)) {
+            if (!VerifyDAO.INSTANCE.isPlayerVerified(player.getUniqueId())) {
                 TextComponent tc = new TextComponent();
                 tc.setText(Main.getInstance().getStringFromConfig("DiscordLinkColored",false));
                 tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(Main.getInstance().getStringFromConfig("JoinOurDiscord",false)).create()));
@@ -56,14 +68,13 @@ public class JoinEvent implements Listener {
 
 
             VerifyDAO.INSTANCE.updateUserName(player);
-            VerifyDAO.INSTANCE.updateRank(player);
 
-            if(VerifyDAO.INSTANCE.isPlayerVerified(player)) {
+            if(VerifyDAO.INSTANCE.isPlayerVerified(player.getUniqueId())) {
 
                 Member m;
 
                 try {
-                    m = Main.INSTANCE.getMemberFromPlayer(player);
+                    m = Main.INSTANCE.getMemberFromPlayer(player.getUniqueId());
                 } catch (SQLException ex) {
                     player.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
                     ex.printStackTrace();

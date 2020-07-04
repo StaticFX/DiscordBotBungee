@@ -8,6 +8,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 public class VerifyDAO {
 
@@ -71,20 +72,20 @@ public class VerifyDAO {
 
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
-        con.executeUpdate("INSERT INTO verify(UUID,Name,Rank,Verified,DiscordID) VALUES(?,?,?,?,?)", player.getUniqueId().toString(), player.getName(), Main.getInstance().getRank(player) ,false,null);
+        con.executeUpdate("INSERT INTO verify(UUID,Name,Verified,DiscordID) VALUES(?,?,?,?)", player.getUniqueId().toString(), player.getName(), Main.getInstance().getRank(player) ,false,null);
         con.closeConnection();
     }
 
-    public String getDiscordID(ProxiedPlayer player) throws SQLException {
+    public String getDiscordID(UUID uuid) throws SQLException {
 
         if(!sql) {
-            return  VerifyFileManager.INSTANCE.getDiscordID(player);
+            return  VerifyFileManager.INSTANCE.getDiscordID(uuid);
         }
 
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
         PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify WHERE UUID = ?");
-        ps.setString(1,player.getUniqueId().toString());
+        ps.setString(1,uuid.toString());
 
         ResultSet rs = ps.executeQuery();
 
@@ -153,29 +154,29 @@ public class VerifyDAO {
         con.closeConnection();
     }
 
-    public void setPlayerAsVerified(ProxiedPlayer player) throws SQLException {
+    public void setPlayerAsVerified(UUID uuid) throws SQLException {
 
         if(!sql) {
-            VerifyFileManager.INSTANCE.setVerifiedState(player,true);
+            VerifyFileManager.INSTANCE.setVerifiedState(uuid,true);
             return;
         }
 
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
-        con.executeUpdate("UPDATE verify SET Verified = true WHERE UUID = ?", player.getUniqueId().toString());
+        con.executeUpdate("UPDATE verify SET Verified = true WHERE UUID = ?", uuid.toString());
         con.closeConnection();
     }
 
-    public void setPlayerAsUnVerified(ProxiedPlayer player) throws SQLException {
+    public void setPlayerAsUnVerified(UUID uuid) throws SQLException {
 
         if(!sql) {
-            VerifyFileManager.INSTANCE.setVerifiedState(player,false);
+            VerifyFileManager.INSTANCE.setVerifiedState(uuid,false);
             return;
         }
 
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
-        con.executeUpdate("UPDATE verify SET Verified = false WHERE UUID = ?", player.getUniqueId().toString());
+        con.executeUpdate("UPDATE verify SET Verified = false WHERE UUID = ?", uuid.toString());
         con.closeConnection();
     }
 
@@ -220,29 +221,18 @@ public class VerifyDAO {
         con.closeConnection();
     }
 
-    public void updateRank(ProxiedPlayer player) throws  SQLException{
+
+
+    public boolean isPlayerVerified(UUID uuid) throws SQLException {
 
         if(!sql) {
-            VerifyFileManager.INSTANCE.updateRank(player);
-            return;
-        }
-
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
-        con.connect();
-        con.executeUpdate("UPDATE verify SET Rank = ? WHERE UUID = ?",Main.getInstance().getRank(player), player.getUniqueId().toString());
-        con.closeConnection();
-    }
-
-    public boolean isPlayerVerified(ProxiedPlayer p) throws SQLException {
-
-        if(!sql) {
-            return VerifyFileManager.INSTANCE.isPlayerVerified(p);
+            return VerifyFileManager.INSTANCE.isPlayerVerified(uuid);
         }
 
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
         PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify WHERE UUID = ?");
-        ps.setString(1,p.getUniqueId().toString());
+        ps.setString(1,uuid.toString());
 
         ResultSet rs = ps.executeQuery();
 

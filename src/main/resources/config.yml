@@ -25,6 +25,7 @@ syncNickName: true
 useTokens: false
 verifyRole: ""
 channelID: ""
+forceCleanChannel: false
 #never edit!
 Setuped: false
-configVersion: "1.1.0"
+configVersion: "1.1.1"

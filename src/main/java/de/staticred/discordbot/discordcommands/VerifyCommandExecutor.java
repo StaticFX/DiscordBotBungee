@@ -71,7 +71,7 @@ public class VerifyCommandExecutor {
         }
 
         try {
-            if(VerifyDAO.INSTANCE.isPlayerVerified(player)) {
+            if(VerifyDAO.INSTANCE.isPlayerVerified(player.getUniqueId())) {
                 embedBuilder.setDescription(Main.getInstance().getStringFromConfig("AlreadyVerified",false).replaceAll("%name%",name) + m.getAsMention());
                 embedBuilder.setColor(Color.red);
                 tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));

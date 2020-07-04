@@ -65,8 +65,8 @@ public class VerifyFileManager {
         saveFile();
     }
 
-    public String getDiscordID(ProxiedPlayer p) {
-        return conf.getString(p.getUniqueId().toString() + ".discordid");
+    public String getDiscordID(UUID uuid) {
+        return conf.getString(uuid.toString() + ".discordid");
     }
 
     public boolean hasDiscordID(ProxiedPlayer p) {
@@ -84,14 +84,14 @@ public class VerifyFileManager {
     }
 
     public void removeDiscordID(ProxiedPlayer p) {
-        removeDiscordIDUUIDLink(getDiscordID(p));
+        removeDiscordIDUUIDLink(getDiscordID(p.getUniqueId()));
         conf.set(p.getUniqueId().toString() + ".discordid","nothing");
         saveFile();
     }
 
 
-    public void setVerifiedState(ProxiedPlayer p, boolean verified) {
-        conf.set(p.getUniqueId().toString() + ".verified",verified);
+    public void setVerifiedState(UUID uuid, boolean verified) {
+        conf.set(uuid.toString() + ".verified",verified);
         saveFile();
     }
 
@@ -118,8 +118,8 @@ public class VerifyFileManager {
         saveFile();
     }
 
-    public boolean isPlayerVerified(ProxiedPlayer p) {
-        return conf.getBoolean(p.getUniqueId().toString() + ".verified");
+    public boolean isPlayerVerified(UUID uuid) {
+        return conf.getBoolean(uuid.toString() + ".verified");
     }
 
     public void addDiscordIDToUUID(String discordID, UUID uuid) {
