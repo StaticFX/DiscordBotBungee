@@ -25,6 +25,7 @@ public class DataBaseConnection {
 
     public void connect() {
         try {
+           Class.forName("org.mariadb.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + url, user,password);
         } catch (Exception e) {
             e.printStackTrace();
@@ -33,11 +34,10 @@ public class DataBaseConnection {
 
     public boolean connectTest() {
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + url, user,password);
+            connect();
             closeConnection();
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
             return false;
         }
     }

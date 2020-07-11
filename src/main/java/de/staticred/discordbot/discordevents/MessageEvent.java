@@ -19,8 +19,8 @@ public class MessageEvent extends ListenerAdapter {
         String[] args = e.getMessage().getContentRaw().split(" ");
         Member m = e.getMember();
 
-        if(!ConfigFileManager.INSTANCE.getVerifyChannel().isEmpty()) {
-            if(e.getChannel().getId().equals(ConfigFileManager.INSTANCE.getVerifyChannel()))
+        if(ConfigFileManager.INSTANCE.getVerifyChannel().isEmpty()) {
+            if(!e.getChannel().getId().equals(ConfigFileManager.INSTANCE.getVerifyChannel()))
             return;
         }
 
@@ -36,9 +36,19 @@ public class MessageEvent extends ListenerAdapter {
         } else if (args[0].equalsIgnoreCase("!update")) {
             new UpdateCommandExecutor(m,e.getChannel(),message,args);
             return;
+        }else{
+            if(!ConfigFileManager.INSTANCE.getVerifyChannel().isEmpty()) {
+                if(e.getChannel().getId().equals(ConfigFileManager.INSTANCE.getVerifyChannel())) {
+                    if(!e.getMember().getUser().isBot()) {
+                        if(ConfigFileManager.INSTANCE.forceCleanMode())
+                            e.getMessage().delete().queue();
+                    }
+                }
+            }
         }
 
-        e.getMessage().delete().queue();
+
+
     }
 
 

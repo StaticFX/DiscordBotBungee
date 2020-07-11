@@ -24,6 +24,7 @@ hs_err_pid*
 
 .idea/
 
+target/
 target/classes/
 target/generated-sources/
 target/maven-archiver/
