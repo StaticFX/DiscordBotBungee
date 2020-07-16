@@ -72,7 +72,7 @@ public class VerifyDAO {
 
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
-        con.executeUpdate("INSERT INTO verify(UUID,Name,Verified,DiscordID) VALUES(?,?,?,?)", player.getUniqueId().toString(), player.getName(), Main.getInstance().getRank(player) ,false,null);
+        con.executeUpdate("INSERT INTO verify(UUID,Name,Verified,DiscordID) VALUES(?,?,?,?)", player.getUniqueId().toString(), player.getName() ,false,null);
         con.closeConnection();
     }
 
