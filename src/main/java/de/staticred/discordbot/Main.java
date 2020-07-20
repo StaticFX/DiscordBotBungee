@@ -9,15 +9,13 @@ import de.staticred.discordbot.bungeeevents.JoinEvent;
 import de.staticred.discordbot.bungeeevents.LeaveEvent;
 import de.staticred.discordbot.db.DataBaseConnection;
 import de.staticred.discordbot.db.MetricsLite;
+import de.staticred.discordbot.db.RewardsDAO;
 import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.discordevents.GuildJoinEvent;
 import de.staticred.discordbot.discordevents.GuildLeftEvent;
 import de.staticred.discordbot.discordevents.MessageEvent;
 import de.staticred.discordbot.event.UserUpdatedRolesEvent;
-import de.staticred.discordbot.files.ConfigFileManager;
-import de.staticred.discordbot.files.DiscordFileManager;
-import de.staticred.discordbot.files.MessagesFileManager;
-import de.staticred.discordbot.files.VerifyFileManager;
+import de.staticred.discordbot.files.*;
 import de.staticred.discordbot.test.TestUserVerifiedEvent;
 import de.staticred.discordbot.util.Debugger;
 import net.dv8tion.jda.api.JDA;
@@ -59,6 +57,12 @@ public class Main extends Plugin {
         VerifyFileManager.INSTANCE.loadFile();
         MessagesFileManager.INSTANCE.loadFile();
         DiscordFileManager.INSTANCE.loadFile();
+        RewardsFileManager.INSTANCE.loadFile();
+        try {
+            RewardsDAO.INSTANCE.loadTable();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         setuped = ConfigFileManager.INSTANCE.isSetuped();
 
         if(ConfigFileManager.INSTANCE.useSQL() && setuped) {

@@ -2,6 +2,7 @@ package de.staticred.discordbot.bungeecommands;
 
 import de.staticred.discordbot.Main;
 import de.staticred.discordbot.api.EventManager;
+import de.staticred.discordbot.db.RewardsDAO;
 import de.staticred.discordbot.db.SRVDAO;
 import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.event.UserClickedMessageEvent;
@@ -77,6 +78,8 @@ public class MCVerifyCommandExecutor extends Command {
                 EventManager.instance.fireEvent(event2);
                 if(event2.isCanceled()) return;
 
+
+
                 VerifyDAO.INSTANCE.setPlayerAsVerified(p.getUniqueId());
                 VerifyDAO.INSTANCE.addDiscordID(p, m);
                 if(Main.useSRV) SRVDAO.INSTANCE.link(p,m.getId());
@@ -94,9 +97,17 @@ public class MCVerifyCommandExecutor extends Command {
             Main.playerMemberHashMap.remove(p);
 
 
-            for(String command : RewardsFileManager.INSTANCE.getCommandsOnVerified()) {
-                ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), command.replace("%player%",p.getName()));
+            try {
+                if(RewardsDAO.INSTANCE.hasPlayerBeenRewarded(p.getUniqueId())) {
+                    for(String command : RewardsFileManager.INSTANCE.getCommandsOnVerified()) {
+                        ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), command.replace("%player%",p.getName()));
+                    }
+                    RewardsDAO.INSTANCE.setPlayerRewardState(p.getUniqueId(),true);
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
             }
+
 
             p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("Verified",true)));
             return;

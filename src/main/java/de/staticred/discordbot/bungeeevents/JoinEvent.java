@@ -1,6 +1,7 @@
 package de.staticred.discordbot.bungeeevents;
 
 import de.staticred.discordbot.Main;
+import de.staticred.discordbot.db.RewardsDAO;
 import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.MessagesFileManager;
@@ -48,8 +49,6 @@ public class JoinEvent implements Listener {
 
         if(!Main.setuped) return;
 
-
-
         try {
 
             if (!VerifyDAO.INSTANCE.isPlayerInDataBase(player)) {
@@ -66,6 +65,9 @@ public class JoinEvent implements Listener {
                 player.sendMessage(sendedText);
             }
 
+            if(!RewardsDAO.INSTANCE.isPlayerInTable(player.getUniqueId())) {
+                RewardsDAO.INSTANCE.addPlayerAsUnRewarded(player.getUniqueId());
+            }
 
             VerifyDAO.INSTANCE.updateUserName(player);
 
