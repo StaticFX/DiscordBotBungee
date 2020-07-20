@@ -9,7 +9,6 @@ public class TestUserVerifiedEvent implements Listener {
 
     @BotEvent
     public void onUserVerified(UserVerifiedEvent event) {
-        Debugger.debugMessage("Event called: UserVerifiedEvent");
     }
 
 }

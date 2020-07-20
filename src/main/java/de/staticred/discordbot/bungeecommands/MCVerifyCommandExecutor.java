@@ -7,12 +7,14 @@ import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.event.UserClickedMessageEvent;
 import de.staticred.discordbot.event.UserUnverifiedEvent;
 import de.staticred.discordbot.event.UserVerifiedEvent;
+import de.staticred.discordbot.files.RewardsFileManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
@@ -57,11 +59,6 @@ public class MCVerifyCommandExecutor extends Command {
             Member m = Main.playerMemberHashMap.get(p);
             TextChannel tc = Main.playerChannelHashMap.get(p);
 
-
-
-
-
-
             Main.INSTANCE.removeAllRolesFromMember(m);
             Main.INSTANCE.updateRoles(m,p);
 
@@ -96,6 +93,11 @@ public class MCVerifyCommandExecutor extends Command {
             Main.playerChannelHashMap.remove(p);
             Main.playerMemberHashMap.remove(p);
 
+
+            for(String command : RewardsFileManager.INSTANCE.getCommandsOnVerified()) {
+                ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), command.replace("%player%",p.getName()));
+            }
+
             p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("Verified",true)));
             return;
 
@@ -117,7 +119,6 @@ public class MCVerifyCommandExecutor extends Command {
             embedBuilder.setDescription("The inquiry has been denied " + m.getAsMention());
             embedBuilder.setColor(Color.red);
             tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10,TimeUnit.SECONDS));
-
             return;
         } else if (args[0].equalsIgnoreCase("update")) {
             try {
@@ -141,20 +142,15 @@ public class MCVerifyCommandExecutor extends Command {
                 return;
             }
 
-
-
             if (m == null) {
                 p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
                 return;
             }
 
-
-
             Main.INSTANCE.removeAllRolesFromMember(m);
             Main.INSTANCE.updateRoles(m,p);
 
             if(Main.INSTANCE.syncNickname) {
-
 
                 if (m.isOwner()) {
                     p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("MemberIsOwner", false)));
@@ -227,11 +223,13 @@ public class MCVerifyCommandExecutor extends Command {
                 return;
             }
 
+            for(String command : RewardsFileManager.INSTANCE.getCommandsOnUnVerified()) {
+                ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), command.replace("%player%",p.getName()));
+            }
+
             p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("UnlinkedYourSelf",true)));
             return;
         }
         p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("VerifyPrefix",true)));
     }
-
-
 }
