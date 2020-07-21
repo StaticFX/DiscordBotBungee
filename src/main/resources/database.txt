@@ -1,0 +1,9 @@
+//this is a file where the database structures and version will be saved, for easy overview in later version
+
+Database version 1.0.0
+
+UUID VarChar(36)
+PlayerName VarChar(16)
+Verified Boolean
+DiscordID VarChar(100)
+Version VarChar(10)

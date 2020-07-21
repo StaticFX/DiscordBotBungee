@@ -1,22 +1,146 @@
 package de.staticred.discordbot.db;
 
 import de.staticred.discordbot.Main;
+import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.VerifyFileManager;
+import de.staticred.discordbot.util.Debugger;
 import net.dv8tion.jda.api.entities.Member;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.UUID;
 
 public class VerifyDAO {
 
     public static VerifyDAO INSTANCE = new VerifyDAO();
 
-    private boolean sql = Main.getInstance().useSQL;
+    private boolean sql = ConfigFileManager.INSTANCE.useSQL();
+
+
+    public void loadDataBase() {
+        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        try {
+
+            con.connect();
+            con.executeUpdate("CREATE TABLE IF NOT EXISTS verify(UUID VARCHAR(36) PRIMARY KEY, PlayerName VARCHAR(16), Verified BOOLEAN, DiscordID VARCHAR(100), Version VARCHAR(10))");
+            con.closeConnection();
+
+            //update database to newest version
+            if(getDataBaseVersion() == null) {
+                Debugger.debugMessage("DataBaseVersion outdated, trying to auto update the Database");
+
+                if(!doesColumnExist("Version")) {
+                    con.connect();
+                    con.executeUpdate("ALTER TABLE verify ADD Version VARCHAR(10)");
+                    con.closeConnection();
+                }
+
+                if(hasUsersInDataBase()) {
+                    con.connect();
+                    con.executeUpdate("INSERT INTO verify(Version) VALUES(?)", Main.DATABASE_VERSION);
+                    con.closeConnection();
+                }
+
+                if(doesColumnExist("rank")) {
+                    con.connect();
+                    con.closeConnection();
+                    con.executeUpdate("ALTER TABLE verify DROP COLUMN rank");
+                }
+
+
+                if(doesColumnExist("Name")) {
+                    con.connect();
+                    con.executeUpdate("ALTER TABLE verify CHANGE Name PlayerName VARCHAR(16)");
+                    con.closeConnection();
+                }
+
+            }
+
+            if(getDataBaseVersion() != null && !getDataBaseVersion().equals(Main.DATABASE_VERSION)) {
+                //update for the future
+            }
+
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("[DiscordVerify] SQL Connect test failed! Please check your SQL Connection settings.");
+        }
+
+        Debugger.debugMessage("SQL Connect test success!");
+
+        con.closeConnection();
+    }
+
+    public boolean doesColumnExist(String column) throws SQLException {
+        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        con.connect();
+        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify");
+
+        ResultSet rs = ps.executeQuery();
+        ResultSetMetaData rsmd = rs.getMetaData();
+        int columns = rsmd.getColumnCount();
+
+        for (int x = 1; x <= columns; x++) {
+            if (column.equals(rsmd.getColumnName(x))) {
+                rs.close();
+                ps.close();
+                con.closeConnection();
+                return true;
+            }
+        }
+        con.closeConnection();
+        ps.close();
+        rs.close();
+        return false;
+    }
+
+    public boolean hasUsersInDataBase() throws SQLException {
+        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        con.connect();
+        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify");
+
+        ResultSet rs = ps.executeQuery();
+
+        if(rs.next()) {
+            rs.close();
+            ps.close();
+            con.closeConnection();
+            return true;
+        }
+        con.closeConnection();
+        ps.close();
+        rs.close();
+        return false;
+    }
+
+    public String getDataBaseVersion() throws SQLException {
+        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        con.connect();
+        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify");
+
+        ResultSet rs = ps.executeQuery();
+
+        if(rs.next()) {
+            String version = rs.getString("Version");
+            rs.close();
+            ps.close();
+            con.closeConnection();
+            return version;
+        }
+        con.closeConnection();
+        ps.close();
+        rs.close();
+        return null;
+    }
 
     public boolean isPlayerInDataBase(ProxiedPlayer p) throws SQLException {
+
+        System.out.println(sql);
 
         if(!sql) return VerifyFileManager.INSTANCE.isPlayerInFile(p);
 
@@ -63,6 +187,18 @@ public class VerifyDAO {
         return null;
     }
 
+    public void removePlayerData(UUID uuid) throws SQLException {
+        if(!sql) {
+            VerifyFileManager.INSTANCE.removePlayerData(uuid);
+            return;
+        }
+
+        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        con.connect();
+        con.executeUpdate("DELETE FROM verify WHERE UUID = ?",uuid.toString());
+        con.closeConnection();
+    }
+
     public void addPlayerAsUnverified(ProxiedPlayer player) throws SQLException {
 
         if(!sql) {
@@ -72,7 +208,8 @@ public class VerifyDAO {
 
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
-        con.executeUpdate("INSERT INTO verify(UUID,Name,Verified,DiscordID) VALUES(?,?,?,?)", player.getUniqueId().toString(), player.getName() ,false,null);
+        con.executeUpdate("INSERT INTO verify(UUID,PlayerName,Verified,DiscordID,Version) VALUES(?,?,?,?,?)", player.getUniqueId().toString(), player.getName() ,false,null, Main.DATABASE_VERSION);
+
         con.closeConnection();
     }
 
@@ -217,7 +354,7 @@ public class VerifyDAO {
 
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
-        con.executeUpdate("UPDATE verify SET Name = ? WHERE UUID = ?", player.getName(), player.getUniqueId().toString());
+        con.executeUpdate("UPDATE verify SET PlayerName = ? WHERE UUID = ?", player.getName(), player.getUniqueId().toString());
         con.closeConnection();
     }
 

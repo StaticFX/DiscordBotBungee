@@ -26,12 +26,13 @@ public class RewardsDAO {
     public void setPlayerRewardState(UUID player, boolean state) throws SQLException {
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
-        con.executeUpdate("UPDATE rewards SET playerRewarded WHERE UUID = ?", state, player.toString());
+        con.executeUpdate("UPDATE rewards SET playerRewarded = ? WHERE UUID = ?", state, player.toString());
         con.closeConnection();
     }
 
     public boolean isPlayerInTable(UUID player) throws SQLException {
         DataBaseConnection con = DataBaseConnection.INSTANCE;
+        con.connect();
         PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM rewards WHERE UUID = ?");
         ps.setString(1, player.toString());
 
@@ -51,7 +52,8 @@ public class RewardsDAO {
 
     public boolean hasPlayerBeenRewarded(UUID player) throws SQLException {
         DataBaseConnection con = DataBaseConnection.INSTANCE;
-        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM rewards WHERE UUID = ? AND WHERE playerRewarded = 1");
+        con.connect();
+        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM rewards WHERE UUID = ? AND playerRewarded = 1");
         ps.setString(1, player.toString());
 
         ResultSet rs = ps.executeQuery();

@@ -44,7 +44,8 @@ public class Main extends Plugin {
     public String token;
     public Activity activity;
     public static String configVersion = "1.1.1";
-    public static String msgVersion = "1.0.0";
+    public static String msgVersion = "1.0.1";
+    public static String DATABASE_VERSION = "1.0.0";
     public static int timer = 0;
     public boolean debugMode = false;
 
@@ -58,25 +59,28 @@ public class Main extends Plugin {
         MessagesFileManager.INSTANCE.loadFile();
         DiscordFileManager.INSTANCE.loadFile();
         RewardsFileManager.INSTANCE.loadFile();
-        try {
-            RewardsDAO.INSTANCE.loadTable();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+
         setuped = ConfigFileManager.INSTANCE.isSetuped();
 
         if(ConfigFileManager.INSTANCE.useSQL() && setuped) {
-
+            try {
+                RewardsDAO.INSTANCE.loadTable();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
             if(!DataBaseConnection.INSTANCE.connectTest())  {
                 Debugger.debugMessage("Can't connect to database.");
                 return;
             }
 
-            loadDataBase();
+            VerifyDAO.INSTANCE.loadDataBase();
         }
+
 
         useSRV = ConfigFileManager.INSTANCE.useSRV();
         useSQL = ConfigFileManager.INSTANCE.useSQL();
+        System.out.println(ConfigFileManager.INSTANCE.useSQL());
+
         token = ConfigFileManager.INSTANCE.getString("bot-token");
         loadBungeeEvents();
         VerifyAPI.getInstance().registerEvent(new TestUserVerifiedEvent());
@@ -146,20 +150,7 @@ public class Main extends Plugin {
         getProxy().getPluginManager().registerListener(this,new LeaveEvent());
     }
 
-    public void loadDataBase() {
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
-        con.connect();
 
-        Debugger.debugMessage("SQL Connect test success!");
-
-        try {
-            con.executeUpdate("CREATE TABLE IF NOT EXISTS verify(UUID VARCHAR(36) PRIMARY KEY, Name VARCHAR(16), Verified BOOLEAN, DiscordID VARCHAR(100))");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("[DiscordVerify] SQL Connect test failed! Please check your SQL Connection settings.");
-        }
-        con.closeConnection();
-    }
 
     public String getStringFromConfig(String string, boolean prefix) {
         if(prefix)

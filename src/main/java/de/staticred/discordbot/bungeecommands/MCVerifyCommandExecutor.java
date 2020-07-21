@@ -98,7 +98,7 @@ public class MCVerifyCommandExecutor extends Command {
 
 
             try {
-                if(RewardsDAO.INSTANCE.hasPlayerBeenRewarded(p.getUniqueId())) {
+                if(!RewardsDAO.INSTANCE.hasPlayerBeenRewarded(p.getUniqueId())) {
                     for(String command : RewardsFileManager.INSTANCE.getCommandsOnVerified()) {
                         ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), command.replace("%player%",p.getName()));
                     }

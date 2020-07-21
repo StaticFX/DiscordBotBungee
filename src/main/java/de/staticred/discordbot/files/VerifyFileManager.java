@@ -51,6 +51,11 @@ public class VerifyFileManager {
         }
     }
 
+    public void removePlayerData(UUID uuid) {
+        conf.set(uuid.toString(), null);
+        saveFile();
+    }
+
     public boolean isPlayerInFile(ProxiedPlayer p) {
         return conf.getKeys().contains(p.getUniqueId().toString());
     }

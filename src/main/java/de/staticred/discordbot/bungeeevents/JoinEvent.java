@@ -30,9 +30,18 @@ public class JoinEvent implements Listener {
 
         if(!Main.configVersion.equals(ConfigFileManager.INSTANCE.getConfigVersion())) {
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Your config version is not compatible with the §4plugin-config version."));
-            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Config version:" + ConfigFileManager.INSTANCE.getConfigVersion()));
-            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Plugin version:" + Main.configVersion));
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Config version: §l" + ConfigFileManager.INSTANCE.getConfigVersion()));
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Plugin version: §l" + Main.configVersion));
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4It may come to errors."));
+
+            TextComponent tc = new TextComponent();
+            tc.setText("§8[§aDiscordBot§8] §4You can find the newest version over §e§lhere");
+            tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§aconfig.yml").create()));
+            tc.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/StaticFX/DiscordBotBungee/blob/master/src/main/resources/config.yml"));
+            TextComponent sendedText = new TextComponent();
+            sendedText.addExtra(tc);
+            player.sendMessage(sendedText);
+
         }
 
         if(!Main.setuped && player.hasPermission("discord.setup")) {
@@ -42,8 +51,18 @@ public class JoinEvent implements Listener {
 
         if(!Main.msgVersion.equals(MessagesFileManager.getInstance().getVersion())) {
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Your message version is not compatible with the §4plugin-config version."));
-            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Config version:" + MessagesFileManager.INSTANCE.getVersion()));
-            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Plugin version:" + Main.msgVersion));
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Config version: §l" + MessagesFileManager.INSTANCE.getVersion()));
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Plugin version: §l" + Main.msgVersion));
+
+
+            TextComponent tc = new TextComponent();
+            tc.setText("§8[§aDiscordBot§8] §4You can find the newest version over §e§lhere");
+            tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§amessages.yml").create()));
+            tc.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/StaticFX/DiscordBotBungee/blob/master/src/main/resources/messages.yml"));
+            TextComponent sendedText = new TextComponent();
+            sendedText.addExtra(tc);
+            player.sendMessage(sendedText);
+
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4It may come to errors."));
         }
 

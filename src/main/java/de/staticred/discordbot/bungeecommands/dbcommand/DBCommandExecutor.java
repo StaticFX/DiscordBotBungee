@@ -56,6 +56,10 @@ public class DBCommandExecutor extends Command {
                 new DBUpdateSubCommand("dbupdate",sender,args).execute("dbupdate",sender,args);
                 return;
             }
+            case "RESET": {
+                new DBResetSubCommand("dbupdate",sender,args).execute("dbupdate",sender,args);
+                return;
+            }
         }
 
         sender.sendMessage(new TextComponent("§8---§aDCVerifier§8---"));

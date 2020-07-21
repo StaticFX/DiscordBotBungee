@@ -7,6 +7,8 @@ import net.md_5.bungee.config.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 public class RewardsFileManager {
@@ -20,8 +22,8 @@ public class RewardsFileManager {
 
         if(!file.exists()) {
             file.getParentFile().mkdirs();
-            try {
-                file.createNewFile();
+            try(InputStream in = getClass().getClassLoader().getResourceAsStream("rewards.yml")) {
+                Files.copy(in,file.toPath());
             } catch (IOException e) {
                 e.printStackTrace();
             }
