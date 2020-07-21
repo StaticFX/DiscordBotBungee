@@ -30,7 +30,7 @@ public class VerifyDAO {
             con.closeConnection();
 
             //update database to newest version
-            if(getDataBaseVersion() == null) {
+            if(getDataBaseVersion() == null || !doesColumnExist("Version")) {
                 Debugger.debugMessage("DataBaseVersion outdated, trying to auto update the Database");
 
                 if(!doesColumnExist("Version")) {
@@ -41,14 +41,14 @@ public class VerifyDAO {
 
                 if(hasUsersInDataBase()) {
                     con.connect();
-                    con.executeUpdate("INSERT INTO verify(Version) VALUES(?)", Main.DATABASE_VERSION);
+                    con.executeUpdate("UPDATE verify SET Version = ?", Main.DATABASE_VERSION);
                     con.closeConnection();
                 }
 
                 if(doesColumnExist("rank")) {
                     con.connect();
-                    con.closeConnection();
                     con.executeUpdate("ALTER TABLE verify DROP COLUMN rank");
+                    con.closeConnection();
                 }
 
 
@@ -63,8 +63,6 @@ public class VerifyDAO {
             if(getDataBaseVersion() != null && !getDataBaseVersion().equals(Main.DATABASE_VERSION)) {
                 //update for the future
             }
-
-
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -118,29 +116,32 @@ public class VerifyDAO {
         return false;
     }
 
-    public String getDataBaseVersion() throws SQLException {
+    public String getDataBaseVersion() {
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
-        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify");
 
-        ResultSet rs = ps.executeQuery();
+        try {
+            PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify");
 
-        if(rs.next()) {
-            String version = rs.getString("Version");
-            rs.close();
-            ps.close();
+            ResultSet rs = ps.executeQuery();
+
+            if(rs.next()) {
+                String version = rs.getString("Version");
+                rs.close();
+                ps.close();
+                con.closeConnection();
+                return version;
+            }
             con.closeConnection();
-            return version;
+            ps.close();
+            rs.close();
+            return null;
+        }catch (Exception e) {
+            return null;
         }
-        con.closeConnection();
-        ps.close();
-        rs.close();
-        return null;
     }
 
     public boolean isPlayerInDataBase(ProxiedPlayer p) throws SQLException {
-
-        System.out.println(sql);
 
         if(!sql) return VerifyFileManager.INSTANCE.isPlayerInFile(p);
 

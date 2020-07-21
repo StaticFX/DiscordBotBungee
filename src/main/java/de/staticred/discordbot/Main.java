@@ -79,7 +79,6 @@ public class Main extends Plugin {
 
         useSRV = ConfigFileManager.INSTANCE.useSRV();
         useSQL = ConfigFileManager.INSTANCE.useSQL();
-        System.out.println(ConfigFileManager.INSTANCE.useSQL());
 
         token = ConfigFileManager.INSTANCE.getString("bot-token");
         loadBungeeEvents();
