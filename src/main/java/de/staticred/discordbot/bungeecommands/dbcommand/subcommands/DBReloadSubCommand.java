@@ -1,6 +1,6 @@
 package de.staticred.discordbot.bungeecommands.dbcommand.subcommands;
 
-import de.staticred.discordbot.Main;
+import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.DiscordFileManager;
 import de.staticred.discordbot.files.MessagesFileManager;
@@ -17,7 +17,7 @@ public class DBReloadSubCommand extends SubCommand {
     @Override
     public void execute(String name, CommandSender sender, String[] args) {
         if(!sender.hasPermission("db.cmd.reload")) {
-            sender.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("NoPermissions",true)));
+            sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("NoPermissions",true)));
             return;
         }
 
@@ -30,6 +30,6 @@ public class DBReloadSubCommand extends SubCommand {
         MessagesFileManager.INSTANCE.loadFile();
         DiscordFileManager.INSTANCE.loadFile();
 
-        sender.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("Reloaded",true)));
+        sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("Reloaded",true)));
     }
 }

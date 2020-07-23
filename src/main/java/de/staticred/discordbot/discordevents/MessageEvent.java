@@ -19,7 +19,7 @@ public class MessageEvent extends ListenerAdapter {
         String[] args = e.getMessage().getContentRaw().split(" ");
         Member m = e.getMember();
 
-        if(ConfigFileManager.INSTANCE.getVerifyChannel().isEmpty()) {
+        if(!ConfigFileManager.INSTANCE.getVerifyChannel().isEmpty()) {
             if(!e.getChannel().getId().equals(ConfigFileManager.INSTANCE.getVerifyChannel()))
             return;
         }
@@ -32,6 +32,7 @@ public class MessageEvent extends ListenerAdapter {
             new UnlinkCommandExecutor(m,e.getChannel(),message,args);
             return;
         }else if(args[0].equalsIgnoreCase("!help")) {
+            new HelpCommandExecutor(m,e.getChannel(),message,args);
             return;
         } else if (args[0].equalsIgnoreCase("!update")) {
             new UpdateCommandExecutor(m,e.getChannel(),message,args);

@@ -1,6 +1,6 @@
 package de.staticred.discordbot.bungeecommands;
 
-import de.staticred.discordbot.Main;
+import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.api.EventManager;
 import de.staticred.discordbot.db.RewardsDAO;
 import de.staticred.discordbot.db.SRVDAO;
@@ -8,7 +8,9 @@ import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.event.UserClickedMessageEvent;
 import de.staticred.discordbot.event.UserUnverifiedEvent;
 import de.staticred.discordbot.event.UserVerifiedEvent;
+import de.staticred.discordbot.files.BlockedServerFileManager;
 import de.staticred.discordbot.files.RewardsFileManager;
+import de.staticred.discordbot.util.MemberManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -19,8 +21,8 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import sun.rmi.rmic.Main;
 
-import javax.swing.plaf.metal.MetalMenuBarUI;
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +45,7 @@ public class MCVerifyCommandExecutor extends Command {
 
 
         if (args.length != 1) {
-            p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("VerifyPrefix",true)));
+            p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("VerifyPrefix",true)));
             return;
         }
 
@@ -52,20 +54,25 @@ public class MCVerifyCommandExecutor extends Command {
             EventManager.instance.fireEvent(event);
             if(event.isCanceled()) return;
 
-            if (!Main.playerMemberHashMap.containsKey(p) && !Main.playerChannelHashMap.containsKey(p)) {
-                p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("NoInquiries",true)));
+            if (!DBVerifier.getInstance().playerMemberHashMap.containsKey(p) && !DBVerifier.getInstance().playerChannelHashMap.containsKey(p)) {
+                p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("NoInquiries",true)));
                 return;
             }
 
-            Member m = Main.playerMemberHashMap.get(p);
-            TextChannel tc = Main.playerChannelHashMap.get(p);
+            if(BlockedServerFileManager.INSTANCE.getBlockedServers().contains(p.getServer().getInfo().getName())) {
+                p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("CantVerifyOnThisServer",true)));
+                return;
+            }
 
-            Main.INSTANCE.removeAllRolesFromMember(m);
-            Main.INSTANCE.updateRoles(m,p);
+            Member m = DBVerifier.getInstance().playerMemberHashMap.get(p);
+            TextChannel tc = DBVerifier.getInstance().playerChannelHashMap.get(p);
 
-            if(Main.INSTANCE.syncNickname) {
+            DBVerifier.INSTANCE.removeAllRolesFromMember(m);
+            DBVerifier.INSTANCE.updateRoles(m,p);
+
+            if(DBVerifier.INSTANCE.syncNickname) {
                 if(m.isOwner()) {
-                    p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("MemberIsOwner",false)));
+                    p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("MemberIsOwner",false)));
                 }else {
                     m.getGuild().modifyNickname(m,p.getName()).queue();
                 }
@@ -82,9 +89,9 @@ public class MCVerifyCommandExecutor extends Command {
 
                 VerifyDAO.INSTANCE.setPlayerAsVerified(p.getUniqueId());
                 VerifyDAO.INSTANCE.addDiscordID(p, m);
-                if(Main.useSRV) SRVDAO.INSTANCE.link(p,m.getId());
+                if(DBVerifier.getInstance().useSRV) SRVDAO.INSTANCE.link(p,m.getId());
             } catch (SQLException e) {
-                p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
+                p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("InternalError",true)));
                 e.printStackTrace();
                 return;
             }
@@ -93,9 +100,8 @@ public class MCVerifyCommandExecutor extends Command {
             embedBuilder.setDescription("You have been verified " + m.getAsMention());
             embedBuilder.setColor(Color.green);
             tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
-            Main.playerChannelHashMap.remove(p);
-            Main.playerMemberHashMap.remove(p);
-
+            DBVerifier.getInstance().playerChannelHashMap.remove(p);
+            DBVerifier.getInstance().playerMemberHashMap.remove(p);
 
             try {
                 if(!RewardsDAO.INSTANCE.hasPlayerBeenRewarded(p.getUniqueId())) {
@@ -108,24 +114,23 @@ public class MCVerifyCommandExecutor extends Command {
                 throwables.printStackTrace();
             }
 
-
-            p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("Verified",true)));
+            p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("Verified",true)));
             return;
 
         } else if (args[0].equalsIgnoreCase("decline")) {
             UserClickedMessageEvent event = new UserClickedMessageEvent(p,true);
             EventManager.instance.fireEvent(event);
             if(event.isCanceled()) return;
-            if (!Main.playerMemberHashMap.containsKey(p) && !Main.playerChannelHashMap.containsKey(p)) {
-                p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("NoInquiries",true)));
+            if (!DBVerifier.getInstance().playerMemberHashMap.containsKey(p) && !DBVerifier.getInstance().playerChannelHashMap.containsKey(p)) {
+                p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("NoInquiries",true)));
                 return;
             }
 
-            TextChannel tc = Main.playerChannelHashMap.get(p);
-            Member m = Main.playerMemberHashMap.get(p);
-            Main.playerChannelHashMap.remove(p);
-            Main.playerMemberHashMap.remove(p);
-            p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("Declined",true)));
+            TextChannel tc = DBVerifier.getInstance().playerChannelHashMap.get(p);
+            Member m = DBVerifier.getInstance().playerMemberHashMap.get(p);
+            DBVerifier.getInstance().playerChannelHashMap.remove(p);
+            DBVerifier.getInstance().playerMemberHashMap.remove(p);
+            p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("Declined",true)));
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setDescription("The inquiry has been denied " + m.getAsMention());
             embedBuilder.setColor(Color.red);
@@ -134,71 +139,71 @@ public class MCVerifyCommandExecutor extends Command {
         } else if (args[0].equalsIgnoreCase("update")) {
             try {
                 if (!VerifyDAO.INSTANCE.hasDiscordID(p)) {
-                    p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("NotLinkedYet",true)));
+                    p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("NotLinkedYet",true)));
                     return;
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
-                p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
+                p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("InternalError",true)));
                 return;
             }
 
             Member m;
 
             try {
-                m = Main.INSTANCE.getMemberFromPlayer(p.getUniqueId());
+                m = MemberManager.getMemberFromPlayer(p.getUniqueId());
             } catch (SQLException e) {
-                p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
+                p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("InternalError",true)));
                 e.printStackTrace();
                 return;
             }
 
             if (m == null) {
-                p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
+                p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("InternalError",true)));
                 return;
             }
 
-            Main.INSTANCE.removeAllRolesFromMember(m);
-            Main.INSTANCE.updateRoles(m,p);
+            DBVerifier.INSTANCE.removeAllRolesFromMember(m);
+            DBVerifier.INSTANCE.updateRoles(m,p);
 
-            if(Main.INSTANCE.syncNickname) {
+            if(DBVerifier.INSTANCE.syncNickname) {
 
                 if (m.isOwner()) {
-                    p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("MemberIsOwner", false)));
+                    p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("MemberIsOwner", false)));
                 } else {
                     m.getGuild().modifyNickname(m, p.getName()).queue();
                 }
 
             }
 
-            p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("UpdatedRankMC",true)));
+            p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("UpdatedRankMC",true)));
             return;
         }else if(args[0].equalsIgnoreCase("unlink")) {
 
             try {
                 if (!VerifyDAO.INSTANCE.hasDiscordID(p)) {
-                    p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("NotLinkedYet",true)));
+                    p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("NotLinkedYet",true)));
                     return;
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
-                p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
+                p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("InternalError",true)));
                 return;
             }
 
             User u;
             try {
-                u = Main.jda.getUserById(VerifyDAO.INSTANCE.getDiscordID(p.getUniqueId()));
+                u = DBVerifier.getInstance().jda.getUserById(VerifyDAO.INSTANCE.getDiscordID(p.getUniqueId()));
             } catch (SQLException e) {
                 e.printStackTrace();
-                p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
+                p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("InternalError",true)));
                 return;
             }
 
             Member m = null;
 
-            if (!Main.jda.getGuilds().isEmpty()) {
-                for (Guild guild : Main.jda.getGuilds()) {
+            if (!DBVerifier.getInstance().jda.getGuilds().isEmpty()) {
+                for (Guild guild : DBVerifier.getInstance().jda.getGuilds()) {
                     if (u != null)
                         m = guild.getMember(u);
                 }
@@ -208,17 +213,17 @@ public class MCVerifyCommandExecutor extends Command {
 
 
             if (m == null) {
-                p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
+                p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("InternalError",true)));
                 return;
             }
 
 
             if(m.isOwner()) {
-                p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("CantUnlink",true)));
+                p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("CantUnlink",true)));
                 return;
             }
 
-            Main.INSTANCE.removeAllRolesFromMember(m);
+            DBVerifier.INSTANCE.removeAllRolesFromMember(m);
 
             try {
                 UserUnverifiedEvent event = new UserUnverifiedEvent(m,p);
@@ -226,10 +231,10 @@ public class MCVerifyCommandExecutor extends Command {
                 if(event.isCanceled()) return;
                 VerifyDAO.INSTANCE.removeDiscordID(p);
                 VerifyDAO.INSTANCE.setPlayerAsUnVerified(p.getUniqueId());
-                if(Main.useSRV)
+                if(DBVerifier.getInstance().useSRV)
                 SRVDAO.INSTANCE.unlink(p);
             } catch (SQLException e) {
-                p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
+                p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("InternalError",true)));
                 e.printStackTrace();
                 return;
             }
@@ -238,9 +243,9 @@ public class MCVerifyCommandExecutor extends Command {
                 ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), command.replace("%player%",p.getName()));
             }
 
-            p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("UnlinkedYourSelf",true)));
+            p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("UnlinkedYourSelf",true)));
             return;
         }
-        p.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("VerifyPrefix",true)));
+        p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("VerifyPrefix",true)));
     }
 }

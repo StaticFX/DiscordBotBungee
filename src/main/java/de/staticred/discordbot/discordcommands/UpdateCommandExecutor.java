@@ -1,12 +1,11 @@
 package de.staticred.discordbot.discordcommands;
 
-import de.staticred.discordbot.Main;
+import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.db.VerifyDAO;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.awt.*;
@@ -24,7 +23,7 @@ public class UpdateCommandExecutor {
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
         if(args.length != 1) {
-            embedBuilder.setDescription(Main.getInstance().getStringFromConfig("UpdateDiscordSyntax",false) + m.getAsMention());
+            embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("UpdateDiscordSyntax",false) + m.getAsMention());
             embedBuilder.setColor(Color.red);
             tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
             command.delete().queueAfter(10,TimeUnit.SECONDS);
@@ -34,7 +33,7 @@ public class UpdateCommandExecutor {
 
         try {
             if(!VerifyDAO.INSTANCE.isDiscordIDInUse(m.getId())) {
-                embedBuilder.setDescription(Main.getInstance().getStringFromConfig("NotVerifiedYet",false) + m.getAsMention());
+                embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("NotVerifiedYet",false) + m.getAsMention());
                 embedBuilder.setColor(Color.red);
                 tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
                 command.delete().queueAfter(10,TimeUnit.SECONDS);
@@ -47,7 +46,7 @@ public class UpdateCommandExecutor {
 
         ProxiedPlayer target = null;
         try {
-            target = Main.getInstance().getProxy().getPlayer(UUID.fromString(VerifyDAO.INSTANCE.getUUIDByDiscordID(m.getId())));
+            target = DBVerifier.getInstance().getProxy().getPlayer(UUID.fromString(VerifyDAO.INSTANCE.getUUIDByDiscordID(m.getId())));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -61,12 +60,12 @@ public class UpdateCommandExecutor {
         }
 
 
-        Main.getInstance().removeAllRolesFromMember(m);
-        Main.getInstance().updateRoles(m,target);
+        DBVerifier.getInstance().removeAllRolesFromMember(m);
+        DBVerifier.getInstance().updateRoles(m,target);
 
-        if(Main.INSTANCE.syncNickname) {
+        if(DBVerifier.INSTANCE.syncNickname) {
             if(m.isOwner()) {
-                embedBuilder.setDescription(Main.getInstance().getStringFromConfig("NoInquiries",false));
+                embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("NoInquiries",false));
                 embedBuilder.setColor(Color.RED);
                 tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
                 command.delete().queueAfter(10,TimeUnit.SECONDS);
@@ -76,7 +75,7 @@ public class UpdateCommandExecutor {
         }
 
 
-        embedBuilder.setDescription(Main.getInstance().getStringFromConfig("UpdatedRank",false) + m.getAsMention());
+        embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("UpdatedRank",false) + m.getAsMention());
         embedBuilder.setColor(Color.green);
         tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
         command.delete().queueAfter(10,TimeUnit.SECONDS);

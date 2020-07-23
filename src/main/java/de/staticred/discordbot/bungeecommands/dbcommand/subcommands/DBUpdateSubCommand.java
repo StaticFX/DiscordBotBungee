@@ -1,6 +1,7 @@
 package de.staticred.discordbot.bungeecommands.dbcommand.subcommands;
 
-import de.staticred.discordbot.Main;
+import de.staticred.discordbot.DBVerifier;
+import de.staticred.discordbot.util.MemberManager;
 import de.staticred.discordbot.util.SubCommand;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -18,7 +19,7 @@ public class DBUpdateSubCommand extends SubCommand {
     @Override
     public void execute(String name, CommandSender sender, String[] args) {
         if(!sender.hasPermission("db.cmd.update")) {
-            sender.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("NoPermissions",true)));
+            sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("NoPermissions",true)));
             return;
         }
 
@@ -30,18 +31,18 @@ public class DBUpdateSubCommand extends SubCommand {
         ProxiedPlayer target = ProxyServer.getInstance().getPlayer(args[1]);
 
         if(target == null) {
-            sender.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("MCPlayerNotFound",true)));
+            sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("MCPlayerNotFound",true)));
             return;
         }
 
         try {
-            Main.getInstance().updateRoles(Main.getInstance().getMemberFromPlayer(target.getUniqueId()),target);
+            DBVerifier.getInstance().updateRoles(MemberManager.getMemberFromPlayer(target.getUniqueId()),target);
         } catch (SQLException e) {
             e.printStackTrace();
             return;
         }
 
-        sender.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("UpdatedRoles",true)));
+        sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("UpdatedRoles",true)));
 
     }
 }

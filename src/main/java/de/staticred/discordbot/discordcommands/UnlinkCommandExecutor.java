@@ -1,6 +1,6 @@
 package de.staticred.discordbot.discordcommands;
 
-import de.staticred.discordbot.Main;
+import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.db.SRVDAO;
 import de.staticred.discordbot.db.VerifyDAO;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -23,7 +23,7 @@ public class UnlinkCommandExecutor {
         EmbedBuilder embedBuilder = new EmbedBuilder();
 
         if(args.length != 1) {
-            embedBuilder.setDescription(Main.getInstance().getStringFromConfig("UnlinkDiscordSyntax",false) + m.getAsMention());
+            embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("UnlinkDiscordSyntax",false) + m.getAsMention());
             embedBuilder.setColor(Color.red);
             tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
             command.delete().queueAfter(10,TimeUnit.SECONDS);
@@ -33,7 +33,7 @@ public class UnlinkCommandExecutor {
 
         try {
             if(!VerifyDAO.INSTANCE.isDiscordIDInUse(m.getId())) {
-                embedBuilder.setDescription(Main.getInstance().getStringFromConfig("NotVerifiedYet",false) + m.getAsMention());
+                embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("NotVerifiedYet",false) + m.getAsMention());
                 embedBuilder.setColor(Color.red);
                 tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10,TimeUnit.SECONDS));
                 command.delete().queueAfter(10,TimeUnit.SECONDS);
@@ -46,18 +46,18 @@ public class UnlinkCommandExecutor {
 
 
 
-        Main.INSTANCE.removeAllRolesFromMember(m);
+        DBVerifier.INSTANCE.removeAllRolesFromMember(m);
 
         try {
             VerifyDAO.INSTANCE.setPlayerAsUnverified(m.getId());
             VerifyDAO.INSTANCE.removeDiscordIDByDiscordID(m);
-            if(Main.useSRV) SRVDAO.INSTANCE.unlink(m.getId());
+            if(DBVerifier.getInstance().useSRV) SRVDAO.INSTANCE.unlink(m.getId());
         } catch (SQLException e) {
             e.printStackTrace();
             return;
         }
 
-        embedBuilder.setDescription(Main.getInstance().getStringFromConfig("SuccessfullyUnlinked",false) + m.getAsMention());
+        embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("SuccessfullyUnlinked",false) + m.getAsMention());
         embedBuilder.setColor(Color.green);
         tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
         command.delete().queueAfter(10,TimeUnit.SECONDS);

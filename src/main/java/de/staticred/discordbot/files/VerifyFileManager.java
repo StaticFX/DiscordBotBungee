@@ -1,6 +1,6 @@
 package de.staticred.discordbot.files;
 
-import de.staticred.discordbot.Main;
+import de.staticred.discordbot.DBVerifier;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -14,7 +14,7 @@ public class VerifyFileManager {
 
     public static VerifyFileManager INSTANCE = new VerifyFileManager();
 
-    private File file = new File(Main.getInstance().getDataFolder().getAbsolutePath(), "verify.yml");
+    private File file = new File(DBVerifier.getInstance().getDataFolder().getAbsolutePath(), "verify.yml");
     private Configuration conf;
 
     public String getName(String discordID) {
@@ -66,6 +66,7 @@ public class VerifyFileManager {
         conf.set(uuid + ".name",p.getName());
         conf.set(uuid + ".discordid","nothing");
         conf.set(uuid + ".verified",false);
+        conf.set(uuid + ".rewarded",false);
         updateRank(p);
         saveFile();
     }
@@ -94,6 +95,11 @@ public class VerifyFileManager {
         saveFile();
     }
 
+    public void setRewardState(UUID uuid, boolean state) {
+        conf.set(uuid.toString() + ".rewarded",state);
+        saveFile();
+    }
+
 
     public void setVerifiedState(UUID uuid, boolean verified) {
         conf.set(uuid.toString() + ".verified",verified);
@@ -115,11 +121,16 @@ public class VerifyFileManager {
 
     public void updateUserName(ProxiedPlayer p) {
         conf.set(p.getUniqueId().toString() + ".name",p.getName());
+
+        if(!conf.contains(p.getUniqueId().toString() + ".rewarded")) {
+            conf.set(p.getUniqueId().toString() + ".rewarded", false);
+        }
+
         saveFile();
     }
 
     public void updateRank(ProxiedPlayer p) {
-        conf.set(p.getUniqueId().toString() + ".rank",Main.getInstance().getRank(p));
+        conf.set(p.getUniqueId().toString() + ".rank", DBVerifier.getInstance().getRank(p));
         saveFile();
     }
 
@@ -146,7 +157,7 @@ public class VerifyFileManager {
     }
 
 
-
-
-
+    public boolean getRewardState(UUID uuid) {
+        return conf.getBoolean(uuid.toString() + ".rewarded");
+    }
 }

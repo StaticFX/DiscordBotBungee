@@ -1,6 +1,6 @@
 package de.staticred.discordbot.db;
 
-import de.staticred.discordbot.Main;
+import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.VerifyFileManager;
 import de.staticred.discordbot.util.Debugger;
@@ -11,7 +11,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.UUID;
 
 public class VerifyDAO {
@@ -41,7 +40,7 @@ public class VerifyDAO {
 
                 if(hasUsersInDataBase()) {
                     con.connect();
-                    con.executeUpdate("UPDATE verify SET Version = ?", Main.DATABASE_VERSION);
+                    con.executeUpdate("UPDATE verify SET Version = ?", DBVerifier.DATABASE_VERSION);
                     con.closeConnection();
                 }
 
@@ -60,7 +59,7 @@ public class VerifyDAO {
 
             }
 
-            if(getDataBaseVersion() != null && !getDataBaseVersion().equals(Main.DATABASE_VERSION)) {
+            if(getDataBaseVersion() != null && !getDataBaseVersion().equals(DBVerifier.DATABASE_VERSION)) {
                 //update for the future
             }
 
@@ -158,9 +157,9 @@ public class VerifyDAO {
             con.closeConnection();
             return true;
         }
-        con.closeConnection();
         ps.close();
         rs.close();
+        con.closeConnection();
         return false;
     }
 
@@ -209,7 +208,7 @@ public class VerifyDAO {
 
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
-        con.executeUpdate("INSERT INTO verify(UUID,PlayerName,Verified,DiscordID,Version) VALUES(?,?,?,?,?)", player.getUniqueId().toString(), player.getName() ,false,null, Main.DATABASE_VERSION);
+        con.executeUpdate("INSERT INTO verify(UUID,PlayerName,Verified,DiscordID,Version) VALUES(?,?,?,?,?)", player.getUniqueId().toString(), player.getName() ,false,null, DBVerifier.DATABASE_VERSION);
 
         con.closeConnection();
     }

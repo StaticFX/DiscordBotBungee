@@ -1,8 +1,6 @@
 package de.staticred.discordbot.db;
 
-import de.staticred.discordbot.Main;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

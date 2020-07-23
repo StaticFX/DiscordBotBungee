@@ -1,6 +1,6 @@
 package de.staticred.discordbot.bungeecommands.dbcommand.subcommands;
 
-import de.staticred.discordbot.Main;
+import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.util.SubCommand;
 import de.staticred.discordbot.util.UUIDFetcher;
@@ -19,7 +19,7 @@ public class DBUnlinkSubCommand extends SubCommand {
     @Override
     public void execute(String name, CommandSender sender, String[] args) {
         if(!sender.hasPermission("db.cmd.unlink")) {
-            sender.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("NoPermissions",true)));
+            sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("NoPermissions",true)));
             return;
         }
 
@@ -33,13 +33,13 @@ public class DBUnlinkSubCommand extends SubCommand {
         UUID uuid = UUIDFetcher.getUUID(inputName);
 
         if(uuid == null) {
-            sender.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("UserNotFound",true)));
+            sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("UserNotFound",true)));
             return;
         }
 
         try {
             if(!VerifyDAO.INSTANCE.isPlayerVerified(uuid)) {
-                sender.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("UserNotVerifiedYet",true)));
+                sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("UserNotVerifiedYet",true)));
                 return;
             }
         } catch (SQLException e) {
@@ -49,7 +49,7 @@ public class DBUnlinkSubCommand extends SubCommand {
 
         try {
             VerifyDAO.INSTANCE.setPlayerAsUnVerified(uuid);
-            sender.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("UnlinkedPlayer",true)));
+            sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("UnlinkedPlayer",true)));
         } catch (SQLException e) {
             e.printStackTrace();
             return;

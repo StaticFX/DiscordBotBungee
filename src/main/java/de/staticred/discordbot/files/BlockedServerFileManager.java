@@ -11,18 +11,16 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.List;
 
-public class RewardsFileManager {
+public class BlockedServerFileManager {
 
-    public static RewardsFileManager INSTANCE = new RewardsFileManager();
-
-    private File file = new File(DBVerifier.getInstance().getDataFolder().getAbsolutePath(), "rewards.yml");
+    private File file = new File(DBVerifier.getInstance().getDataFolder().getAbsolutePath(), "blockedservers.yml");
     private Configuration conf;
+    public static BlockedServerFileManager INSTANCE = new BlockedServerFileManager();
 
     public void loadFile() {
-
         if(!file.exists()) {
             file.getParentFile().mkdirs();
-            try(InputStream in = getClass().getClassLoader().getResourceAsStream("rewards.yml")) {
+            try(InputStream in = getClass().getClassLoader().getResourceAsStream("blockedservers.yml")) {
                 Files.copy(in,file.toPath());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -34,14 +32,23 @@ public class RewardsFileManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
+
+        saveFile();
     }
 
-    public List<String> getCommandsOnVerified() {
-        return conf.getStringList("verified.commands");
+    public List<String> getBlockedServers() {
+        return conf.getStringList("blockedservers");
     }
 
-    public List<String> getCommandsOnUnVerified() {
-        return conf.getStringList("unverified.commands");
+
+    public void saveFile() {
+        try {
+            ConfigurationProvider.getProvider(YamlConfiguration.class).save(conf,file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

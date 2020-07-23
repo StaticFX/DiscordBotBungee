@@ -1,4 +1,4 @@
-name: DiscordBotBungee
-version: 1.3.0
+name: DBVerifier
+version: 1.4.0
 author: staticfx
-main: de.staticred.discordbot.Main
+main: de.staticred.discordbot.DBVerifier

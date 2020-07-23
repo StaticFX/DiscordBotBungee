@@ -1,7 +1,6 @@
 package de.staticred.discordbot.files;
 
-import de.staticred.discordbot.Main;
-import net.dv8tion.jda.api.entities.Role;
+import de.staticred.discordbot.DBVerifier;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -13,7 +12,7 @@ import java.nio.file.Files;
 
 public class ConfigFileManager {
 
-    private File file = new File(Main.getInstance().getDataFolder().getAbsolutePath(), "config.yml");
+    private File file = new File(DBVerifier.getInstance().getDataFolder().getAbsolutePath(), "config.yml");
     private Configuration conf;
     public static ConfigFileManager INSTANCE = new ConfigFileManager();
 

@@ -1,5 +1,8 @@
 package de.staticred.discordbot.db;
 
+import de.staticred.discordbot.files.ConfigFileManager;
+import de.staticred.discordbot.files.VerifyFileManager;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,7 +13,13 @@ public class RewardsDAO {
     public static RewardsDAO INSTANCE = new RewardsDAO();
 
     public void loadTable() throws SQLException {
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
+
+        if(!ConfigFileManager.INSTANCE.useSQL()) {
+            return;
+        }
+
+
+            DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
         con.executeUpdate("CREATE TABLE IF NOT EXISTS rewards(UUID VARCHAR(36) PRIMARY KEY, playerRewarded BOOLEAN)");
         con.closeConnection();
@@ -24,6 +33,12 @@ public class RewardsDAO {
     }
 
     public void setPlayerRewardState(UUID player, boolean state) throws SQLException {
+
+        if(!ConfigFileManager.INSTANCE.useSQL()) {
+            VerifyFileManager.INSTANCE.setRewardState(player,state);
+            return;
+        }
+
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
         con.executeUpdate("UPDATE rewards SET playerRewarded = ? WHERE UUID = ?", state, player.toString());
@@ -31,6 +46,11 @@ public class RewardsDAO {
     }
 
     public boolean isPlayerInTable(UUID player) throws SQLException {
+
+        if(!ConfigFileManager.INSTANCE.useSQL()) {
+            return true;
+        }
+
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
         PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM rewards WHERE UUID = ?");
@@ -51,6 +71,11 @@ public class RewardsDAO {
     }
 
     public boolean hasPlayerBeenRewarded(UUID player) throws SQLException {
+
+        if(!ConfigFileManager.INSTANCE.useSQL()) {
+            return VerifyFileManager.INSTANCE.getRewardState(player);
+        }
+
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
         PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM rewards WHERE UUID = ? AND playerRewarded = 1");

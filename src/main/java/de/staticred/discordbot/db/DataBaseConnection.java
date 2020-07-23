@@ -1,5 +1,7 @@
 package de.staticred.discordbot.db;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import de.staticred.discordbot.files.ConfigFileManager;
 
 import java.sql.Connection;
@@ -14,19 +16,26 @@ public class DataBaseConnection {
     int port;
 
     public final static DataBaseConnection INSTANCE = new DataBaseConnection();
+    private HikariDataSource  source;
+    private HikariConfig config = new HikariConfig();
 
     private DataBaseConnection() {
-        user = ConfigFileManager.INSTANCE.getUser();
-        password = ConfigFileManager.INSTANCE.getPassword();
+
+        config.setUsername(ConfigFileManager.INSTANCE.getUser());
+        config.setPassword(ConfigFileManager.INSTANCE.getPassword());
+        config.addDataSourceProperty( "cachePrepStmts" , "true" );
+        config.addDataSourceProperty( "prepStmtCacheSize" , "250" );
+        config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
         url = ConfigFileManager.INSTANCE.getDataBase();
         host = ConfigFileManager.INSTANCE.getHost();
         port = ConfigFileManager.INSTANCE.getPort();
+        config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + url);
     }
 
     public void connect() {
         try {
-           Class.forName("org.mariadb.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + url, user,password);
+            source = new HikariDataSource(config);
+            connection = source.getConnection();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -44,11 +53,8 @@ public class DataBaseConnection {
 
 
     public void closeConnection() {
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        if(source.isRunning())
+            source.close();
     }
 
     public boolean isConnectionOpened() {

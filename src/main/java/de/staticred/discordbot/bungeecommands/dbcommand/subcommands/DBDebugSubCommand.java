@@ -1,6 +1,6 @@
 package de.staticred.discordbot.bungeecommands.dbcommand.subcommands;
 
-import de.staticred.discordbot.Main;
+import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.util.SubCommand;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -15,7 +15,7 @@ public class DBDebugSubCommand extends SubCommand {
     @Override
     public void execute(String name, CommandSender sender, String[] args) {
         if(!sender.hasPermission("db.cmd.debug")) {
-            sender.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("NoPermissions",true)));
+            sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("NoPermissions",true)));
             return;
         }
 
@@ -24,8 +24,8 @@ public class DBDebugSubCommand extends SubCommand {
             return;
         }
 
-        Main.getInstance().debugMode = !Main.getInstance().debugMode;
+        DBVerifier.getInstance().debugMode = !DBVerifier.getInstance().debugMode;
 
-        sender.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("DebugModeSwitched",true).replaceAll("%mode%",Boolean.toString(Main.getInstance().debugMode))));
+        sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("DebugModeSwitched",true).replaceAll("%mode%",Boolean.toString(DBVerifier.getInstance().debugMode))));
     }
 }

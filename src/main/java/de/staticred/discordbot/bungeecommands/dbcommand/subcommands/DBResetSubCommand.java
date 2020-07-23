@@ -1,6 +1,6 @@
 package de.staticred.discordbot.bungeecommands.dbcommand.subcommands;
 
-import de.staticred.discordbot.Main;
+import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.util.SubCommand;
 import de.staticred.discordbot.util.UUIDFetcher;
@@ -19,7 +19,7 @@ public class DBResetSubCommand extends SubCommand {
     @Override
     public void execute(String name, CommandSender sender, String[] args) {
         if(!sender.hasPermission("db.cmd.reset")) {
-            sender.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("NoPermissions",true)));
+            sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("NoPermissions",true)));
             return;
         }
 
@@ -33,7 +33,7 @@ public class DBResetSubCommand extends SubCommand {
         UUID uuid = UUIDFetcher.getUUID(inputName);
 
         if(uuid == null) {
-            sender.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("UserNotFound",true)));
+            sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("UserNotFound",true)));
             return;
         }
 
@@ -41,10 +41,10 @@ public class DBResetSubCommand extends SubCommand {
             VerifyDAO.INSTANCE.removePlayerData(uuid);
         } catch (SQLException e) {
             e.printStackTrace();
-            sender.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("InternalError",true)));
+            sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("InternalError",true)));
             return;
         }
 
-        sender.sendMessage(new TextComponent(Main.getInstance().getStringFromConfig("ResetPlayer", true)));
+        sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("ResetPlayer", true)));
     }
 }
