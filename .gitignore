@@ -30,3 +30,5 @@ target/generated-sources/
 target/maven-archiver/
 target/maven-status/
 
+
+dependency-reduced-pom.xml
