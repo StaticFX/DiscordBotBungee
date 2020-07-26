@@ -7,10 +7,7 @@ import de.staticred.discordbot.bungeecommands.MCVerifyCommandExecutor;
 import de.staticred.discordbot.bungeecommands.SetupCommandExecutor;
 import de.staticred.discordbot.bungeeevents.JoinEvent;
 import de.staticred.discordbot.bungeeevents.LeaveEvent;
-import de.staticred.discordbot.db.DataBaseConnection;
-import de.staticred.discordbot.db.MetricsLite;
-import de.staticred.discordbot.db.RewardsDAO;
-import de.staticred.discordbot.db.VerifyDAO;
+import de.staticred.discordbot.db.*;
 import de.staticred.discordbot.discordevents.GuildJoinEvent;
 import de.staticred.discordbot.discordevents.GuildLeftEvent;
 import de.staticred.discordbot.discordevents.MessageEvent;
@@ -31,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 
 public class DBVerifier extends Plugin {
 
@@ -128,13 +126,11 @@ public class DBVerifier extends Plugin {
         String activity = ConfigFileManager.INSTANCE.getString("discordBotActivityType");
         String type = ConfigFileManager.INSTANCE.getString("discordBotActivity");
         String link = ConfigFileManager.INSTANCE.getString("streamingLink");
-        MetricsLite metrics = new MetricsLite(this);
 
-
-        System.out.println(ConfigFileManager.INSTANCE.hasVerifyRole());
+        Metrics metrics = new Metrics(this, 	5843);
+        metrics.addCustomChart(new Metrics.SingleLineChart("groups_registered", () -> DiscordFileManager.INSTANCE.getAllGroups().size()));
 
         Debugger.debugMessage("Using metrics: " + metrics.isEnabled());
-        loadMetrcis();
 
         if(activity.equalsIgnoreCase("listening")) {
             this.activity = Activity.listening(type);
@@ -201,13 +197,6 @@ public class DBVerifier extends Plugin {
         }
         return amount;
     }
-
-
-
-    void loadMetrcis() {
-        MetricsLite metrcis = new MetricsLite(this);
-    }
-
 
     @Override
     public void onDisable() {
