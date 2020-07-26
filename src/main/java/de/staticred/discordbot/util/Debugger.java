@@ -12,7 +12,7 @@ public class Debugger {
         for(ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
             if(player.hasPermission("db.debug")) {
                 if(DBVerifier.getInstance().debugMode) {
-                    player.sendMessage(new TextComponent("§8[§aDBVerifier] [§aDEBUG§8] §r" + string));
+                    player.sendMessage(new TextComponent("§8[§aDBVerifier§8] [§aDEBUG§8] §r" + string));
                 }
             }
         }

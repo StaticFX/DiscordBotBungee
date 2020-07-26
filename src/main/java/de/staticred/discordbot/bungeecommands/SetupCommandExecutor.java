@@ -28,7 +28,7 @@ public class SetupCommandExecutor extends Command {
         ProxiedPlayer p = (ProxiedPlayer) sender;
 
         if(!p.hasPermission("db.cmd.setup")) {
-            p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("NoPermission", true)));
+            p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("NoPermissions", true)));
             return;
         }
 
@@ -87,10 +87,9 @@ public class SetupCommandExecutor extends Command {
 
         p.sendMessage(new TextComponent("§aNow let´s check the discord Groups."));
         int groups = DiscordFileManager.INSTANCE.getAllGroups().size();
-        if(groups == 0) {
-            p.sendMessage(new TextComponent("§cThere were 0 groups found, please recheck your discord - names.yml!"));
-            return;
-        }
+        if(groups == 0)
+            p.sendMessage(new TextComponent("§cThere were 0 groups found, please recheck your discord.yml! If this is no error"));
+
 
         p.sendMessage(new TextComponent("§aThere were §c" + groups + " §afound in the config."));
         p.sendMessage(new TextComponent("§aThe plugin will now generate the default values for each §agroup."));

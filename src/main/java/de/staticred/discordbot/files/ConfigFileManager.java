@@ -103,6 +103,13 @@ public class ConfigFileManager {
         return conf.getString("verifyRole");
     }
 
+    public boolean hasVerifyRole() {
+        if(!conf.getString("verifyRole").isEmpty()) return true;
+        if(conf.getLong("verifyRole") != 0) return true;
+        if(conf.getString("verifyRole") != null) return true;
+        return false;
+    }
+
     public long getVerifyRoleAsLong() {
         return conf.getLong("verifyRole");
     }

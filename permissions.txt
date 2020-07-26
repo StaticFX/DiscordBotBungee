@@ -1,7 +1,0 @@
-db.verified =  verified rank
-db.vip = vip rank
-db.youtuber = youtuber rank
-db.friend = friend rank
-db.staff = staff rank
-db.discrodstuff = discord-stuff rank
-db.admin = admin-rank
