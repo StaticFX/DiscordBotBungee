@@ -83,7 +83,9 @@ public class MCVerifyCommandExecutor extends Command {
                 EventManager.instance.fireEvent(event2);
                 if(event2.isCanceled()) return;
 
-
+                if(DBVerifier.getInstance().useSRV) {
+                    DBVerifier.getInstance().bukkitMessageHandler.sendPlayerVerified(p,m.getId());
+                }
 
                 VerifyDAO.INSTANCE.setPlayerAsVerified(p.getUniqueId());
                 VerifyDAO.INSTANCE.addDiscordID(p, m);
@@ -226,11 +228,14 @@ public class MCVerifyCommandExecutor extends Command {
                 UserUnverifiedEvent event = new UserUnverifiedEvent(m,p);
                 EventManager.instance.fireEvent(event);
                 if(event.isCanceled()) return;
+
+                if(DBVerifier.getInstance().useSRV) {
+                    DBVerifier.getInstance().bukkitMessageHandler.sendPlayerUnlinked(p,VerifyDAO.INSTANCE.getDiscordID(p.getUniqueId()));
+                }
+
                 VerifyDAO.INSTANCE.removeDiscordID(p);
                 VerifyDAO.INSTANCE.setPlayerAsUnVerified(p.getUniqueId());
-                if(DBVerifier.getInstance().useSRV) {
 
-                }
             } catch (SQLException e) {
                 p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("InternalError",true)));
                 e.printStackTrace();

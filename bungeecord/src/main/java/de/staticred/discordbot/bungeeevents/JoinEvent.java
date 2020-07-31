@@ -70,7 +70,15 @@ public class JoinEvent implements Listener {
             return;
         }
 
+
+
         try {
+
+            if(DBVerifier.getInstance().useSRV) {
+                if(!VerifyDAO.INSTANCE.isPlayerVerified(player.getUniqueId())) {
+                    DBVerifier.getInstance().bukkitMessageHandler.sendPlayerUnlinked(player);
+                }
+            }
 
             if (!VerifyDAO.INSTANCE.isPlayerInDataBase(player)) {
                 VerifyDAO.INSTANCE.addPlayerAsUnverified(player);

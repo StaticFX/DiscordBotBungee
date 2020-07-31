@@ -4,18 +4,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.staticred.plugins.bungeecord</groupId>
-    <artifactId>DBVerifier</artifactId>
-    <version>1.4.1-Build</version>
+    <groupId>org.example</groupId>
+    <artifactId>DBVerifier-Bungeecord</artifactId>
+    <version>1.5.0</version>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
     <repositories>
-         <repository>
+        <repository>
             <id>central</id>
             <name>bintray</name>
             <url>https://jcenter.bintray.com</url>
+        </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
             <id>bungeecord-repo</id>
@@ -51,7 +55,6 @@
         </plugins>
     </build>
 
-
     <dependencies>
         <dependency>
             <groupId>net.md-5</groupId>
@@ -60,24 +63,16 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-           <groupId>net.dv8tion</groupId>
-           <artifactId>JDA</artifactId>
-           <version>4.2.0_182</version>
-            <scope>compile</scope>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-          <version>2.0.0-alpha1</version>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/com.zaxxer/HikariCP -->
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>3.4.5</version>
-            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.dv8tion</groupId>
+            <artifactId>JDA</artifactId>
+            <version>4.2.0_182</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.json/json -->
         <dependency>
@@ -86,4 +81,5 @@
             <version>20200518</version>
         </dependency>
     </dependencies>
+
 </project>

@@ -1,15 +1,19 @@
 package de.staticred.discordbot.bungeecommands;
 
 import de.staticred.discordbot.DBVerifier;
+import de.staticred.discordbot.bukkitconnectionhandler.BukkitMessageHandler;
 import de.staticred.discordbot.db.DataBaseConnection;
 import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.DiscordFileManager;
+import de.staticred.discordbot.util.Debugger;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
 import javax.security.auth.login.LoginException;
+import java.util.concurrent.TimeUnit;
 
 public class SetupCommandExecutor extends Command {
 
@@ -72,19 +76,45 @@ public class SetupCommandExecutor extends Command {
                 p.sendMessage(new TextComponent("§aNow let´s test the SRV connection"));
                 p.sendMessage(new TextComponent("§aTesting Connection:"));
                 p.sendMessage(new TextComponent(""));
-                if(DataBaseConnection.INSTANCE.connectTest()) {
-                    p.sendMessage(new TextComponent("§aTest succeed ✔"));
-                    p.sendMessage(new TextComponent(""));
-                }else{
-                    p.sendMessage(new TextComponent("§cTest Failed ✖"));
-                    p.sendMessage(new TextComponent("§cBe sure to setup the correct connection details!"));
-                    p.sendMessage(new TextComponent(""));
-                    DBVerifier.getInstance().settingUp.clear();
-                    return;
-                }
+
+
+                if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Sending test message to bukkit server");
+                DBVerifier.getInstance().bukkitMessageHandler.sendConnectTestToBukkit(p);
+
+
+                if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Starting async scheduler, waiting 10 seconds");
+
+                ProxyServer.getInstance().getScheduler().schedule(DBVerifier.getInstance(),() -> {
+                    if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("3 seconds are over");
+
+                    if(!DBVerifier.getInstance().foundSRV) {
+                        p.sendMessage(new TextComponent("§cTest Failed ✖"));
+                        p.sendMessage(new TextComponent("§cTimed out"));
+                        p.sendMessage(new TextComponent("§cThe plugin can't reach out to your bukkit server or the installed srv on the bukkit!"));
+                        p.sendMessage(new TextComponent(""));
+                        DBVerifier.getInstance().settingUp.clear();
+                        DBVerifier.getInstance().srvFailed = true;
+                        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Set setup to failed");
+
+                    }else{
+                        p.sendMessage(new TextComponent("§aTest succeed ✔"));
+                        p.sendMessage(new TextComponent(""));
+                        groupCheck(p);
+
+                    }
+                }, 3, TimeUnit.SECONDS);
+
+            }else{
+                groupCheck(p);
+
             }
         }
 
+
+    }
+
+
+    public void groupCheck(ProxiedPlayer p) {
         p.sendMessage(new TextComponent("§aNow let´s check the discord Groups."));
         int groups = DiscordFileManager.INSTANCE.getAllGroups().size();
         if(groups == 0)

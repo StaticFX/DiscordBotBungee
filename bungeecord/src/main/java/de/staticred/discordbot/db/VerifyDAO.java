@@ -80,7 +80,6 @@ public class VerifyDAO {
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
         PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify WHERE Verified = 1");
-
         ResultSet rs = ps.executeQuery();
 
         int amount = 0;
@@ -88,6 +87,7 @@ public class VerifyDAO {
         while (rs.next()){
             amount += 1;
         }
+
         con.closeConnection();
         ps.close();
         rs.close();
