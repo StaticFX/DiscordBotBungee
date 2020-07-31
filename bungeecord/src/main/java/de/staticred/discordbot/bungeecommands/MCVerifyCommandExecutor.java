@@ -3,7 +3,6 @@ package de.staticred.discordbot.bungeecommands;
 import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.api.EventManager;
 import de.staticred.discordbot.db.RewardsDAO;
-import de.staticred.discordbot.db.SRVDAO;
 import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.event.UserClickedMessageEvent;
 import de.staticred.discordbot.event.UserUnverifiedEvent;
@@ -21,7 +20,6 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
-import sun.rmi.rmic.Main;
 
 import java.awt.*;
 import java.sql.SQLException;
@@ -89,7 +87,6 @@ public class MCVerifyCommandExecutor extends Command {
 
                 VerifyDAO.INSTANCE.setPlayerAsVerified(p.getUniqueId());
                 VerifyDAO.INSTANCE.addDiscordID(p, m);
-                if(DBVerifier.getInstance().useSRV) SRVDAO.INSTANCE.link(p,m.getId());
             } catch (SQLException e) {
                 p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("InternalError",true)));
                 e.printStackTrace();
@@ -231,8 +228,9 @@ public class MCVerifyCommandExecutor extends Command {
                 if(event.isCanceled()) return;
                 VerifyDAO.INSTANCE.removeDiscordID(p);
                 VerifyDAO.INSTANCE.setPlayerAsUnVerified(p.getUniqueId());
-                if(DBVerifier.getInstance().useSRV)
-                SRVDAO.INSTANCE.unlink(p);
+                if(DBVerifier.getInstance().useSRV) {
+
+                }
             } catch (SQLException e) {
                 p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("InternalError",true)));
                 e.printStackTrace();

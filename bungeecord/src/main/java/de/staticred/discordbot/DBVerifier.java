@@ -2,6 +2,7 @@ package de.staticred.discordbot;
 
 import de.staticred.discordbot.api.EventManager;
 import de.staticred.discordbot.api.VerifyAPI;
+import de.staticred.discordbot.bukkitconnectionhandler.BukkitMessageHandler;
 import de.staticred.discordbot.bungeecommands.dbcommand.DBCommandExecutor;
 import de.staticred.discordbot.bungeecommands.MCVerifyCommandExecutor;
 import de.staticred.discordbot.bungeecommands.SetupCommandExecutor;
@@ -67,13 +68,27 @@ public class DBVerifier extends Plugin {
     public Activity activity;
 
     //the version of the internal file system
-    public final static String configVersion = "1.1.1";
+    public final static String configVersion = "1.1.2";
     public final static String msgVersion = "1.0.2";
 
     //the version of the database
     public final static String DATABASE_VERSION = "1.0.0";
 
+    //debug mode of the plugin
     public boolean debugMode = false;
+
+    //the name of the channel which is used to communicate with the bukkit subserver for a discordsrv connection
+    public static final String PLUGIN_CHANNEL_NAME = "dbverifier:bungeecord";
+
+    //this object is handling the messaging
+    public BukkitMessageHandler bukkitMessageHandler;
+
+    //this will store the last message which got send from a bukkit
+    public String lastMessageFromBukkit;
+
+    public boolean foundSRV = false;
+
+    public boolean srvFailed = false;
 
     @Override
     public void onEnable() {
@@ -99,6 +114,11 @@ public class DBVerifier extends Plugin {
         BlockedServerFileManager.INSTANCE.loadFile();
 
         setuped = ConfigFileManager.INSTANCE.isSetuped();
+
+        bukkitMessageHandler = new BukkitMessageHandler();
+
+        getProxy().registerChannel(PLUGIN_CHANNEL_NAME);
+        getProxy().getPluginManager().registerListener(this, bukkitMessageHandler);
 
         if(ConfigFileManager.INSTANCE.useSQL() && setuped) {
             if(!DataBaseConnection.INSTANCE.connectTest())  {
@@ -129,6 +149,21 @@ public class DBVerifier extends Plugin {
 
         Metrics metrics = new Metrics(this, 	5843);
         metrics.addCustomChart(new Metrics.SingleLineChart("groups_registered", () -> DiscordFileManager.INSTANCE.getAllGroups().size()));
+
+
+        if(setuped) {
+            int verifed = 0;
+            try {
+                verifed = VerifyDAO.INSTANCE.getAmountOfVerifiedPlayers();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            int finalVerifed = verifed;
+            metrics.addCustomChart(new Metrics.SingleLineChart("players_verified", () -> finalVerifed));
+        }
+
+
 
         Debugger.debugMessage("Using metrics: " + metrics.isEnabled());
 
@@ -321,6 +356,8 @@ public class DBVerifier extends Plugin {
                     }
 
 
+                } else {
+                    if(debugMode) Debugger.debugMessage("Player does not have permission.");
                 }
 
             }else{
@@ -399,6 +436,4 @@ public class DBVerifier extends Plugin {
             }
         }
     }
-
-
 }

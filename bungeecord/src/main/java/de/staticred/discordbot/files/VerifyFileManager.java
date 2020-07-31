@@ -160,4 +160,15 @@ public class VerifyFileManager {
     public boolean getRewardState(UUID uuid) {
         return conf.getBoolean(uuid.toString() + ".rewarded");
     }
+
+    public int getAmountOfVerifiedPlayers() {
+        int amount = 0;
+        for(String key : conf.getKeys()) {
+            if(isPlayerVerified(UUID.fromString(key))) {
+                amount += 0;
+            }
+        }
+
+        return amount;
+    }
 }

@@ -17,4 +17,9 @@ public class Debugger {
             }
         }
     }
+
+
+    public static void debugMessage(Object string) {
+        debugMessage(string.toString());
+    }
 }

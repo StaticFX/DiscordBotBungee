@@ -73,6 +73,27 @@ public class VerifyDAO {
         con.closeConnection();
     }
 
+    public int getAmountOfVerifiedPlayers() throws SQLException {
+
+        if(!sql) return VerifyFileManager.INSTANCE.getAmountOfVerifiedPlayers();
+
+        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        con.connect();
+        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify WHERE Verified = 1");
+
+        ResultSet rs = ps.executeQuery();
+
+        int amount = 0;
+
+        while (rs.next()){
+            amount += 1;
+        }
+        con.closeConnection();
+        ps.close();
+        rs.close();
+        return amount;
+    }
+
     public boolean doesColumnExist(String column) throws SQLException {
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();

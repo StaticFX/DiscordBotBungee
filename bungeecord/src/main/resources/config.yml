@@ -1,4 +1,4 @@
-#DiscordBot Bungee Config Version 1.0.9
+#DiscordBot Bungee Config Version 1.1.2
 
 #sql
 UseSQL: true
@@ -8,11 +8,6 @@ SQL_DATABASE: "discordbot"
 SQL_HOST: ""
 SQL_PORT: ""
 USE_DISCORDSRV: false
-SRV_USER: "root"
-SRV_PASSWORD: ""
-SRV_HOST: "localhost"
-SRV_PORT: "3306"
-SRV_DATABASE: "discordsrv"
 
 #settings
 prefix: "&8[&6DiscordBot&8] "
@@ -28,4 +23,4 @@ channelID: ""
 forceCleanChannel: false
 #never edit!
 Setuped: false
-configVersion: "1.1.1"
+configVersion: "1.1.2"

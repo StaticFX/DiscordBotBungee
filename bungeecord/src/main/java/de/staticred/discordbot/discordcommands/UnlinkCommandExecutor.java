@@ -1,15 +1,18 @@
 package de.staticred.discordbot.discordcommands;
 
 import de.staticred.discordbot.DBVerifier;
-import de.staticred.discordbot.db.SRVDAO;
 import de.staticred.discordbot.db.VerifyDAO;
+import de.staticred.discordbot.util.Debugger;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.awt.*;
 import java.sql.SQLException;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class UnlinkCommandExecutor {
@@ -48,10 +51,31 @@ public class UnlinkCommandExecutor {
 
         DBVerifier.INSTANCE.removeAllRolesFromMember(m);
 
+
+        UUID uuid;
+
+        try {
+            uuid = UUID.fromString(VerifyDAO.INSTANCE.getUUIDByDiscordID(m.getId()));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
+
+        if(player != null) {
+            if(DBVerifier.getInstance().useSRV) {
+                DBVerifier.getInstance().bukkitMessageHandler.sendPlayerUnlinked(player,m.getId());
+            }
+        }else{
+            Debugger.debugMessage("A member unlinked himself from a account which is not present on the network. The player will get unlinked on the next reconnect.");
+        }
+
+
+
         try {
             VerifyDAO.INSTANCE.setPlayerAsUnverified(m.getId());
             VerifyDAO.INSTANCE.removeDiscordIDByDiscordID(m);
-            if(DBVerifier.getInstance().useSRV) SRVDAO.INSTANCE.unlink(m.getId());
         } catch (SQLException e) {
             e.printStackTrace();
             return;
