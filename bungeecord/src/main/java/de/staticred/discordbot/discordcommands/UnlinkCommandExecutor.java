@@ -2,6 +2,8 @@ package de.staticred.discordbot.discordcommands;
 
 import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.db.VerifyDAO;
+import de.staticred.discordbot.files.ConfigFileManager;
+import de.staticred.discordbot.files.DiscordMessageFileManager;
 import de.staticred.discordbot.util.Debugger;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -26,20 +28,34 @@ public class UnlinkCommandExecutor {
         EmbedBuilder embedBuilder = new EmbedBuilder();
 
         if(args.length != 1) {
-            embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("UnlinkDiscordSyntax",false) + m.getAsMention());
-            embedBuilder.setColor(Color.red);
-            tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
-            command.delete().queueAfter(10,TimeUnit.SECONDS);
+            int time = ConfigFileManager.INSTANCE.getTime();
+
+
+            if(time != -1) {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UnlinkDiscordSyntax")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                command.delete().queueAfter(time,TimeUnit.SECONDS);
+            } else {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UnlinkDiscordSyntax")).queue();
+                command.delete().queue();
+            }
+
+
             return;
         }
 
 
         try {
             if(!VerifyDAO.INSTANCE.isDiscordIDInUse(m.getId())) {
-                embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("NotVerifiedYet",false) + m.getAsMention());
-                embedBuilder.setColor(Color.red);
-                tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10,TimeUnit.SECONDS));
-                command.delete().queueAfter(10,TimeUnit.SECONDS);
+                int time = ConfigFileManager.INSTANCE.getTime();
+
+                if(time != -1) {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedYet")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                    command.delete().queueAfter(time,TimeUnit.SECONDS);
+                } else {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedYet")).queue();
+                    command.delete().queue();
+                }
+
                 return;
             }
         } catch (SQLException e) {
@@ -81,10 +97,15 @@ public class UnlinkCommandExecutor {
             return;
         }
 
-        embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("SuccessfullyUnlinked",false) + m.getAsMention());
-        embedBuilder.setColor(Color.green);
-        tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
-        command.delete().queueAfter(10,TimeUnit.SECONDS);
+        int time = ConfigFileManager.INSTANCE.getTime();
+
+        if(time != -1) {
+            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SuccessfullyUnlinked")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+            command.delete().queueAfter(time,TimeUnit.SECONDS);
+        } else {
+            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SuccessfullyUnlinked")).queue();
+            command.delete().queue();
+        }
 
     }
 

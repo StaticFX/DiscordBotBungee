@@ -10,20 +10,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 
-public class MessagesFileManager {
-    private File file = new File(DBVerifier.getInstance().getDataFolder().getAbsolutePath() + "/messages", "MinecraftMessages.yml");
+public class SetupFileManager {
+
+
+    private File file = new File(DBVerifier.getInstance().getDataFolder().getAbsolutePath(), "setup.yml");
     private Configuration conf;
-    public static MessagesFileManager INSTANCE = new MessagesFileManager();
-
-    public static MessagesFileManager getInstance() {
-        return INSTANCE;
-    }
-
+    public static SetupFileManager INSTANCE = new SetupFileManager();
 
     public void loadFile() {
         if(!file.exists()) {
             file.getParentFile().mkdirs();
-            try(InputStream in = getClass().getClassLoader().getResourceAsStream("MinecraftMessages.yml")) {
+            try(InputStream in = getClass().getClassLoader().getResourceAsStream("setup.yml")) {
                 Files.copy(in,file.toPath());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -35,25 +32,23 @@ public class MessagesFileManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        saveFile();
     }
 
-    public void saveFile() {
+    public void saveFile() throws IOException {
+        ConfigurationProvider.getProvider(YamlConfiguration.class).save(conf,file);
+    }
+
+    public void setSetup(boolean state) {
+        conf.set("setup",state);
         try {
-            ConfigurationProvider.getProvider(YamlConfiguration.class).save(conf,file);
+            saveFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public String getString(String path) {
-        return conf.getString(path);
+    public boolean isSetup() {
+        return conf.getBoolean("setup");
     }
-
-    public String getVersion() {
-        return conf.getString("version");
-    }
-
 
 }

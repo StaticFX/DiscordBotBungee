@@ -2,6 +2,8 @@ package de.staticred.discordbot.discordcommands;
 
 import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.db.VerifyDAO;
+import de.staticred.discordbot.files.ConfigFileManager;
+import de.staticred.discordbot.files.DiscordMessageFileManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -23,20 +25,30 @@ public class UpdateCommandExecutor {
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
         if(args.length != 1) {
-            embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("UpdateDiscordSyntax",false) + m.getAsMention());
-            embedBuilder.setColor(Color.red);
-            tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
-            command.delete().queueAfter(10,TimeUnit.SECONDS);
+            int time = ConfigFileManager.INSTANCE.getTime();
+
+            if(time != -1) {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UpdateDiscordSyntax")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                command.delete().queueAfter(time,TimeUnit.SECONDS);
+            } else {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UpdateDiscordSyntax")).queue();
+                command.delete().queue();
+            }
             return;
         }
 
 
         try {
             if(!VerifyDAO.INSTANCE.isDiscordIDInUse(m.getId())) {
-                embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("NotVerifiedYet",false) + m.getAsMention());
-                embedBuilder.setColor(Color.red);
-                tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
-                command.delete().queueAfter(10,TimeUnit.SECONDS);
+                int time = ConfigFileManager.INSTANCE.getTime();
+
+                if(time != -1) {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedYet")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                    command.delete().queueAfter(time,TimeUnit.SECONDS);
+                } else {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedYet")).queue();
+                    command.delete().queue();
+                }
                 return;
             }
         } catch (SQLException e) {
@@ -65,20 +77,30 @@ public class UpdateCommandExecutor {
 
         if(DBVerifier.INSTANCE.syncNickname) {
             if(m.isOwner()) {
-                embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("NoInquiries",false));
-                embedBuilder.setColor(Color.RED);
-                tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
-                command.delete().queueAfter(10,TimeUnit.SECONDS);
+                int time = ConfigFileManager.INSTANCE.getTime();
+
+                if(time != -1) {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NoInquiries")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                    command.delete().queueAfter(time,TimeUnit.SECONDS);
+                } else {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NoInquiries")).queue();
+                    command.delete().queue();
+                }
             }else {
                 m.getGuild().modifyNickname(m,target.getName()).queue();
             }
         }
 
 
-        embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("UpdatedRank",false) + m.getAsMention());
-        embedBuilder.setColor(Color.green);
-        tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
-        command.delete().queueAfter(10,TimeUnit.SECONDS);
+        int time = ConfigFileManager.INSTANCE.getTime();
+
+        if(time != -1) {
+            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UpdatedRank")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+            command.delete().queueAfter(time,TimeUnit.SECONDS);
+        } else {
+            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UpdatedRank")).queue();
+            command.delete().queue();
+        }
         return;
     }
 }

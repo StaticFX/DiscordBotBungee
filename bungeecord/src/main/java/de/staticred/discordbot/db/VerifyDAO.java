@@ -152,9 +152,9 @@ public class VerifyDAO {
                 con.closeConnection();
                 return version;
             }
-            con.closeConnection();
             ps.close();
             rs.close();
+            con.closeConnection();
             return null;
         }catch (Exception e) {
             return null;

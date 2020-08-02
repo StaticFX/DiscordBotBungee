@@ -31,19 +31,6 @@ public class ConfigFileManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-
-        saveFile();
-    }
-
-
-    public void saveFile() {
-        try {
-            ConfigurationProvider.getProvider(YamlConfiguration.class).save(conf,file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 
@@ -74,21 +61,12 @@ public class ConfigFileManager {
         return conf.getString("SQL_HOST");
     }
 
-    public int getPort() {
-        return conf.getInt("SQL_PORT");
+    public String getPort() {
+        return conf.getString("SQL_PORT");
     }
     
     public boolean useSRV() {
         return conf.getBoolean("USE_DISCORDSRV");
-    }
-
-    public boolean isSetuped() {
-        return conf.getBoolean("Setuped");
-    }
-
-    public void setSetuped(boolean setuped) {
-        conf.set("Setuped",setuped);
-        saveFile();
     }
 
     public String getConfigVersion() {
@@ -108,6 +86,10 @@ public class ConfigFileManager {
         if(conf.getLong("verifyRole") != 0) return true;
         if(conf.getString("verifyRole") != null) return true;
         return false;
+    }
+
+    public int getTime() {
+        return conf.getInt("deleteMessages");
     }
 
     public long getVerifyRoleAsLong() {

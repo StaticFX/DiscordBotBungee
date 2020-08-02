@@ -12,8 +12,7 @@ import java.sql.SQLException;
 public class DataBaseConnection {
 
     private Connection connection;
-    String user, password,url, host;
-    int port;
+    String url, host, port;
 
     public final static DataBaseConnection INSTANCE = new DataBaseConnection();
     private HikariDataSource  source;
@@ -29,6 +28,7 @@ public class DataBaseConnection {
         url = ConfigFileManager.INSTANCE.getDataBase();
         host = ConfigFileManager.INSTANCE.getHost();
         port = ConfigFileManager.INSTANCE.getPort();
+        System.out.println("jdbc:mysql://" + host + ":" + port + "/" + url);
         config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + url);
     }
 

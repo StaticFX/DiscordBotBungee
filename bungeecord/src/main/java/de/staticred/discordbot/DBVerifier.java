@@ -113,7 +113,11 @@ public class DBVerifier extends Plugin {
 
         BlockedServerFileManager.INSTANCE.loadFile();
 
-        setuped = ConfigFileManager.INSTANCE.isSetuped();
+        DiscordMessageFileManager.INSTANCE.loadFile();
+
+        SetupFileManager.INSTANCE.loadFile();
+
+        setuped = SetupFileManager.INSTANCE.isSetup();
 
         bukkitMessageHandler = new BukkitMessageHandler();
 
@@ -238,7 +242,7 @@ public class DBVerifier extends Plugin {
 
         if(jda != null)
             jda.shutdownNow();
-        if(ConfigFileManager.INSTANCE.isSetuped()) {
+        if(SetupFileManager.INSTANCE.isSetup()) {
             DataBaseConnection.INSTANCE.closeConnection();
         }
 

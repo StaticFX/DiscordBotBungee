@@ -1,22 +1,3 @@
-#discord messaging
-DCMemberIsOwner: "You can´t update your name because you are the server owner "
-VerifyDiscordSyntax: "Use !verify [name] "
-AlreadyLinked: "This discord account is already linked "
-SearchingForPlayer: "Searching for player '%name%' on the network... "
-PlayerNotFound: "The player '%name%' was not found on the network "
-AlreadyVerified: "The player '%name%' is already verified "
-SendInquiry: "The player '%name%' got an inquiry "
-AlreadyInquiry: "The player '%name%' got already an inquiry "
-FoundPlayer: "The player '%name%' was found, please accept the ingame message "
-UpdateDiscordSyntax: "Please use !update "
-NotVerifiedYet: "You are not verified yet "
-UpdatedRank: "You successfully updated your rank "
-UnlinkDiscordSyntax: "Please use !unlink "
-SuccessfullyUnlinked: "You successfully unlinked yourself"
-CantVerifyOnThisServer: "You can't verify yourself on this subserver!"
-#leave empty for no
-JoinMessage: "Welcome to our network! Use !verify [ingameName] to verify yourself!"
-
 #minecraft messaging
 MemberIsOwner: "&8[&4WARNING&8] &cYour discord account is the owner of the &cdiscord server. &cThe bot can´t edit your name to §csync it."
 NoInquiries: "&cYou don´t have any pending inquiries."

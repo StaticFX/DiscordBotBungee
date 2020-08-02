@@ -4,6 +4,7 @@ import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.files.BlockedServerFileManager;
 import de.staticred.discordbot.files.ConfigFileManager;
+import de.staticred.discordbot.files.DiscordMessageFileManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -31,12 +32,17 @@ public class VerifyCommandExecutor {
 
         if(!DBVerifier.getInstance().setuped) return;
 
+        int time = ConfigFileManager.INSTANCE.getTime();
+
         if(args.length != 2) {
-            EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("VerifyDiscordSyntax",false) + m.getAsMention());
-            embedBuilder.setColor(Color.red);
-            tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
-            command.delete().queueAfter(10, TimeUnit.SECONDS);
+
+            if(time != -1) {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("VerifyDiscordSyntax")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                command.delete().queueAfter(time,TimeUnit.SECONDS);
+            } else {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("VerifyDiscordSyntax")).queue();
+                command.delete().queue();
+            }
             return;
         }
 
@@ -46,11 +52,14 @@ public class VerifyCommandExecutor {
 
         try {
             if(VerifyDAO.INSTANCE.isDiscordIDInUse(m.getId())) {
-                EmbedBuilder embedBuilder = new EmbedBuilder();
-                embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("AlreadyLinked",false) + m.getAsMention());
-                embedBuilder.setColor(Color.red);
-                tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
-                command.delete().queueAfter(10, TimeUnit.SECONDS);
+
+                if(time != -1) {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyLinked")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                    command.delete().queueAfter(time,TimeUnit.SECONDS);
+                } else {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyLinked")).queue();
+                    command.delete().queue();
+                }
                 return;
             }
         } catch (SQLException ex) {
@@ -58,25 +67,36 @@ public class VerifyCommandExecutor {
             return;
         }
 
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("SearchingForPlayer",false).replaceAll("%name%",name) + m.getAsMention());
-        embedBuilder.setColor(Color.orange);
-        tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
+
+        if(time != -1) {
+            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SearchingForPlayer", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+            command.delete().queueAfter(time,TimeUnit.SECONDS);
+        } else {
+            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SearchingForPlayer", name)).queue();
+            command.delete().queue();
+        }
 
         if(player == null) {
-            embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("PlayerNotFound",false).replaceAll("%name%",name) + m.getAsMention());
-            embedBuilder.setColor(Color.red);
-            tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
-            command.delete().queueAfter(10,TimeUnit.SECONDS);
+
+            if(time != -1) {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("PlayerNotFound", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                command.delete().queueAfter(time,TimeUnit.SECONDS);
+            } else {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("PlayerNotFound", name)).queue();
+                command.delete().queue();
+            }
             return;
         }
 
         try {
             if(VerifyDAO.INSTANCE.isPlayerVerified(player.getUniqueId())) {
-                embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("AlreadyVerified",false).replaceAll("%name%",name) + m.getAsMention());
-                embedBuilder.setColor(Color.red);
-                tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
-                command.delete().queueAfter(10,TimeUnit.SECONDS);
+                if(time != -1) {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyVerified", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                    command.delete().queueAfter(time,TimeUnit.SECONDS);
+                } else {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyVerified", name)).queue();
+                    command.delete().queue();
+                }
                 return;
             }
         } catch (SQLException ex) {
@@ -85,31 +105,44 @@ public class VerifyCommandExecutor {
         }
 
         if(DBVerifier.getInstance().playerChannelHashMap.containsKey(player)) {
-            embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("SendInquiry",false).replaceAll("%name%",name) + m.getAsMention());
-            embedBuilder.setColor(Color.red);
-            tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
-            command.delete().queueAfter(10,TimeUnit.SECONDS);
+            if(time != -1) {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SendInquiry", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                command.delete().queueAfter(time,TimeUnit.SECONDS);
+            } else {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SendInquiry", name)).queue();
+                command.delete().queue();
+            }
             return;
         }
         if(DBVerifier.getInstance().playerMemberHashMap.containsKey(player)) {
-            embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("AlreadyInquiry",false).replaceAll("%name%",name) + m.getAsMention());
-            embedBuilder.setColor(Color.red);
-            tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
-            command.delete().queueAfter(10,TimeUnit.SECONDS);
+            if(time != -1) {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyInquiry", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                command.delete().queueAfter(time,TimeUnit.SECONDS);
+            } else {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyInquiry", name)).queue();
+                command.delete().queue();
+            }
             return;
         }
 
         if(BlockedServerFileManager.INSTANCE.getBlockedServers().contains(player.getServer().getInfo().getName())) {
-            embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("CantVerifyOnThisServer",false).replaceAll("%name%",name) + m.getAsMention());
-            embedBuilder.setColor(Color.red);
-            tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
-            command.delete().queueAfter(10,TimeUnit.SECONDS);
+            if(time != -1) {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("CantVerifyOnThisServer", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                command.delete().queueAfter(time,TimeUnit.SECONDS);
+            } else {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("CantVerifyOnThisServer", name)).queue();
+                command.delete().queue();
+            }
             return;
         }
 
-        embedBuilder.setDescription(DBVerifier.getInstance().getStringFromConfig("FoundPlayer",false).replaceAll("%name%",name) + m.getAsMention());
-        embedBuilder.setColor(Color.green);
-        tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
+        if(time != -1) {
+            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("FoundPlayer", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+            command.delete().queueAfter(time,TimeUnit.SECONDS);
+        } else {
+            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("FoundPlayer", name)).queue();
+            command.delete().queue();
+        }
         command.delete().queueAfter(10,TimeUnit.SECONDS);
 
         player.sendMessage(new net.md_5.bungee.api.chat.TextComponent(DBVerifier.getInstance().getStringFromConfig("PendingInquiry",true).replaceAll("%user%",m.getEffectiveName())));

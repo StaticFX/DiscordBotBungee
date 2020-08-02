@@ -19,7 +19,7 @@ public class RewardsDAO {
         }
 
 
-            DataBaseConnection con = DataBaseConnection.INSTANCE;
+        DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.connect();
         con.executeUpdate("CREATE TABLE IF NOT EXISTS rewards(UUID VARCHAR(36) PRIMARY KEY, playerRewarded BOOLEAN)");
         con.closeConnection();

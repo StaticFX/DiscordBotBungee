@@ -8,6 +8,8 @@ import de.staticred.discordbot.event.UserClickedMessageEvent;
 import de.staticred.discordbot.event.UserUnverifiedEvent;
 import de.staticred.discordbot.event.UserVerifiedEvent;
 import de.staticred.discordbot.files.BlockedServerFileManager;
+import de.staticred.discordbot.files.ConfigFileManager;
+import de.staticred.discordbot.files.DiscordMessageFileManager;
 import de.staticred.discordbot.files.RewardsFileManager;
 import de.staticred.discordbot.util.MemberManager;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -97,8 +99,12 @@ public class MCVerifyCommandExecutor extends Command {
 
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setDescription("You have been verified " + m.getAsMention());
-            embedBuilder.setColor(Color.green);
-            tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
+            int time = ConfigFileManager.INSTANCE.getTime();
+            if(time != -1) {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("Verifed")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+            } else {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("Verifed")).queue();
+            }
             DBVerifier.getInstance().playerChannelHashMap.remove(p);
             DBVerifier.getInstance().playerMemberHashMap.remove(p);
 
@@ -130,10 +136,12 @@ public class MCVerifyCommandExecutor extends Command {
             DBVerifier.getInstance().playerChannelHashMap.remove(p);
             DBVerifier.getInstance().playerMemberHashMap.remove(p);
             p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("Declined",true)));
-            EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setDescription("The inquiry has been denied " + m.getAsMention());
-            embedBuilder.setColor(Color.red);
-            tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10,TimeUnit.SECONDS));
+            int time = ConfigFileManager.INSTANCE.getTime();
+            if(time != -1) {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("InquiryHasBeenDenied")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+            } else {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("InquiryHasBeenDenied")).queue();
+            }
             return;
         } else if (args[0].equalsIgnoreCase("update")) {
             try {

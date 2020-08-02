@@ -5,6 +5,7 @@ import de.staticred.discordbot.bukkitconnectionhandler.BukkitMessageHandler;
 import de.staticred.discordbot.db.DataBaseConnection;
 import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.DiscordFileManager;
+import de.staticred.discordbot.files.SetupFileManager;
 import de.staticred.discordbot.util.Debugger;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -130,6 +131,6 @@ public class SetupCommandExecutor extends Command {
         p.sendMessage(new TextComponent("§aThe setup is now finished, after you edited, be sure to §arestart §ayour proxy."));
 
         DBVerifier.getInstance().settingUp.clear();
-        ConfigFileManager.INSTANCE.setSetuped(true);
+        SetupFileManager.INSTANCE.setSetup(true);
     }
 }

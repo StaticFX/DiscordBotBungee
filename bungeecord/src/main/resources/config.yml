@@ -11,16 +11,41 @@ USE_DISCORDSRV: false
 
 #settings
 prefix: "&8[&6DiscordBot&8] "
+
+#token used to control your bot, if you have no idea how to get it, watch my tutorial
 bot-token: ""
+
+#Valid types: playing, listening, watching, streaming
 discordBotActivityType: "listening"
+
+#the activity the bot is doing
 discordBotActivity: "!help"
+
+#only needed when activitytype streaming is used
 streamingLink: ""
+
+#command for ingame /discord accept for example
 verifycommand: "discord"
+
+#if the bot should sync nicknames between mc and dc
 syncNickName: true
+
+#if the bot should use id/tokens for discord-roles
 useTokens: false
+
+#the role every player will get when verified
 verifyRole: ""
+
+#the channel id where the bot will listen for commands
 channelID: ""
+
+#if the command channel should be clean or not
 forceCleanChannel: false
+
+#how long the bot should wait to delete a message (messages that have to do with the bot)
+# 0 for instant delete
+# -1 for no delete
+# above 0 for waiting
+deleteMessages: 10
 #never edit!
-Setuped: false
 configVersion: "1.1.2"
