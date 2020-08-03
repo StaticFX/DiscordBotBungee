@@ -62,6 +62,16 @@ public class DBVerifier extends JavaPlugin implements PluginMessageListener {
             System.out.println("unlinked " + name + " in srv");
         }
 
+        if(subchannel.equals("request")) {
+            JSONObject jsonObject = new JSONObject(data);
+            String uuid = jsonObject.getString("uuid");
+
+            boolean verified = srv.getAccountLinkManager().getDiscordId(UUID.fromString(uuid)) == null;
+            sendToBungee(player,"test","{\"uuid\": \"" + uuid + "\", \"verified\": " + verified + "}");
+
+
+        }
+
         if (subchannel.equals("test")) {
             sendToBungee(player,"test","{\"test\":true}");
         }

@@ -12,6 +12,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import org.json.JSONObject;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -43,6 +44,13 @@ public class BukkitMessageHandler implements Listener {
         player.getServer().getInfo().sendData(DBVerifier.PLUGIN_CHANNEL_NAME, out.toByteArray());
     }
 
+    public void sendPlayerVerifedRequest(ProxiedPlayer player) {
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF( "request");
+        out.writeUTF("{\"uuid\": \"" + player.getUniqueId().toString() + "\"}");
+        player.getServer().getInfo().sendData(DBVerifier.PLUGIN_CHANNEL_NAME, out.toByteArray());
+    }
+
 
     @EventHandler
     public void onMessageReceived(PluginMessageEvent e) {
@@ -70,6 +78,20 @@ public class BukkitMessageHandler implements Listener {
             DBVerifier.getInstance().lastMessageFromBukkit = data;
 
         }
+
+        if(subChannel.equals("requestAnswer")) {
+            if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Received message from Bukkit-Subserver: " + e.getSender().getSocketAddress());
+            String data = in.readUTF();
+            if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Input: " + data);
+
+            JSONObject object = new JSONObject(data);
+            String uuid = object.getString("uuid");
+            boolean verifedOnSrv = object.getBoolean("verified");
+
+            DBVerifier.getInstance().playerSRVVerifiedHashMap.put(UUID.fromString(uuid),verifedOnSrv);
+
+        }
+
         if(subChannel.equals("test")) {
 
             if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Received message from Bukkit-Subserver: " + e.getSender().getSocketAddress());

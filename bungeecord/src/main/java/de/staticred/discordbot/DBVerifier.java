@@ -6,6 +6,7 @@ import de.staticred.discordbot.bukkitconnectionhandler.BukkitMessageHandler;
 import de.staticred.discordbot.bungeecommands.dbcommand.DBCommandExecutor;
 import de.staticred.discordbot.bungeecommands.MCVerifyCommandExecutor;
 import de.staticred.discordbot.bungeecommands.SetupCommandExecutor;
+import de.staticred.discordbot.bungeeevents.ChangedBukkitServerEvent;
 import de.staticred.discordbot.bungeeevents.JoinEvent;
 import de.staticred.discordbot.bungeeevents.LeaveEvent;
 import de.staticred.discordbot.db.*;
@@ -31,11 +32,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class DBVerifier extends Plugin {
 
 
-    //TODO: Update a player (SRV) when he swappes servers
     //TODO: Add a DiscordCommand (!info), gives everything the plugin knows about the discord member
 
     //the instance of this howl plugin
@@ -93,6 +94,8 @@ public class DBVerifier extends Plugin {
     public boolean foundSRV = false;
 
     public boolean srvFailed = false;
+
+    public HashMap<UUID, Boolean> playerSRVVerifiedHashMap = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -263,6 +266,8 @@ public class DBVerifier extends Plugin {
     public void loadBungeeEvents() {
         getProxy().getPluginManager().registerListener(this,new JoinEvent());
         getProxy().getPluginManager().registerListener(this,new LeaveEvent());
+        getProxy().getPluginManager().registerListener(this,new ChangedBukkitServerEvent());
+
     }
 
 
