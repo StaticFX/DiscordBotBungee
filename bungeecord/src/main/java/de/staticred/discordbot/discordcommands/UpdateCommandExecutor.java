@@ -61,11 +61,15 @@ public class UpdateCommandExecutor {
             e.printStackTrace();
         }
 
+        int time = ConfigFileManager.INSTANCE.getTime();
+
         if(target == null) {
-            embedBuilder.setDescription("Error. Please be on the server to update your rank!");
-            embedBuilder.setColor(Color.green);
-            tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
-            command.delete().queueAfter(10,TimeUnit.SECONDS);
+            if(time != -1) {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("MustBeOnServer")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                command.delete().queueAfter(time,TimeUnit.SECONDS);
+            }else {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("MustBeOnServer")).queue();
+            }
             return;
         }
 
@@ -75,7 +79,6 @@ public class UpdateCommandExecutor {
 
         if(DBVerifier.INSTANCE.syncNickname) {
             if(m.isOwner()) {
-                int time = ConfigFileManager.INSTANCE.getTime();
 
                 if(time != -1) {
                     tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NoInquiries")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
@@ -88,8 +91,6 @@ public class UpdateCommandExecutor {
             }
         }
 
-
-        int time = ConfigFileManager.INSTANCE.getTime();
 
         if(time != -1) {
             tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UpdatedRank")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));

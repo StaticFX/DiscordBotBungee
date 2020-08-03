@@ -1,5 +1,6 @@
 package de.staticred.discordbot.discordcommands;
 
+import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.DiscordMessageFileManager;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -36,7 +37,10 @@ public class HelpCommandExecutor {
             return;
         }
 
-        embedBuilder.setDescription("!help -> list of all commands\n!verify -> synchronise your discord rank with your minecraft rank\n!unlink -> unlink from your mc account\n!update -> update your discord rank");
+        String prefix = ConfigFileManager.INSTANCE.getCommandPrefix();
+
+        embedBuilder.setDescription( prefix + "help -> list of all commands\n" + prefix + "verify -> synchronise your discord rank with your minecraft rank\n" + prefix +"unlink -> unlink from your mc account\n" + prefix + "update -> update your discord rank\n" + prefix + "info -> gives information about a linked player/member");
+        embedBuilder.setFooter("DBVerifier " + DBVerifier.pluginVersion + " by StaticRed.");
         embedBuilder.setColor(Color.GREEN);
 
         int time = ConfigFileManager.INSTANCE.getTime();

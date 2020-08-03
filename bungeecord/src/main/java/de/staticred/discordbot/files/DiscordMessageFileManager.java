@@ -98,6 +98,7 @@ public class DiscordMessageFileManager {
         String title = object.getString("title");
         String description = object.getString("description");
         String color = object.getString("color");
+        String footer = object.getString("footer");
 
         Color colorObj;
         try {
@@ -111,15 +112,18 @@ public class DiscordMessageFileManager {
         builder.setTitle(title);
         builder.setDescription(description);
         builder.setColor(colorObj);
+        builder.setFooter(footer);
 
         return builder.build();
     }
 
-    public MessageEmbed getEmbedInformationPlayer(String path, String name, String id, String uuid, String tagline) {
-        JSONObject object = new JSONObject(getString(path).replaceAll("%name%",name).replaceAll("%id%", id).replaceAll("%uuid%",uuid).replaceAll("%tag%",tagline));
+    public MessageEmbed getEmbedInformationPlayer(String path, String name, String id, String uuid, String tagline, String member) {
+        JSONObject object = new JSONObject(getString(path).replaceAll("%name%",name).replaceAll("%id%", id).replaceAll("%uuid%",uuid).replaceAll("%tag%",tagline).replaceAll("%member%",member));
         String title = object.getString("title");
         String description = object.getString("description");
         String color = object.getString("color");
+        String footer = object.getString("footer");
+
 
         Color colorObj;
         try {
@@ -133,6 +137,7 @@ public class DiscordMessageFileManager {
         builder.setTitle(title);
         builder.setDescription(description);
         builder.setColor(colorObj);
+        builder.setFooter(footer);
 
         return builder.build();
     }

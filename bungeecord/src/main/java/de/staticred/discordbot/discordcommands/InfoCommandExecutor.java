@@ -1,8 +1,10 @@
 package de.staticred.discordbot.discordcommands;
 
+import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.DiscordMessageFileManager;
+import de.staticred.discordbot.util.Debugger;
 import de.staticred.discordbot.util.MemberManager;
 import de.staticred.discordbot.util.UUIDFetcher;
 import net.dv8tion.jda.api.entities.Member;
@@ -51,13 +53,10 @@ public class InfoCommandExecutor {
 
         if(player.startsWith("<") && player.endsWith(">")) {
 
-            String id = player.substring(3, player.length() -1);
+            String id = player.substring(2, player.length() -1);
 
-            if(time != -1) {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("InterpretingAsMember")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
-            } else {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("InterpretingAsMember")).queue();
-            }
+            if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("ID fount for account: " + id);
+
 
             if(!VerifyDAO.INSTANCE.isDiscordIDInUse(id)) {
                 if(time != -1) {
@@ -69,29 +68,34 @@ public class InfoCommandExecutor {
             }
 
             UUID uuid = UUID.fromString(VerifyDAO.INSTANCE.getUUIDByDiscordID(id));
-            String name = UUIDFetcher.getName(uuid);
+            System.out.println(uuid.toString());
 
             if(time != -1) {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationMember("InformationAboutAsMember",name,id,uuid.toString())).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationMember("InformationAboutAsMember",m.getUser().getName(),id,uuid.toString())).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
             } else {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationMember("InformationAboutAsMember",name,id,uuid.toString())).queue();
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationMember("InformationAboutAsMember",m.getAsMention(),id,uuid.toString())).queue();
             }
             return;
         } else {
-            if(time != -1) {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("InterpretingAsPlayer")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
-            } else {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("InterpretingAsPlayer")).queue();
-            }
 
-            UUID uuid = UUID.fromString(player);
+            UUID uuid = VerifyDAO.INSTANCE.getUUIDByName(player);
 
             if(uuid == null) {
-
+                if(time != -1) {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("PlayerNotRegisteredOnMojang")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                } else {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("PlayerNotRegisteredOnMojang")).queue();
+                }
+                return;
             }
 
-            if(VerifyDAO.INSTANCE.isPlayerVerified(uuid)) {
-
+            if(!VerifyDAO.INSTANCE.isPlayerVerified(uuid)) {
+                if(time != -1) {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedPlayer")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                } else {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedPlayer")).queue();
+                }
+                return;
             }
 
             String name = player;
@@ -99,9 +103,9 @@ public class InfoCommandExecutor {
             String tagLine = MemberManager.getMemberFromPlayer(uuid).getUser().getAsTag();
 
             if(time != -1) {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationPlayer("InformationAboutAsMember",name,id,uuid.toString(),tagLine)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationPlayer("InformationAboutAsPlayer",name,id,uuid.toString(),tagLine,m.getAsMention())).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
             } else {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationPlayer("InformationAboutAsMember",name,id,uuid.toString(),tagLine)).queue();
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationPlayer("InformationAboutAsPlayer",name,id,uuid.toString(),tagLine,m.getAsMention())).queue();
             }
 
 

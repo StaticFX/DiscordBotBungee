@@ -8,6 +8,7 @@ import net.md_5.bungee.config.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 public class VerifyFileManager {
@@ -49,6 +50,17 @@ public class VerifyFileManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public UUID getUUIDByPlayerName(String name) {
+
+        for(String group : conf.getKeys()) {
+            if(UUID.fromString(group) != null) {
+                if(getName(getDiscordID(UUID.fromString(group))).equals(name)) return UUID.fromString(group);
+            }
+        }
+        return null;
+
     }
 
     public void removePlayerData(UUID uuid) {

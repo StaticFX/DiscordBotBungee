@@ -22,6 +22,7 @@ import io.netty.util.internal.logging.Log4JLoggerFactory;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -76,6 +77,8 @@ public class DBVerifier extends Plugin {
     //the version of the internal file system
     public final static String configVersion = "1.1.2";
     public final static String msgVersion = "1.0.2";
+
+    public static String pluginVersion;
 
     //the version of the database
     public final static String DATABASE_VERSION = "1.0.0";
@@ -135,6 +138,8 @@ public class DBVerifier extends Plugin {
 
         getProxy().registerChannel(PLUGIN_CHANNEL_NAME);
         getProxy().getPluginManager().registerListener(this, bukkitMessageHandler);
+
+        pluginVersion = getDescription().getVersion();
 
         if(ConfigFileManager.INSTANCE.useSQL() && setuped) {
             if(!DataBaseConnection.INSTANCE.connectTest())  {

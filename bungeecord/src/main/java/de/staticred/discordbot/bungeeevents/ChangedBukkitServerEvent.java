@@ -20,6 +20,8 @@ public class ChangedBukkitServerEvent implements Listener {
 
         DBVerifier.getInstance().bukkitMessageHandler.sendPlayerVerifedRequest(switcher);
 
+        if(!DBVerifier.getInstance().setuped) return;
+
         ProxyServer.getInstance().getScheduler().schedule(DBVerifier.getInstance(),() -> {
 
             try {

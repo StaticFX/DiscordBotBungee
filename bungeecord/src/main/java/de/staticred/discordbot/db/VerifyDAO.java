@@ -181,7 +181,7 @@ public class VerifyDAO {
         ResultSet rs = ps.executeQuery();
 
         if(rs.next()) {
-            String name = rs.getString("Name");
+            String name = rs.getString("PlayerName");
             rs.close();
             ps.close();
             return name;
@@ -365,6 +365,7 @@ public class VerifyDAO {
 
         if(rs.next()) {
             boolean online = rs.getBoolean("Verified");
+            System.out.println(online);
             rs.close();
             ps.close();
             return online;
@@ -372,6 +373,30 @@ public class VerifyDAO {
         ps.close();
         rs.close();
         return false;
+    }
+
+    public UUID getUUIDByName(String name) throws SQLException {
+        if(!sql) {
+            return VerifyFileManager.INSTANCE.getUUIDByPlayerName(name);
+        }
+
+        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.getUUIDByName");
+        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify WHERE PlayerName = ?");
+        ps.setString(1,name);
+
+        ResultSet rs = ps.executeQuery();
+
+        if(rs.next()) {
+            UUID online = UUID.fromString(rs.getString("UUID"));
+            System.out.println(online);
+            rs.close();
+            ps.close();
+            return online;
+        }
+        ps.close();
+        rs.close();
+        return null;
     }
 
     public boolean isDiscordIDInUse(String discordID) throws SQLException {
