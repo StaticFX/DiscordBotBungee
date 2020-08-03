@@ -16,4 +16,11 @@ CantVerifyOnThisServer: '{"title": "Error", "description": "You cant verify your
 InquiryHasBeenDenied: '{"title": "Warning", "description":"The inquiry has been denied by the player", "color": "red"}'
 Verifed: '{"title": "Success", "description":"You have been verified", "color": "green"}'
 JoinMessage: '{"title": "Your Network", "description": "Welcome to our network! Use !verify [ingameName] to verify yourself!", "color": "green"}'
+NoPermissions: '{"title": "No permission", "description": "You dont have the permission for this command!", "color": "red"}'
+InfoSyntax: '{"title": "Syntax Error", "description": "Use !info [player/tagged member]", "color": "red"}'
+InterpretingAsMember: '{"title": "Information", "description": "Interpreting target as discord member", "color": "yellow"}'
+InterpretingAsPlayer: '{"title": "Information", "description": "Interpreting target as bungeecord player", "color": "yellow"}'
+NotVerifed: '{"title": "Information", "description": "This discord account is not verified yet.", "color": "yellow"}'
+InformationAboutAsMember: '{"title": "Information about %name%", "description": "DiscordID: %id%\nUUID: %uuid%\nName: %name%", "color": "green"}'
+InformationAboutAsPlayer: '{"title": "Information about %name%", "description": "DiscordID: %id%\nDiscordTag: %tag%\nUUID: %uuid%\nName: %name%", "color": "green"}'
 version: 1.0.2

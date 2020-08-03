@@ -18,7 +18,7 @@ public class DBUnlinkSubCommand extends SubCommand {
 
     @Override
     public void execute(String name, CommandSender sender, String[] args) {
-        if(!sender.hasPermission("db.cmd.unlink")) {
+        if(!sender.hasPermission("db.cmd.unlink") && !sender.hasPermission("db.*")) {
             sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("NoPermissions",true)));
             return;
         }

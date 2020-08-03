@@ -1,9 +1,6 @@
 package de.staticred.discordbot.discordevents;
 
-import de.staticred.discordbot.discordcommands.HelpCommandExecutor;
-import de.staticred.discordbot.discordcommands.UnlinkCommandExecutor;
-import de.staticred.discordbot.discordcommands.UpdateCommandExecutor;
-import de.staticred.discordbot.discordcommands.VerifyCommandExecutor;
+import de.staticred.discordbot.discordcommands.*;
 import de.staticred.discordbot.files.ConfigFileManager;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -35,7 +32,10 @@ public class MessageEvent extends ListenerAdapter {
             new HelpCommandExecutor(m,e.getChannel(),message,args);
             return;
         } else if (args[0].equalsIgnoreCase(ConfigFileManager.INSTANCE.getCommandPrefix() + "update")) {
-            new UpdateCommandExecutor(m,e.getChannel(),message,args);
+            new UpdateCommandExecutor(m, e.getChannel(), message, args);
+            return;
+        } else if  (args[0].equalsIgnoreCase(ConfigFileManager.INSTANCE.getCommandPrefix() + "info")) {
+            new InfoCommandExecutor(m,e.getChannel(),message,args);
             return;
         }else{
             if(!ConfigFileManager.INSTANCE.getVerifyChannel().isEmpty()) {

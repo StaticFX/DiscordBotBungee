@@ -16,7 +16,7 @@ public class DBReloadSubCommand extends SubCommand {
 
     @Override
     public void execute(String name, CommandSender sender, String[] args) {
-        if(!sender.hasPermission("db.cmd.reload")) {
+        if(!sender.hasPermission("db.cmd.reload") && !sender.hasPermission("db.*")) {
             sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("NoPermissions",true)));
             return;
         }

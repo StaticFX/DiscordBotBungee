@@ -30,7 +30,7 @@ public class SetupCommandExecutor extends Command {
         }
         ProxiedPlayer p = (ProxiedPlayer) sender;
 
-        if(!p.hasPermission("db.cmd.setup")) {
+        if(!p.hasPermission("db.cmd.setup") && !sender.hasPermission("db.*")) {
             p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("NoPermissions", true)));
             return;
         }

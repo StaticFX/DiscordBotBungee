@@ -45,6 +45,10 @@ public class DiscordFileManager {
         }
     }
 
+    public String getPrefix(String group) {
+        return conf.getString(group + ".prefix");
+    }
+
     public @Nullable List<String> getAllGroups()  {
         return conf.getStringList("Groups");
     }
@@ -105,6 +109,14 @@ public class DiscordFileManager {
 
         return null;
 
+    }
+
+    public void update() {
+        for(String group : getAllGroups()) {
+            if(!conf.contains(group + ".prefix")) {
+                conf.set(group + ".prefix", group + " | %name%");
+            }
+        }
     }
 
     public List<String> getAllDiscordGroups() {

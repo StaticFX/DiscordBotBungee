@@ -43,7 +43,7 @@ public class JoinEvent implements Listener {
 
         }
 
-        if(!DBVerifier.getInstance().setuped && player.hasPermission("discord.setup")) {
+        if(!DBVerifier.getInstance().setuped && player.hasPermission("discord.setup") || player.hasPermission("db.*")) {
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §aHey, looks like my plugin isn´t setup yet. \n§aMy wizard will guide you trough the process."));
             player.sendMessage(new TextComponent("§aUse /setup to start now!"));
         }

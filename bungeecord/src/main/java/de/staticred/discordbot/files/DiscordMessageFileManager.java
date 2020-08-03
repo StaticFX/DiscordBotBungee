@@ -93,6 +93,51 @@ public class DiscordMessageFileManager {
         return builder.build();
     }
 
+    public MessageEmbed getEmbedInformationMember(String path, String name, String id, String uuid) {
+        JSONObject object = new JSONObject(getString(path).replaceAll("%name%",name).replaceAll("%id%", id).replaceAll("%uuid%",uuid));
+        String title = object.getString("title");
+        String description = object.getString("description");
+        String color = object.getString("color");
+
+        Color colorObj;
+        try {
+            Field field = Class.forName("java.awt.Color").getField(color);
+            colorObj = (Color) field.get(null);
+        } catch (Exception e) {
+            colorObj = null; // Not defined
+        }
+
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setTitle(title);
+        builder.setDescription(description);
+        builder.setColor(colorObj);
+
+        return builder.build();
+    }
+
+    public MessageEmbed getEmbedInformationPlayer(String path, String name, String id, String uuid, String tagline) {
+        JSONObject object = new JSONObject(getString(path).replaceAll("%name%",name).replaceAll("%id%", id).replaceAll("%uuid%",uuid).replaceAll("%tag%",tagline));
+        String title = object.getString("title");
+        String description = object.getString("description");
+        String color = object.getString("color");
+
+        Color colorObj;
+        try {
+            Field field = Class.forName("java.awt.Color").getField(color);
+            colorObj = (Color) field.get(null);
+        } catch (Exception e) {
+            colorObj = null; // Not defined
+        }
+
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setTitle(title);
+        builder.setDescription(description);
+        builder.setColor(colorObj);
+
+        return builder.build();
+    }
+
+
     public String getString(String path) {
         return conf.getString(path);
     }

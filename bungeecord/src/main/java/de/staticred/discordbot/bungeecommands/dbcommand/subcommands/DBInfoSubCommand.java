@@ -22,7 +22,7 @@ public class DBInfoSubCommand extends SubCommand {
 
     @Override
     public void execute(String name, CommandSender sender, String[] args) {
-        if(!sender.hasPermission("db.cmd.info")) {
+        if(!sender.hasPermission("db.cmd.info") && !sender.hasPermission("db.*")) {
             sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("NoPermissions",true)));
             return;
         }

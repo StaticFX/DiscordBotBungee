@@ -70,13 +70,6 @@ public class MCVerifyCommandExecutor extends Command {
             DBVerifier.INSTANCE.removeAllRolesFromMember(m);
             DBVerifier.INSTANCE.updateRoles(m,p);
 
-            if(DBVerifier.INSTANCE.syncNickname) {
-                if(m.isOwner()) {
-                    p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("MemberIsOwner",false)));
-                }else {
-                    m.getGuild().modifyNickname(m,p.getName()).queue();
-                }
-            }
 
 
             try {

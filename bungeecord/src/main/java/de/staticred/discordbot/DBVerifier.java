@@ -22,6 +22,7 @@ import io.netty.util.internal.logging.Log4JLoggerFactory;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.apache.log4j.lf5.Log4JLogRecord;
@@ -124,6 +125,8 @@ public class DBVerifier extends Plugin {
 
         SettingsFileManager.INSTANCE.loadFile();
 
+        DiscordFileManager.INSTANCE.update();
+
         debugMode = SettingsFileManager.INSTANCE.isDebug();
 
         setuped = SettingsFileManager.INSTANCE.isSetup();
@@ -214,6 +217,7 @@ public class DBVerifier extends Plugin {
 
         Debugger.debugMessage("Plugin loaded.");
     }
+
 
     private boolean fileUpdater() {
         File oldFile = new File(getDataFolder().getParentFile().getAbsoluteFile() + "/DiscordBotBungee");
@@ -361,6 +365,15 @@ public class DBVerifier extends Plugin {
                             if(debugMode) Debugger.debugMessage("Trying to give role to the player");
                             m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(group),true).get(0)).queue();
                         }
+
+                        if(DBVerifier.INSTANCE.syncNickname) {
+                            if(m.isOwner()) {
+                                p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("MemberIsOwner",false)));
+                            }else {
+                                m.getGuild().modifyNickname(m,DiscordFileManager.INSTANCE.getPrefix(group).replaceAll("%name%",p.getName())).queue();
+                            }
+                        }
+
                         if(debugMode) Debugger.debugMessage("Adding nondynamic role to player");
                         roles.add(group);
                         addedNonDynamicGroups.add(m);

@@ -10,7 +10,7 @@ public class Debugger {
     public static void debugMessage(String string) {
         System.out.println("[DBVerifier] [DEBUG] " + string);
         for(ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
-            if(player.hasPermission("db.debug")) {
+            if(player.hasPermission("db.debug") || player.hasPermission("db.*")) {
                 if(DBVerifier.getInstance().debugMode) {
                     player.sendMessage(new TextComponent("§8[§aDBVerifier§8] [§aDEBUG§8] §r" + string));
                 }

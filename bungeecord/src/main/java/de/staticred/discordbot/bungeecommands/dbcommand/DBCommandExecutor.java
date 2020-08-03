@@ -16,7 +16,7 @@ public class DBCommandExecutor extends Command {
     public void execute(CommandSender sender, String[] args) {
 
         if(sender instanceof ProxiedPlayer) {
-            if(!sender.hasPermission("db.cmd")) {
+            if(!sender.hasPermission("db.cmd") && !sender.hasPermission("db.*")) {
                 return;
             }
         }

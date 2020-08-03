@@ -15,7 +15,7 @@ public class DBDebugSubCommand extends SubCommand {
 
     @Override
     public void execute(String name, CommandSender sender, String[] args) {
-        if(!sender.hasPermission("db.cmd.debug")) {
+        if(!sender.hasPermission("db.cmd.debug") && !sender.hasPermission("db.*")) {
             sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("NoPermissions",true)));
             return;
         }

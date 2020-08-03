@@ -18,7 +18,7 @@ public class DBUpdateSubCommand extends SubCommand {
 
     @Override
     public void execute(String name, CommandSender sender, String[] args) {
-        if(!sender.hasPermission("db.cmd.update")) {
+        if(!sender.hasPermission("db.cmd.update") && !sender.hasPermission("db.*")) {
             sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("NoPermissions",true)));
             return;
         }

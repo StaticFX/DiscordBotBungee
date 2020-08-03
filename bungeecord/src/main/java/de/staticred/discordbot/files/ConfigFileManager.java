@@ -1,6 +1,7 @@
 package de.staticred.discordbot.files;
 
 import de.staticred.discordbot.DBVerifier;
+import net.dv8tion.jda.api.entities.Role;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -79,6 +80,17 @@ public class ConfigFileManager {
 
     public String getVerifyRole() {
         return conf.getString("verifyRole");
+    }
+
+
+    public Role getPermissionRole() {
+
+        if(useTokens()) {
+            return DBVerifier.getInstance().jda.getRoleById(conf.getString("permissedGroup"));
+        }else{
+            return DBVerifier.getInstance().jda.getRolesByName(conf.getString("permissedGroup"),false).get(0);
+        }
+
     }
 
     public boolean hasVerifyRole() {
