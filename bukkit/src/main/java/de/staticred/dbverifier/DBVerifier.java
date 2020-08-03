@@ -10,6 +10,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 public class DBVerifier extends JavaPlugin implements PluginMessageListener {
@@ -35,8 +36,8 @@ public class DBVerifier extends JavaPlugin implements PluginMessageListener {
         if(!channel.equals(PLUGIN_CHANNEL_NAME)) return;
 
         ByteArrayDataInput in = ByteStreams.newDataInput(message);
-        String subchannel = in.readUTF();
 
+        String subchannel = in.readUTF();
         String data = in.readUTF();
 
         System.out.println("Received Data by BungeeCord: " + data + " SubChannel: " + subchannel);

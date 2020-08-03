@@ -35,6 +35,9 @@ import java.util.List;
 public class DBVerifier extends Plugin {
 
 
+    //TODO: Update a player (SRV) when he swappes servers
+    //TODO: Add a DiscordCommand (!info), gives everything the plugin knows about the discord member
+
     //the instance of this howl plugin
     public static DBVerifier INSTANCE;
 
@@ -304,11 +307,11 @@ public class DBVerifier extends Plugin {
 
                 if(ConfigFileManager.INSTANCE.useTokens()) {
                     if(debugMode) Debugger.debugMessage("Tokens are used");
-                    if(debugMode) Debugger.debugMessage("Token found for group: verify - " + ConfigFileManager.INSTANCE.getVerifyRoleAsLong());
+                    if(debugMode) Debugger.debugMessage("Token found for group: verify - " + ConfigFileManager.INSTANCE.getVerifyRole());
                     if(debugMode) Debugger.debugMessage("Trying to give role to the player");
-                    if(debugMode) Debugger.debugMessage("Is role null? " + (m.getGuild().getRoleById((ConfigFileManager.INSTANCE.getVerifyRoleAsLong())) == null));
+                    if(debugMode) Debugger.debugMessage("Is role null? " + (m.getGuild().getRoleById((ConfigFileManager.INSTANCE.getVerifyRole())) == null));
 
-                    m.getGuild().addRoleToMember(m,m.getGuild().getRoleById((ConfigFileManager.INSTANCE.getVerifyRoleAsLong()))).queue();
+                    m.getGuild().addRoleToMember(m,m.getGuild().getRoleById((ConfigFileManager.INSTANCE.getVerifyRole()))).queue();
                 }else{
                     if(debugMode) Debugger.debugMessage("Tokens are not used");
                     if(debugMode) Debugger.debugMessage("Name found for group: verify - " + ConfigFileManager.INSTANCE.getVerifyRole());

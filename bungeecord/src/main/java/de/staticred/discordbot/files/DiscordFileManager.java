@@ -80,8 +80,8 @@ public class DiscordFileManager {
         return conf.getString(group + ".groupName");
     }
 
-    public long getDiscordGroupIDForGroup(String group) {
-        return conf.getLong(group + ".groupName");
+    public String getDiscordGroupIDForGroup(String group) {
+        return conf.getString(group + ".groupName");
     }
 
     public boolean isDynamicGroup(String group) {
@@ -113,7 +113,7 @@ public class DiscordFileManager {
 
         for(String group : getAllGroups()) {
             if(ConfigFileManager.INSTANCE.useTokens()) {
-                string.add(Long.toString(getDiscordGroupIDForGroup(group)));
+                string.add((getDiscordGroupIDForGroup(group)));
             }else{
                 string.add(getDiscordGroupNameForGroup(group));
             }

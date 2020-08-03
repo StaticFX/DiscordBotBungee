@@ -22,8 +22,6 @@ public class BukkitMessageHandler implements Listener {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Sending string: '" + "{\"name\":\"" + player.getName() +"\",\"uuid\":\"" + player.getUniqueId().toString() + "\"}" +  "' to bukkitsubserver: " + player.getServer().getInfo().getName());
         out.writeUTF( "verified");
-
-
         out.writeUTF("{\"name\": \"" + player.getName() + "\", \"uuid\": \"" + player.getUniqueId().toString() + "\", \"discordID\": \"" + discordID + "\"}");
         player.getServer().getInfo().sendData(DBVerifier.PLUGIN_CHANNEL_NAME, out.toByteArray());
     }
@@ -92,6 +90,7 @@ public class BukkitMessageHandler implements Listener {
     public void sendConnectTestToBukkit(ProxiedPlayer player) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF( "test");
+        out.writeUTF( "Test SRV from Bungeecord");
         player.getServer().getInfo().sendData(DBVerifier.PLUGIN_CHANNEL_NAME, out.toByteArray());
     }
 }

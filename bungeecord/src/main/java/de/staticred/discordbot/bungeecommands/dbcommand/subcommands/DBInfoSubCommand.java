@@ -54,7 +54,7 @@ public class DBInfoSubCommand extends SubCommand {
         try {
             sender.sendMessage(new TextComponent("§aDiscordID §7-> §e" + VerifyDAO.INSTANCE.getDiscordID(uuid)));
             Member member = MemberManager.getMemberFromPlayer(uuid);
-            sender.sendMessage(new TextComponent("§aDiscordName §7-> §e" + member.getEffectiveName()));
+            sender.sendMessage(new TextComponent("§aDiscordName §7-> §e" + member.getUser().getAsTag()));
             sender.sendMessage(new TextComponent("§aOnline §7-> §e" + member.getOnlineStatus().toString()));
             sender.sendMessage(new TextComponent("§aRoles §7-> §e" + member.getRoles().toString()));
         } catch (SQLException e) {
