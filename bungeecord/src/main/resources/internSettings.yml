@@ -1,2 +1,3 @@
 #no need to edit this file, otherwise your plugin will not work
 setup: false
+debugmode: false

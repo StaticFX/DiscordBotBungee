@@ -2,12 +2,17 @@ package de.staticred.discordbot.db;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.pool.HikariPool;
+import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.files.ConfigFileManager;
+import de.staticred.discordbot.util.Debugger;
+import jdk.internal.net.http.hpack.HPACK;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 public class DataBaseConnection {
 
@@ -34,6 +39,7 @@ public class DataBaseConnection {
 
     public void connect() {
         try {
+            if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection");
             source = new HikariDataSource(config);
             connection = source.getConnection();
         } catch (Exception e) {
@@ -53,6 +59,7 @@ public class DataBaseConnection {
 
 
     public void closeConnection() {
+        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Closing DB Connection");
         if(source.isRunning())
             source.close();
     }

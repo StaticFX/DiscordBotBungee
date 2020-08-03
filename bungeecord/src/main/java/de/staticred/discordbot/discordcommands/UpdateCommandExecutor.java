@@ -30,9 +30,8 @@ public class UpdateCommandExecutor {
             if(time != -1) {
                 tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UpdateDiscordSyntax")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 command.delete().queueAfter(time,TimeUnit.SECONDS);
-            } else {
+            }else {
                 tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UpdateDiscordSyntax")).queue();
-                command.delete().queue();
             }
             return;
         }
@@ -45,9 +44,8 @@ public class UpdateCommandExecutor {
                 if(time != -1) {
                     tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedYet")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                     command.delete().queueAfter(time,TimeUnit.SECONDS);
-                } else {
+                }else {
                     tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedYet")).queue();
-                    command.delete().queue();
                 }
                 return;
             }
@@ -82,9 +80,8 @@ public class UpdateCommandExecutor {
                 if(time != -1) {
                     tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NoInquiries")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                     command.delete().queueAfter(time,TimeUnit.SECONDS);
-                } else {
+                }else {
                     tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NoInquiries")).queue();
-                    command.delete().queue();
                 }
             }else {
                 m.getGuild().modifyNickname(m,target.getName()).queue();
@@ -97,10 +94,8 @@ public class UpdateCommandExecutor {
         if(time != -1) {
             tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UpdatedRank")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
             command.delete().queueAfter(time,TimeUnit.SECONDS);
-        } else {
+        }else {
             tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UpdatedRank")).queue();
-            command.delete().queue();
         }
-        return;
     }
 }

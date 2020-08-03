@@ -88,6 +88,10 @@ public class ConfigFileManager {
         return false;
     }
 
+    public String getCommandPrefix() {
+        return conf.getString("commandPrefix");
+    }
+
     public int getTime() {
         return conf.getInt("deleteMessages");
     }

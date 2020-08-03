@@ -29,7 +29,7 @@ public class HelpCommandExecutor {
             if(time != -1) {
                 tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 command.delete().queueAfter(10,TimeUnit.SECONDS);
-            }else{
+            }else {
                 tc.sendMessage(embedBuilder.build()).queue();
             }
 
@@ -44,7 +44,7 @@ public class HelpCommandExecutor {
         if(time != -1) {
             tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
             command.delete().queueAfter(10,TimeUnit.SECONDS);
-        }else{
+        }else {
             tc.sendMessage(embedBuilder.build()).queue();
         }
 

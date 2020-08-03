@@ -97,12 +97,11 @@ public class MCVerifyCommandExecutor extends Command {
                 return;
             }
 
-            EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setDescription("You have been verified " + m.getAsMention());
+
             int time = ConfigFileManager.INSTANCE.getTime();
             if(time != -1) {
                 tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("Verifed")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
-            } else {
+            }else {
                 tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("Verifed")).queue();
             }
             DBVerifier.getInstance().playerChannelHashMap.remove(p);
@@ -139,7 +138,7 @@ public class MCVerifyCommandExecutor extends Command {
             int time = ConfigFileManager.INSTANCE.getTime();
             if(time != -1) {
                 tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("InquiryHasBeenDenied")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
-            } else {
+            }else {
                 tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("InquiryHasBeenDenied")).queue();
             }
             return;

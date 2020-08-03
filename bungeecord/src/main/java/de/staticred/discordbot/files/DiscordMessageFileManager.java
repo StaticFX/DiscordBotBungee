@@ -55,7 +55,13 @@ public class DiscordMessageFileManager {
         String description = object.getString("description");
         String color = object.getString("color");
 
-        Color colorObj = Color.getColor(color);
+        Color colorObj;
+        try {
+            Field field = Class.forName("java.awt.Color").getField(color);
+            colorObj = (Color) field.get(null);
+        } catch (Exception e) {
+            colorObj = null; // Not defined
+        }
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle(title);

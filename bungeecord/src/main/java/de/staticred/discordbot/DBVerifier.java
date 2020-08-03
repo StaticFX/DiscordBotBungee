@@ -16,20 +16,21 @@ import de.staticred.discordbot.event.UserUpdatedRolesEvent;
 import de.staticred.discordbot.files.*;
 import de.staticred.discordbot.test.TestUserVerifiedEvent;
 import de.staticred.discordbot.util.Debugger;
+import io.netty.util.internal.logging.Log4J2LoggerFactory;
+import io.netty.util.internal.logging.Log4JLoggerFactory;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
+import org.apache.log4j.lf5.Log4JLogRecord;
+
 import javax.security.auth.login.LoginException;
 import java.io.File;
-import java.nio.file.attribute.DosFileAttributes;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.Callable;
 
 public class DBVerifier extends Plugin {
 
@@ -75,7 +76,7 @@ public class DBVerifier extends Plugin {
     public final static String DATABASE_VERSION = "1.0.0";
 
     //debug mode of the plugin
-    public boolean debugMode = false;
+    public boolean debugMode;
 
     //the name of the channel which is used to communicate with the bukkit subserver for a discordsrv connection
     public static final String PLUGIN_CHANNEL_NAME = "dbverifier:bungeecord";
@@ -115,9 +116,11 @@ public class DBVerifier extends Plugin {
 
         DiscordMessageFileManager.INSTANCE.loadFile();
 
-        SetupFileManager.INSTANCE.loadFile();
+        SettingsFileManager.INSTANCE.loadFile();
 
-        setuped = SetupFileManager.INSTANCE.isSetup();
+        debugMode = SettingsFileManager.INSTANCE.isDebug();
+
+        setuped = SettingsFileManager.INSTANCE.isSetup();
 
         bukkitMessageHandler = new BukkitMessageHandler();
 
@@ -129,6 +132,7 @@ public class DBVerifier extends Plugin {
                 Debugger.debugMessage("Can't connect to database.");
                 return;
             }
+            DataBaseConnection.INSTANCE.connect();
             try {
                 RewardsDAO.INSTANCE.loadTable();
             } catch (SQLException throwables) {
@@ -153,7 +157,6 @@ public class DBVerifier extends Plugin {
 
         Metrics metrics = new Metrics(this, 	5843);
         metrics.addCustomChart(new Metrics.SingleLineChart("groups_registered", () -> DiscordFileManager.INSTANCE.getAllGroups().size()));
-
 
         if(setuped) {
             int verifed = 0;
@@ -242,7 +245,7 @@ public class DBVerifier extends Plugin {
 
         if(jda != null)
             jda.shutdownNow();
-        if(SetupFileManager.INSTANCE.isSetup()) {
+        if(SettingsFileManager.INSTANCE.isSetup()) {
             DataBaseConnection.INSTANCE.closeConnection();
         }
 
@@ -269,7 +272,7 @@ public class DBVerifier extends Plugin {
 
     public void initBot(String token, Activity activity) throws LoginException {
         Debugger.debugMessage("Trying to init bot");
-        jda = new JDABuilder(token).build();
+        jda = JDABuilder.createDefault(token).build();
         jda.getPresence().setPresence(activity,true);
         jda.addEventListener(new MessageEvent());
         jda.addEventListener(new GuildJoinEvent());

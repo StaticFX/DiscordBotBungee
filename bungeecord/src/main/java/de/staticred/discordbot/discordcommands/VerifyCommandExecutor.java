@@ -39,9 +39,6 @@ public class VerifyCommandExecutor {
             if(time != -1) {
                 tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("VerifyDiscordSyntax")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 command.delete().queueAfter(time,TimeUnit.SECONDS);
-            } else {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("VerifyDiscordSyntax")).queue();
-                command.delete().queue();
             }
             return;
         }
@@ -56,9 +53,6 @@ public class VerifyCommandExecutor {
                 if(time != -1) {
                     tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyLinked")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                     command.delete().queueAfter(time,TimeUnit.SECONDS);
-                } else {
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyLinked")).queue();
-                    command.delete().queue();
                 }
                 return;
             }
@@ -70,10 +64,8 @@ public class VerifyCommandExecutor {
 
         if(time != -1) {
             tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SearchingForPlayer", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
-            command.delete().queueAfter(time,TimeUnit.SECONDS);
         } else {
             tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SearchingForPlayer", name)).queue();
-            command.delete().queue();
         }
 
         if(player == null) {
@@ -81,9 +73,8 @@ public class VerifyCommandExecutor {
             if(time != -1) {
                 tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("PlayerNotFound", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 command.delete().queueAfter(time,TimeUnit.SECONDS);
-            } else {
+            }else {
                 tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("PlayerNotFound", name)).queue();
-                command.delete().queue();
             }
             return;
         }
@@ -93,9 +84,8 @@ public class VerifyCommandExecutor {
                 if(time != -1) {
                     tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyVerified", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                     command.delete().queueAfter(time,TimeUnit.SECONDS);
-                } else {
+                }else {
                     tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyVerified", name)).queue();
-                    command.delete().queue();
                 }
                 return;
             }
@@ -108,9 +98,8 @@ public class VerifyCommandExecutor {
             if(time != -1) {
                 tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SendInquiry", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 command.delete().queueAfter(time,TimeUnit.SECONDS);
-            } else {
+            }else {
                 tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SendInquiry", name)).queue();
-                command.delete().queue();
             }
             return;
         }
@@ -118,9 +107,8 @@ public class VerifyCommandExecutor {
             if(time != -1) {
                 tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyInquiry", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 command.delete().queueAfter(time,TimeUnit.SECONDS);
-            } else {
+            }else {
                 tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyInquiry", name)).queue();
-                command.delete().queue();
             }
             return;
         }
@@ -129,9 +117,8 @@ public class VerifyCommandExecutor {
             if(time != -1) {
                 tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("CantVerifyOnThisServer", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 command.delete().queueAfter(time,TimeUnit.SECONDS);
-            } else {
+            }else {
                 tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("CantVerifyOnThisServer", name)).queue();
-                command.delete().queue();
             }
             return;
         }
@@ -141,9 +128,7 @@ public class VerifyCommandExecutor {
             command.delete().queueAfter(time,TimeUnit.SECONDS);
         } else {
             tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("FoundPlayer", name)).queue();
-            command.delete().queue();
         }
-        command.delete().queueAfter(10,TimeUnit.SECONDS);
 
         player.sendMessage(new net.md_5.bungee.api.chat.TextComponent(DBVerifier.getInstance().getStringFromConfig("PendingInquiry",true).replaceAll("%user%",m.getEffectiveName())));
 

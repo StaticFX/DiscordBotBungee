@@ -25,16 +25,16 @@ public class MessageEvent extends ListenerAdapter {
             return;
         }
 
-        if(args[0].equalsIgnoreCase("!verify") || args[0].equalsIgnoreCase("!sync")) {
+        if(args[0].equalsIgnoreCase( ConfigFileManager.INSTANCE.getCommandPrefix() + "verify") || args[0].equalsIgnoreCase(ConfigFileManager.INSTANCE.getCommandPrefix() + "sync")) {
             new VerifyCommandExecutor(m,e.getChannel(),message,args);
             return;
-        }else if(args[0].equalsIgnoreCase("!unlink")) {
+        }else if(args[0].equalsIgnoreCase(ConfigFileManager.INSTANCE.getCommandPrefix() + "unlink")) {
             new UnlinkCommandExecutor(m,e.getChannel(),message,args);
             return;
-        }else if(args[0].equalsIgnoreCase("!help")) {
+        }else if(args[0].equalsIgnoreCase(ConfigFileManager.INSTANCE.getCommandPrefix() + "help")) {
             new HelpCommandExecutor(m,e.getChannel(),message,args);
             return;
-        } else if (args[0].equalsIgnoreCase("!update")) {
+        } else if (args[0].equalsIgnoreCase(ConfigFileManager.INSTANCE.getCommandPrefix() + "update")) {
             new UpdateCommandExecutor(m,e.getChannel(),message,args);
             return;
         }else{

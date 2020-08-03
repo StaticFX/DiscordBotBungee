@@ -42,6 +42,9 @@ channelID: ""
 #if the command channel should be clean or not
 forceCleanChannel: false
 
+#messagePrefix for the discord bot
+commandPrefix: "!"
+
 #how long the bot should wait to delete a message (messages that have to do with the bot)
 # 0 for instant delete
 # -1 for no delete

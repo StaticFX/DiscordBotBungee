@@ -10,17 +10,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 
-public class SetupFileManager {
+public class SettingsFileManager {
 
 
-    private File file = new File(DBVerifier.getInstance().getDataFolder().getAbsolutePath(), "setup.yml");
+    private File file = new File(DBVerifier.getInstance().getDataFolder().getAbsolutePath(), "internSettings.yml");
     private Configuration conf;
-    public static SetupFileManager INSTANCE = new SetupFileManager();
+    public static SettingsFileManager INSTANCE = new SettingsFileManager();
 
     public void loadFile() {
         if(!file.exists()) {
             file.getParentFile().mkdirs();
-            try(InputStream in = getClass().getClassLoader().getResourceAsStream("setup.yml")) {
+            try(InputStream in = getClass().getClassLoader().getResourceAsStream("internSettings.yml")) {
                 Files.copy(in,file.toPath());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -45,6 +45,19 @@ public class SetupFileManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void toggleDebug() {
+        conf.set("debugmode",!conf.getBoolean("debugmode"));
+        try {
+            saveFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isDebug() {
+        return conf.getBoolean("debugmode");
     }
 
     public boolean isSetup() {

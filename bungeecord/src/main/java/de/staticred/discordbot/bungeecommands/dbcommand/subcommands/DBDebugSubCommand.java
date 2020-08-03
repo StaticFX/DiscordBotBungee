@@ -1,6 +1,7 @@
 package de.staticred.discordbot.bungeecommands.dbcommand.subcommands;
 
 import de.staticred.discordbot.DBVerifier;
+import de.staticred.discordbot.files.SettingsFileManager;
 import de.staticred.discordbot.util.SubCommand;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -24,7 +25,8 @@ public class DBDebugSubCommand extends SubCommand {
             return;
         }
 
-        DBVerifier.getInstance().debugMode = !DBVerifier.getInstance().debugMode;
+        SettingsFileManager.INSTANCE.toggleDebug();
+        DBVerifier.getInstance().debugMode = SettingsFileManager.INSTANCE.isDebug();
 
         sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("DebugModeSwitched",true).replaceAll("%mode%",Boolean.toString(DBVerifier.getInstance().debugMode))));
     }
