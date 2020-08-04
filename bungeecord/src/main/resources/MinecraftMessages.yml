@@ -28,4 +28,4 @@ CantUnlink: "&cYou can´t unlink yourself because you are the §cowner of the se
 UnlinkedYourSelf: "&aYou successfully unlinked yourself."
 VerifyPrefix: "&cUse /discord ACCEPT/DECLINE/UPDATE/UNLINK"
 ResetPlayer: "&aThe player has been reset."
-version: 1.0.2
+version: 1.0.3

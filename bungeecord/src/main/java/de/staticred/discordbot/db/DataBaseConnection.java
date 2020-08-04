@@ -34,7 +34,7 @@ public class DataBaseConnection {
         url = ConfigFileManager.INSTANCE.getDataBase();
         host = ConfigFileManager.INSTANCE.getHost();
         port = ConfigFileManager.INSTANCE.getPort();
-        System.out.println("jdbc:mysql://" + host + ":" + port + "/" + url);
+        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("jdbc:mysql://" + host + ":" + port + "/" + url);
         config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + url);
     }
 

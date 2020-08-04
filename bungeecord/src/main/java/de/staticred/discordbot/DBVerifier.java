@@ -75,8 +75,9 @@ public class DBVerifier extends Plugin {
     public Activity activity;
 
     //the version of the internal file system
-    public final static String configVersion = "1.1.2";
-    public final static String msgVersion = "1.0.2";
+    public final static String configVersion = "1.1.3";
+    public final static String msgVersion = "1.0.3";
+    public final static String dcMSGVersion  = "1.0.3";
 
     public static String pluginVersion;
 

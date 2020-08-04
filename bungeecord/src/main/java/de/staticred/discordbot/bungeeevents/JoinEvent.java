@@ -4,7 +4,9 @@ import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.db.RewardsDAO;
 import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.files.ConfigFileManager;
+import de.staticred.discordbot.files.DiscordMessageFileManager;
 import de.staticred.discordbot.files.MessagesFileManager;
+import de.staticred.discordbot.files.SettingsFileManager;
 import de.staticred.discordbot.util.Debugger;
 import de.staticred.discordbot.util.MemberManager;
 import net.dv8tion.jda.api.entities.Member;
@@ -43,7 +45,7 @@ public class JoinEvent implements Listener {
 
         }
 
-        if(!DBVerifier.getInstance().setuped && player.hasPermission("discord.setup") || player.hasPermission("db.*")) {
+        if(!SettingsFileManager.INSTANCE.isSetup()  && player.hasPermission("discord.setup") || player.hasPermission("db.*")) {
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §aHey, looks like my plugin isn´t setup yet. \n§aMy wizard will guide you trough the process."));
             player.sendMessage(new TextComponent("§aUse /setup to start now!"));
         }
@@ -56,7 +58,7 @@ public class JoinEvent implements Listener {
 
             TextComponent tc = new TextComponent();
             tc.setText("§8[§aDiscordBot§8] §4You can find the newest version over §e§lhere");
-            tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§amessages.yml").create()));
+            tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§aminecraftMessages.yml").create()));
             tc.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/StaticFX/DiscordBotBungee/blob/master/src/main/resources/messages.yml"));
             TextComponent sendedText = new TextComponent();
             sendedText.addExtra(tc);
@@ -65,7 +67,24 @@ public class JoinEvent implements Listener {
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4It may come to errors."));
         }
 
-        if(!DBVerifier.getInstance().setuped) {
+        if(!DBVerifier.dcMSGVersion.equals(DiscordMessageFileManager.INSTANCE.getVersion())) {
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Your message version is not compatible with the §4plugin-config version."));
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Config version: §l" + MessagesFileManager.INSTANCE.getVersion()));
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Plugin version: §l" + DBVerifier.dcMSGVersion));
+
+
+            TextComponent tc = new TextComponent();
+            tc.setText("§8[§aDiscordBot§8] §4You can find the newest version over §e§lhere");
+            tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§adiscordMessages.yml").create()));
+            tc.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/StaticFX/DiscordBotBungee/blob/master/src/main/resources/messages.yml"));
+            TextComponent sendedText = new TextComponent();
+            sendedText.addExtra(tc);
+            player.sendMessage(sendedText);
+
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4It may come to errors."));
+        }
+
+        if(!SettingsFileManager.INSTANCE.isSetup()) {
             Debugger.debugMessage("Plugin not setup yet, not adding players to verify.");
             return;
         }

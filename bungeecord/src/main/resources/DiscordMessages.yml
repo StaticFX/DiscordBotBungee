@@ -26,4 +26,4 @@ NotVerifiedPlayer: '{"title": "Information", "description": "This account is not
 PlayerNotRegisteredOnMojang: '{"title": "Error", "description": "The player you searched for is not registered on the database.", "color": "red"}'
 InformationAboutAsMember: '{"title": "Information about member **%memberName%**", "description": "**DiscordID:** %id%\n**UUID:** %uuid%\n**Name:** %name%\n**Member:** %memberAsTag%","footer": "Interpreted as discord member" ,"color": "green"}'
 InformationAboutAsPlayer: '{"title": "Information about player **%name%**", "description": "**DiscordID:** %id%\n**DiscordTag:** %tag%\n**Member:** %memberAsTag%\n**UUID:** %uuid%\n**Name:** %name%","footer": "Interpreted as bungeecord player", "color": "green"}'
-version: 1.0.2
+version: 1.0.3

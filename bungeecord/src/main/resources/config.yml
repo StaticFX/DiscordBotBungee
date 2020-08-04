@@ -56,4 +56,4 @@ deleteMessages: 10
 #this also behaves bases on the useTokens rule
 permissedGroup: ""
 #never edit!
-configVersion: "1.1.2"
+configVersion: "1.1.3"
