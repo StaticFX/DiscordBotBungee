@@ -49,11 +49,15 @@ public class InfoCommandExecutor {
 
         String player = args[1];
 
-        System.out.println(player);
-
         if(player.startsWith("<") && player.endsWith(">")) {
 
-            String id = player.substring(2, player.length() -1);
+            String id;
+            if(player.contains("!")) {
+                id = player.substring(3, player.length() -1);
+            }else {
+                id = player.substring(2, player.length() -1);
+            }
+
 
             if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("ID fount for account: " + id);
 
@@ -68,12 +72,13 @@ public class InfoCommandExecutor {
             }
 
             UUID uuid = UUID.fromString(VerifyDAO.INSTANCE.getUUIDByDiscordID(id));
-            System.out.println(uuid.toString());
+            String name = VerifyDAO.INSTANCE.getName(id);
+            Member target = MemberManager.getMemberFromPlayer(uuid);
 
             if(time != -1) {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationMember("InformationAboutAsMember",m.getUser().getName(),id,uuid.toString())).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationMember("InformationAboutAsMember",name,id,uuid.toString(),target.getEffectiveName(),target.getAsMention())).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
             } else {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationMember("InformationAboutAsMember",m.getAsMention(),id,uuid.toString())).queue();
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationMember("InformationAboutAsMember",name,id,uuid.toString(),target.getEffectiveName(),target.getAsMention())).queue();
             }
             return;
         } else {
@@ -98,17 +103,16 @@ public class InfoCommandExecutor {
                 return;
             }
 
-            String name = player;
             String id = VerifyDAO.INSTANCE.getDiscordID(uuid);
-            String tagLine = MemberManager.getMemberFromPlayer(uuid).getUser().getAsTag();
+            String name = VerifyDAO.INSTANCE.getName(id);
+            Member target = MemberManager.getMemberFromPlayer(uuid);
+            String tagLine = target.getUser().getAsTag();
 
             if(time != -1) {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationPlayer("InformationAboutAsPlayer",name,id,uuid.toString(),tagLine,m.getAsMention())).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationPlayer("InformationAboutAsPlayer",name,id,uuid.toString(),tagLine,target.getAsMention())).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
             } else {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationPlayer("InformationAboutAsPlayer",name,id,uuid.toString(),tagLine,m.getAsMention())).queue();
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationPlayer("InformationAboutAsPlayer",name,id,uuid.toString(),tagLine,target.getAsMention())).queue();
             }
-
-
 
         }
 

@@ -2,6 +2,7 @@ package de.staticred.discordbot.bungeecommands.dbcommand.subcommands;
 
 import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.db.VerifyDAO;
+import de.staticred.discordbot.util.MemberManager;
 import de.staticred.discordbot.util.SubCommand;
 import de.staticred.discordbot.util.UUIDFetcher;
 import net.md_5.bungee.api.CommandSender;
@@ -30,7 +31,12 @@ public class DBUnlinkSubCommand extends SubCommand {
 
         String inputName = args[1];
 
-        UUID uuid = UUIDFetcher.getUUID(inputName);
+        UUID uuid = null;
+        try {
+            uuid = VerifyDAO.INSTANCE.getUUIDByName(inputName);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         if(uuid == null) {
             sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("UserNotFound",true)));
@@ -49,6 +55,7 @@ public class DBUnlinkSubCommand extends SubCommand {
 
         try {
             VerifyDAO.INSTANCE.setPlayerAsUnVerified(uuid);
+            DBVerifier.getInstance().removeAllRolesFromMember(MemberManager.getMemberFromPlayer(uuid));
             sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("UnlinkedPlayer",true)));
         } catch (SQLException e) {
             e.printStackTrace();

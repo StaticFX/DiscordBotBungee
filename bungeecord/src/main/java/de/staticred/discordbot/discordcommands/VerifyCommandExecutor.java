@@ -35,10 +35,11 @@ public class VerifyCommandExecutor {
         int time = ConfigFileManager.INSTANCE.getTime();
 
         if(args.length != 2) {
-
             if(time != -1) {
                 tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("VerifyDiscordSyntax")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 command.delete().queueAfter(time,TimeUnit.SECONDS);
+            }else{
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("VerifyDiscordSyntax")).queue();
             }
             return;
         }
@@ -53,6 +54,8 @@ public class VerifyCommandExecutor {
                 if(time != -1) {
                     tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyLinked")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                     command.delete().queueAfter(time,TimeUnit.SECONDS);
+                }else{
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyLinked")).queue();
                 }
                 return;
             }

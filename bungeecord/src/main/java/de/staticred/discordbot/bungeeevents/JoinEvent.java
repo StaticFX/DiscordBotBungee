@@ -76,7 +76,9 @@ public class JoinEvent implements Listener {
                 VerifyDAO.INSTANCE.addPlayerAsUnverified(player);
             }
 
-            if (!VerifyDAO.INSTANCE.isPlayerVerified(player.getUniqueId())) {
+            boolean verified = VerifyDAO.INSTANCE.isPlayerVerified(player.getUniqueId());
+
+            if (!verified) {
                 TextComponent tc = new TextComponent();
                 tc.setText(DBVerifier.getInstance().getStringFromConfig("DiscordLinkColored",false));
                 tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(DBVerifier.getInstance().getStringFromConfig("JoinOurDiscord",false)).create()));
@@ -92,9 +94,9 @@ public class JoinEvent implements Listener {
 
             VerifyDAO.INSTANCE.updateUserName(player);
 
-            DBVerifier.getInstance().playerSRVVerifiedHashMap.put(player.getUniqueId(), VerifyDAO.INSTANCE.isPlayerVerified(player.getUniqueId()));
+            DBVerifier.getInstance().playerSRVVerifiedHashMap.put(player.getUniqueId(), verified);
 
-            if(VerifyDAO.INSTANCE.isPlayerVerified(player.getUniqueId())) {
+            if(verified) {
 
                 Member m;
 

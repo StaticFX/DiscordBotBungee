@@ -23,7 +23,7 @@ InterpretingAsMember: '{"title": "Information", "description": "Interpreting tar
 InterpretingAsPlayer: '{"title": "Information", "description": "Interpreting target as bungeecord player", "color": "yellow"}'
 NotVerifed: '{"title": "Information", "description": "This discord account is not verified yet.", "color": "red"}'
 NotVerifiedPlayer: '{"title": "Information", "description": "This account is not verified yet.", "color": "red"}'
-PlayerNotRegisteredOnMojang: '{"title": "Error", "description": "The player you searched for is not registered on the mojang-database.", "color": "red"}'
-InformationAboutAsMember: '{"title": "Information about **%name%**", "description": "**DiscordID:** %id%\n**UUID:** %uuid%\n**Name:** %name%","footer": "Interpreted as discord member" ,"color": "green"}'
-InformationAboutAsPlayer: '{"title": "Information about **%name%**", "description": "**DiscordID:** %id%\n**DiscordTag:** %tag%\n**Member:** %member%\n**UUID:** %uuid%\n**Name:** %name%","footer": "Interpreted as bungeecord player", "color": "green"}'
+PlayerNotRegisteredOnMojang: '{"title": "Error", "description": "The player you searched for is not registered on the database.", "color": "red"}'
+InformationAboutAsMember: '{"title": "Information about member **%memberName%**", "description": "**DiscordID:** %id%\n**UUID:** %uuid%\n**Name:** %name%\n**Member:** %memberAsTag%","footer": "Interpreted as discord member" ,"color": "green"}'
+InformationAboutAsPlayer: '{"title": "Information about player **%name%**", "description": "**DiscordID:** %id%\n**DiscordTag:** %tag%\n**Member:** %memberAsTag%\n**UUID:** %uuid%\n**Name:** %name%","footer": "Interpreted as bungeecord player", "color": "green"}'
 version: 1.0.2

@@ -30,6 +30,7 @@ public class DataBaseConnection {
         config.addDataSourceProperty( "cachePrepStmts" , "true" );
         config.addDataSourceProperty( "prepStmtCacheSize" , "250" );
         config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
+        config.setMaxLifetime(50000);
         url = ConfigFileManager.INSTANCE.getDataBase();
         host = ConfigFileManager.INSTANCE.getHost();
         port = ConfigFileManager.INSTANCE.getPort();

@@ -89,6 +89,7 @@ public class UnlinkCommandExecutor {
         try {
             VerifyDAO.INSTANCE.setPlayerAsUnverified(m.getId());
             VerifyDAO.INSTANCE.removeDiscordIDByDiscordID(m);
+            DBVerifier.getInstance().removeAllRolesFromMember(m);
         } catch (SQLException e) {
             e.printStackTrace();
             return;

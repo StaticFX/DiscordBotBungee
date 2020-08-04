@@ -67,8 +67,6 @@ public class MCVerifyCommandExecutor extends Command {
             Member m = DBVerifier.getInstance().playerMemberHashMap.get(p);
             TextChannel tc = DBVerifier.getInstance().playerChannelHashMap.get(p);
 
-            DBVerifier.INSTANCE.removeAllRolesFromMember(m);
-            DBVerifier.INSTANCE.updateRoles(m,p);
 
 
 
@@ -84,6 +82,7 @@ public class MCVerifyCommandExecutor extends Command {
 
                 VerifyDAO.INSTANCE.setPlayerAsVerified(p.getUniqueId());
                 VerifyDAO.INSTANCE.addDiscordID(p, m);
+                DBVerifier.INSTANCE.updateRoles(m,p);
             } catch (SQLException e) {
                 p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("InternalError",true)));
                 e.printStackTrace();
@@ -222,7 +221,6 @@ public class MCVerifyCommandExecutor extends Command {
                 return;
             }
 
-            DBVerifier.INSTANCE.removeAllRolesFromMember(m);
 
             try {
                 UserUnverifiedEvent event = new UserUnverifiedEvent(m,p);
@@ -235,6 +233,8 @@ public class MCVerifyCommandExecutor extends Command {
 
                 VerifyDAO.INSTANCE.removeDiscordID(p);
                 VerifyDAO.INSTANCE.setPlayerAsUnVerified(p.getUniqueId());
+                DBVerifier.INSTANCE.removeAllRolesFromMember(m);
+
 
             } catch (SQLException e) {
                 p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("InternalError",true)));

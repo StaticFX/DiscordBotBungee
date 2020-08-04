@@ -93,8 +93,8 @@ public class DiscordMessageFileManager {
         return builder.build();
     }
 
-    public MessageEmbed getEmbedInformationMember(String path, String name, String id, String uuid) {
-        JSONObject object = new JSONObject(getString(path).replaceAll("%name%",name).replaceAll("%id%", id).replaceAll("%uuid%",uuid));
+    public MessageEmbed getEmbedInformationMember(String path, String name, String id, String uuid, String memberName, String memberTag) {
+        JSONObject object = new JSONObject(getString(path).replaceAll("%name%",name).replaceAll("%id%", id).replaceAll("%uuid%",uuid).replaceAll("%memberName%",memberName).replaceAll("%memberAsTag%",memberTag));
         String title = object.getString("title");
         String description = object.getString("description");
         String color = object.getString("color");
@@ -118,7 +118,7 @@ public class DiscordMessageFileManager {
     }
 
     public MessageEmbed getEmbedInformationPlayer(String path, String name, String id, String uuid, String tagline, String member) {
-        JSONObject object = new JSONObject(getString(path).replaceAll("%name%",name).replaceAll("%id%", id).replaceAll("%uuid%",uuid).replaceAll("%tag%",tagline).replaceAll("%member%",member));
+        JSONObject object = new JSONObject(getString(path).replaceAll("%name%",name).replaceAll("%id%", id).replaceAll("%uuid%",uuid).replaceAll("%tag%",tagline).replaceAll("%memberAsTag%",member));
         String title = object.getString("title");
         String description = object.getString("description");
         String color = object.getString("color");

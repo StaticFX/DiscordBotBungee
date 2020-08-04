@@ -27,8 +27,10 @@ public class VerifyDAO {
             if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.loadDataBase 1");
             con.executeUpdate("CREATE TABLE IF NOT EXISTS verify(UUID VARCHAR(36) PRIMARY KEY, PlayerName VARCHAR(16), Verified BOOLEAN, DiscordID VARCHAR(100), Version VARCHAR(10))");
 
+            String version = getDataBaseVersion();
+
             //update database to newest version
-            if(getDataBaseVersion() == null || !doesColumnExist("Version")) {
+            if(version == null || !doesColumnExist("Version")) {
                 Debugger.debugMessage("DataBaseVersion outdated, trying to auto update the Database");
 
                 if(!doesColumnExist("Version")) {
@@ -54,7 +56,7 @@ public class VerifyDAO {
 
             }
 
-            if(getDataBaseVersion() != null && !getDataBaseVersion().equals(DBVerifier.DATABASE_VERSION)) {
+            if(version != null && !version.equals(DBVerifier.DATABASE_VERSION)) {
                 //update for the future
             }
 
@@ -331,7 +333,7 @@ public class VerifyDAO {
 
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.removeDiscordIDByDiscordID");
-        con.executeUpdate("UPDATE verify SET Verified = false, DiscordID = ? WHERE DiscordID = ?", null,m.getId());
+        con.executeUpdate("UPDATE verify SET DiscordID = ? WHERE DiscordID = ?", null,m.getId());
     }
 
 
@@ -365,7 +367,6 @@ public class VerifyDAO {
 
         if(rs.next()) {
             boolean online = rs.getBoolean("Verified");
-            System.out.println(online);
             rs.close();
             ps.close();
             return online;

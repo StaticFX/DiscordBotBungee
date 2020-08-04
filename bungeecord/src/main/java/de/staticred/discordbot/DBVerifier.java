@@ -334,6 +334,13 @@ public class DBVerifier extends Plugin {
 
                     m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(ConfigFileManager.INSTANCE.getVerifyRole(),true).get(0)).queue();
                 }
+
+                if(DBVerifier.INSTANCE.syncNickname) {
+                    if(debugMode) Debugger.debugMessage("Renaming " + m.getNickname() + " to " + p.getName());
+                    if(!m.isOwner())
+                        m.getGuild().modifyNickname(m,p.getName()).queue();
+                }
+
             }catch (NullPointerException | IndexOutOfBoundsException exception) {
                 Debugger.debugMessage("The Bot can't find the given Role. The Role the problem has occured: verify");
                 Debugger.debugMessage("UseIDs: " + ConfigFileManager.INSTANCE.useTokens());
@@ -372,9 +379,8 @@ public class DBVerifier extends Plugin {
                         }
 
                         if(DBVerifier.INSTANCE.syncNickname) {
-                            if(m.isOwner()) {
-                                p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("MemberIsOwner",false)));
-                            }else {
+                            if(debugMode) Debugger.debugMessage("Renaming " + m.getEffectiveName() + " to " + DiscordFileManager.INSTANCE.getPrefix(group).replaceAll("%name%",p.getName()));
+                            if(!m.isOwner()) {
                                 m.getGuild().modifyNickname(m,DiscordFileManager.INSTANCE.getPrefix(group).replaceAll("%name%",p.getName())).queue();
                             }
                         }
@@ -394,7 +400,6 @@ public class DBVerifier extends Plugin {
                 }
 
             }else{
-
                 if(debugMode) Debugger.debugMessage("Group is dynamic");
                 if(debugMode) Debugger.debugMessage("Checking if players has permission: " + DiscordFileManager.INSTANCE.getPermissionsForGroup(group));
 
@@ -457,13 +462,19 @@ public class DBVerifier extends Plugin {
     }
 
     public void removeAllRolesFromMember(Member m) {
+
+
         for(Role role : m.getRoles()) {
                 if(ConfigFileManager.INSTANCE.useTokens()) {
                     if(DiscordFileManager.INSTANCE.getAllDiscordGroups().contains(role.getId())) {
                         m.getGuild().removeRoleFromMember(m,role).queue();
                     }
+                    if(ConfigFileManager.INSTANCE.getVerifyRole().equals(role.getId()))
+                        m.getGuild().removeRoleFromMember(m,role).queue();
                 }else{
                     if(DiscordFileManager.INSTANCE.getAllDiscordGroups().contains(role.getName())) {
+                        m.getGuild().removeRoleFromMember(m,role).queue();
+                    if(ConfigFileManager.INSTANCE.getVerifyRole().equals(role.getName()))
                         m.getGuild().removeRoleFromMember(m,role).queue();
                 }
             }

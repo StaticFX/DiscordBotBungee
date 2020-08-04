@@ -33,7 +33,13 @@ public class DBInfoSubCommand extends SubCommand {
         }
         String inputName = args[1];
 
-        UUID uuid = UUIDFetcher.getUUID(inputName);
+        UUID uuid = null;
+        try {
+            uuid = VerifyDAO.INSTANCE.getUUIDByName(inputName);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return;
+        }
 
         if(uuid == null) {
             sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("UserNotFound",true)));
