@@ -99,6 +99,12 @@ public class MCVerifyCommandExecutor extends Command {
             DBVerifier.getInstance().playerChannelHashMap.remove(p);
             DBVerifier.getInstance().playerMemberHashMap.remove(p);
 
+            if(ConfigFileManager.INSTANCE.getSyncName()) {
+                if(m.isOwner()) {
+                    p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("MemberIsOwner",true)));
+                }
+            }
+
             try {
                 if(!RewardsDAO.INSTANCE.hasPlayerBeenRewarded(p.getUniqueId())) {
                     for(String command : RewardsFileManager.INSTANCE.getCommandsOnVerified()) {

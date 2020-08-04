@@ -38,14 +38,14 @@ public class JoinEvent implements Listener {
             TextComponent tc = new TextComponent();
             tc.setText("§8[§aDiscordBot§8] §4You can find the newest version over §e§lhere");
             tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§aconfig.yml").create()));
-            tc.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/StaticFX/DiscordBotBungee/blob/master/src/main/resources/config.yml"));
+            tc.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/StaticFX/DiscordBotBungee/blob/1.5.0/bungeecord/src/main/resources/config.yml"));
             TextComponent sendedText = new TextComponent();
             sendedText.addExtra(tc);
             player.sendMessage(sendedText);
 
         }
 
-        if(!SettingsFileManager.INSTANCE.isSetup()  && player.hasPermission("discord.setup") || player.hasPermission("db.*")) {
+        if(!SettingsFileManager.INSTANCE.isSetup()  && (player.hasPermission("discord.setup") || player.hasPermission("db.*"))) {
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §aHey, looks like my plugin isn´t setup yet. \n§aMy wizard will guide you trough the process."));
             player.sendMessage(new TextComponent("§aUse /setup to start now!"));
         }
@@ -59,7 +59,7 @@ public class JoinEvent implements Listener {
             TextComponent tc = new TextComponent();
             tc.setText("§8[§aDiscordBot§8] §4You can find the newest version over §e§lhere");
             tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§aminecraftMessages.yml").create()));
-            tc.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/StaticFX/DiscordBotBungee/blob/master/src/main/resources/messages.yml"));
+            tc.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/StaticFX/DiscordBotBungee/blob/1.5.0/bungeecord/src/main/resources/MinecraftMessages.yml"));
             TextComponent sendedText = new TextComponent();
             sendedText.addExtra(tc);
             player.sendMessage(sendedText);
@@ -76,7 +76,7 @@ public class JoinEvent implements Listener {
             TextComponent tc = new TextComponent();
             tc.setText("§8[§aDiscordBot§8] §4You can find the newest version over §e§lhere");
             tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§adiscordMessages.yml").create()));
-            tc.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/StaticFX/DiscordBotBungee/blob/master/src/main/resources/messages.yml"));
+            tc.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/StaticFX/DiscordBotBungee/blob/1.5.0/bungeecord/src/main/resources/DiscordMessages.yml"));
             TextComponent sendedText = new TextComponent();
             sendedText.addExtra(tc);
             player.sendMessage(sendedText);

@@ -86,9 +86,9 @@ public class ConfigFileManager {
     public Role getPermissionRole() {
 
         if(useTokens()) {
-            return DBVerifier.getInstance().jda.getRoleById(conf.getString("permissedGroup"));
+            return DBVerifier.getInstance().jda.getRoleById(conf.getString("permissedRole"));
         }else{
-            return DBVerifier.getInstance().jda.getRolesByName(conf.getString("permissedGroup"),false).get(0);
+            return DBVerifier.getInstance().jda.getRolesByName(conf.getString("permissedRole"),false).get(0);
         }
 
     }

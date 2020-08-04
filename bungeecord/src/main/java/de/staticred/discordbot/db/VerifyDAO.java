@@ -390,7 +390,6 @@ public class VerifyDAO {
 
         if(rs.next()) {
             UUID online = UUID.fromString(rs.getString("UUID"));
-            System.out.println(online);
             rs.close();
             ps.close();
             return online;

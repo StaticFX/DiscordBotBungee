@@ -54,6 +54,6 @@ deleteMessages: 10
 #this is a need to set, otherwise no admin commands on the discord will work
 #whatever group you set here, it will have the permission to execute the included admincommands
 #this also behaves bases on the useTokens rule
-permissedGroup: ""
+permissedRole: ""
 #never edit!
 configVersion: "1.1.3"
