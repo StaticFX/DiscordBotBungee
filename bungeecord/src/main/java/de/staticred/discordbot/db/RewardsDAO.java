@@ -69,6 +69,10 @@ public class RewardsDAO {
 
     public boolean hasPlayerBeenRewarded(UUID player) throws SQLException {
 
+
+        if(ConfigFileManager.INSTANCE.igrnoreRewardState()) return false;
+
+
         if(!ConfigFileManager.INSTANCE.useSQL()) {
             return VerifyFileManager.INSTANCE.getRewardState(player);
         }

@@ -36,10 +36,10 @@ public class VerifyCommandExecutor {
 
         if(args.length != 2) {
             if(time != -1) {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("VerifyDiscordSyntax")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("VerifyDiscordSyntax",m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 command.delete().queueAfter(time,TimeUnit.SECONDS);
             }else{
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("VerifyDiscordSyntax")).queue();
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("VerifyDiscordSyntax",m)).queue();
             }
             return;
         }
@@ -52,10 +52,10 @@ public class VerifyCommandExecutor {
             if(VerifyDAO.INSTANCE.isDiscordIDInUse(m.getId())) {
 
                 if(time != -1) {
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyLinked")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyLinked",m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                     command.delete().queueAfter(time,TimeUnit.SECONDS);
                 }else{
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyLinked")).queue();
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyLinked",m)).queue();
                 }
                 return;
             }
@@ -64,20 +64,19 @@ public class VerifyCommandExecutor {
             return;
         }
 
-
         if(time != -1) {
-            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SearchingForPlayer", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SearchingForPlayer", name, m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
         } else {
-            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SearchingForPlayer", name)).queue();
+            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SearchingForPlayer", name, m)).queue();
         }
 
         if(player == null) {
 
             if(time != -1) {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("PlayerNotFound", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("PlayerNotFound", name,m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 command.delete().queueAfter(time,TimeUnit.SECONDS);
             }else {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("PlayerNotFound", name)).queue();
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("PlayerNotFound", name,m)).queue();
             }
             return;
         }
@@ -85,10 +84,10 @@ public class VerifyCommandExecutor {
         try {
             if(VerifyDAO.INSTANCE.isPlayerVerified(player.getUniqueId())) {
                 if(time != -1) {
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyVerified", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyVerified", name,m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                     command.delete().queueAfter(time,TimeUnit.SECONDS);
                 }else {
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyVerified", name)).queue();
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyVerified", name,m)).queue();
                 }
                 return;
             }
@@ -99,38 +98,38 @@ public class VerifyCommandExecutor {
 
         if(DBVerifier.getInstance().playerChannelHashMap.containsKey(player)) {
             if(time != -1) {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SendInquiry", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SendInquiry", name,m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 command.delete().queueAfter(time,TimeUnit.SECONDS);
             }else {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SendInquiry", name)).queue();
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SendInquiry", name,m)).queue();
             }
             return;
         }
         if(DBVerifier.getInstance().playerMemberHashMap.containsKey(player)) {
             if(time != -1) {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyInquiry", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyInquiry", name,m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 command.delete().queueAfter(time,TimeUnit.SECONDS);
             }else {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyInquiry", name)).queue();
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("AlreadyInquiry", name,m)).queue();
             }
             return;
         }
 
         if(BlockedServerFileManager.INSTANCE.getBlockedServers().contains(player.getServer().getInfo().getName())) {
             if(time != -1) {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("CantVerifyOnThisServer", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("CantVerifyOnThisServer", name,m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 command.delete().queueAfter(time,TimeUnit.SECONDS);
             }else {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("CantVerifyOnThisServer", name)).queue();
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("CantVerifyOnThisServer", name,m)).queue();
             }
             return;
         }
 
         if(time != -1) {
-            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("FoundPlayer", name)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("FoundPlayer", name,m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
             command.delete().queueAfter(time,TimeUnit.SECONDS);
         } else {
-            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("FoundPlayer", name)).queue();
+            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("FoundPlayer", name,m)).queue();
         }
 
         player.sendMessage(new net.md_5.bungee.api.chat.TextComponent(DBVerifier.getInstance().getStringFromConfig("PendingInquiry",true).replaceAll("%user%",m.getEffectiveName())));
@@ -139,11 +138,11 @@ public class VerifyCommandExecutor {
         String commandStrng = ConfigFileManager.INSTANCE.getString("verifycommand");
 
         net.md_5.bungee.api.chat.TextComponent textC = new net.md_5.bungee.api.chat.TextComponent();
-        textC.setText("§a§lAccept");
+        textC.setText(DBVerifier.getInstance().getStringFromConfig("AcceptMessage",false));
         textC.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(DBVerifier.getInstance().getStringFromConfig("AcceptInquiry",false)).create()));
         textC.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + commandStrng + " accept"));
         net.md_5.bungee.api.chat.TextComponent tc2 = new net.md_5.bungee.api.chat.TextComponent();
-        tc2.setText("§c§lDecline");
+        tc2.setText(DBVerifier.getInstance().getStringFromConfig("DeclineMessage",false));
         tc2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(DBVerifier.getInstance().getStringFromConfig("DenyInquiry",false)).create()));
         tc2.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + commandStrng + " decline"));
         net.md_5.bungee.api.chat.TextComponent tc3 = new net.md_5.bungee.api.chat.TextComponent(" §7| ");

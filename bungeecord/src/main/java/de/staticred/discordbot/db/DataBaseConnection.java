@@ -2,17 +2,12 @@ package de.staticred.discordbot.db;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import com.zaxxer.hikari.pool.HikariPool;
 import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.util.Debugger;
-import jdk.internal.net.http.hpack.HPACK;
-
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.logging.Level;
 
 public class DataBaseConnection {
 
@@ -24,7 +19,6 @@ public class DataBaseConnection {
     private HikariConfig config = new HikariConfig();
 
     private DataBaseConnection() {
-
         config.setUsername(ConfigFileManager.INSTANCE.getUser());
         config.setPassword(ConfigFileManager.INSTANCE.getPassword());
         config.addDataSourceProperty( "cachePrepStmts" , "true" );

@@ -36,12 +36,22 @@ public class RewardsFileManager {
         }
     }
 
-    public List<String> getCommandsOnVerified() {
-        return conf.getStringList("verified.commands");
+    public List<String> getCommandsOnVerifiedBungee() {
+        return conf.getStringList("verified.commands.bungee");
     }
 
-    public List<String> getCommandsOnUnVerified() {
-        return conf.getStringList("unverified.commands");
+    public List<String> getCommandsOnVerifiedBukkit() {
+        return conf.getStringList("verified.commands.bukkit");
     }
+
+    public List<String> getCommandsOnUnVerifiedBungee() {
+        return conf.getStringList("unlinked.commands.bungee");
+    }
+
+    public List<String> getCommandsOnUnVerifiedBukkit() {
+        return conf.getStringList("unlinked.commands.bukkit");
+    }
+
+
 
 }

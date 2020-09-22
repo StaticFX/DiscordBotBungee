@@ -32,10 +32,10 @@ public class UnlinkCommandExecutor {
 
 
             if(time != -1) {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UnlinkDiscordSyntax")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UnlinkDiscordSyntax", m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 command.delete().queueAfter(time,TimeUnit.SECONDS);
             }else {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UnlinkDiscordSyntax")).queue();
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UnlinkDiscordSyntax", m)).queue();
             }
 
             return;
@@ -47,10 +47,10 @@ public class UnlinkCommandExecutor {
                 int time = ConfigFileManager.INSTANCE.getTime();
 
                 if(time != -1) {
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedYet")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedYet", m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                     command.delete().queueAfter(time,TimeUnit.SECONDS);
                 }else {
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedYet")).queue();
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedYet", m)).queue();
                 }
 
                 return;
@@ -98,10 +98,10 @@ public class UnlinkCommandExecutor {
         int time = ConfigFileManager.INSTANCE.getTime();
 
         if(time != -1) {
-            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SuccessfullyUnlinked")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SuccessfullyUnlinked", m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
             command.delete().queueAfter(time,TimeUnit.SECONDS);
         }else {
-            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SuccessfullyUnlinked")).queue();
+            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("SuccessfullyUnlinked", m)).queue();
         }
     }
 

@@ -54,10 +54,17 @@ public class VerifyFileManager {
 
     public UUID getUUIDByPlayerName(String name) {
 
-        for(String group : conf.getKeys()) {
-            if(UUID.fromString(group) != null) {
-                if(getName(getDiscordID(UUID.fromString(group))).equals(name)) return UUID.fromString(group);
+        for(String iteradedUUID : conf.getKeys()) {
+            if(iteradedUUID.matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")) {
+                //is a uuid
+
+                if(getName(iteradedUUID).equals(name)) {
+                    return UUID.fromString(iteradedUUID);
+                }
+                return null;
             }
+
+
         }
         return null;
 
@@ -70,6 +77,10 @@ public class VerifyFileManager {
 
     public boolean isPlayerInFile(ProxiedPlayer p) {
         return conf.getKeys().contains(p.getUniqueId().toString());
+    }
+
+    public String getName(UUID uuid) {
+        return conf.getString(uuid.toString() + ".name");
     }
 
     public void addPlayerAsUnverified(ProxiedPlayer p) {
@@ -174,13 +185,6 @@ public class VerifyFileManager {
     }
 
     public int getAmountOfVerifiedPlayers() {
-        int amount = 0;
-        for(String key : conf.getKeys()) {
-            if(isPlayerVerified(UUID.fromString(key))) {
-                amount += 0;
-            }
-        }
-
-        return amount;
+       return 0;
     }
 }

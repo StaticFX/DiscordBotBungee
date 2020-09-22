@@ -2,6 +2,7 @@ package de.staticred.discordbot.bungeeevents;
 
 import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.db.VerifyDAO;
+import de.staticred.discordbot.files.ConfigFileManager;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ServerSwitchEvent;
@@ -18,9 +19,14 @@ public class ChangedBukkitServerEvent implements Listener {
 
         ProxiedPlayer switcher = event.getPlayer();
 
+
+        if(ConfigFileManager.INSTANCE.useSRV())
+
         DBVerifier.getInstance().bukkitMessageHandler.sendPlayerVerifedRequest(switcher);
 
         if(!DBVerifier.getInstance().setuped) return;
+
+        if(!ConfigFileManager.INSTANCE.useSRV()) return;
 
         ProxyServer.getInstance().getScheduler().schedule(DBVerifier.getInstance(),() -> {
 

@@ -89,6 +89,9 @@ public class JoinEvent implements Listener {
             return;
         }
 
+
+
+
         try {
 
             if (!VerifyDAO.INSTANCE.isPlayerInDataBase(player)) {
@@ -115,6 +118,7 @@ public class JoinEvent implements Listener {
 
             DBVerifier.getInstance().playerSRVVerifiedHashMap.put(player.getUniqueId(), verified);
 
+
             if(verified) {
 
                 Member m;
@@ -131,8 +135,11 @@ public class JoinEvent implements Listener {
                     return;
                 }
 
-                DBVerifier.getInstance().removeAllRolesFromMember(m);
-                DBVerifier.getInstance().updateRoles(m,player);
+                if(ConfigFileManager.INSTANCE.autoUpdate()) {
+                    DBVerifier.getInstance().removeAllRolesFromMember(m);
+                    DBVerifier.getInstance().updateRoles(m,player);
+                }
+
 
                 if(DBVerifier.INSTANCE.syncNickname) {
                     if(!m.isOwner()) {
@@ -140,6 +147,8 @@ public class JoinEvent implements Listener {
                     }
                 }
             }
+
+
 
         } catch(SQLException ex) {
             ex.printStackTrace();

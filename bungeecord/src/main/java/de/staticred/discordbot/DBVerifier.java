@@ -6,7 +6,9 @@ import de.staticred.discordbot.bukkitconnectionhandler.BukkitMessageHandler;
 import de.staticred.discordbot.bungeecommands.dbcommand.DBCommandExecutor;
 import de.staticred.discordbot.bungeecommands.MCVerifyCommandExecutor;
 import de.staticred.discordbot.bungeecommands.SetupCommandExecutor;
+import de.staticred.discordbot.bungeecommands.dbgroupcommand.DBGroupCommandExecutor;
 import de.staticred.discordbot.bungeeevents.ChangedBukkitServerEvent;
+import de.staticred.discordbot.bungeeevents.ChatEvent;
 import de.staticred.discordbot.bungeeevents.JoinEvent;
 import de.staticred.discordbot.bungeeevents.LeaveEvent;
 import de.staticred.discordbot.db.*;
@@ -17,11 +19,13 @@ import de.staticred.discordbot.event.UserUpdatedRolesEvent;
 import de.staticred.discordbot.files.*;
 import de.staticred.discordbot.test.TestUserVerifiedEvent;
 import de.staticred.discordbot.util.Debugger;
+import de.staticred.discordbot.util.GroupInfo;
 import io.netty.util.internal.logging.Log4J2LoggerFactory;
 import io.netty.util.internal.logging.Log4JLoggerFactory;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -66,7 +70,7 @@ public class DBVerifier extends Plugin {
     public boolean useSRV;
 
     //the players who are setting up the plugin
-    public ArrayList<ProxiedPlayer> settingUp = new ArrayList<>();
+    public ArrayList<CommandSender> settingUp = new ArrayList<>();
 
     //the token of the bot
     public String token;
@@ -75,9 +79,9 @@ public class DBVerifier extends Plugin {
     public Activity activity;
 
     //the version of the internal file system
-    public final static String configVersion = "1.1.3";
-    public final static String msgVersion = "1.0.3";
-    public final static String dcMSGVersion  = "1.0.3";
+    public final static String configVersion = "1.6.0";
+    public final static String msgVersion = "1.6.0";
+    public final static String dcMSGVersion  = "1.6.0";
 
     public static String pluginVersion;
 
@@ -88,7 +92,7 @@ public class DBVerifier extends Plugin {
     public boolean debugMode;
 
     //the name of the channel which is used to communicate with the bukkit subserver for a discordsrv connection
-    public static final String PLUGIN_CHANNEL_NAME = "dbverifier:bungeecord";
+    public static final String PLUGIN_CHANNEL_NAME = "dbv:bungeecord";
 
     //this object is handling the messaging
     public BukkitMessageHandler bukkitMessageHandler;
@@ -101,6 +105,11 @@ public class DBVerifier extends Plugin {
     public boolean srvFailed = false;
 
     public HashMap<UUID, Boolean> playerSRVVerifiedHashMap = new HashMap<>();
+
+    //hashmap used to save the state the user is setting up a group;
+    public HashMap<UUID, Integer> playerCreatingGroupStateHashMap = new HashMap<>();
+    //hashmap used to save the values the player gave
+    public HashMap<UUID, GroupInfo> playerGroupInfoHashMap = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -130,6 +139,8 @@ public class DBVerifier extends Plugin {
         SettingsFileManager.INSTANCE.loadFile();
 
         DiscordFileManager.INSTANCE.update();
+
+        AliasesFileManager.INSTANCE.loadFile();
 
         debugMode = SettingsFileManager.INSTANCE.isDebug();
 
@@ -247,8 +258,9 @@ public class DBVerifier extends Plugin {
     private int getAmountOfGroupsTokens() {
         int amount = 0;
         for(String group : DiscordFileManager.INSTANCE.getAllGroups()) {
+            long tempTest;
             try {
-                DiscordFileManager.INSTANCE.getDiscordGroupIDForGroup(group);
+                tempTest = Long.parseLong(DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(group));
                 amount++;
             }catch (Exception ignore) {
             }
@@ -262,7 +274,9 @@ public class DBVerifier extends Plugin {
         if(jda != null)
             jda.shutdownNow();
         if(SettingsFileManager.INSTANCE.isSetup()) {
-            DataBaseConnection.INSTANCE.closeConnection();
+            if(useSQL) {
+                DataBaseConnection.INSTANCE.closeConnection();
+            }
         }
 
     }
@@ -271,13 +285,14 @@ public class DBVerifier extends Plugin {
         getProxy().getPluginManager().registerCommand(this,new MCVerifyCommandExecutor(command));
         getProxy().getPluginManager().registerCommand(this,new DBCommandExecutor("db"));
         getProxy().getPluginManager().registerCommand(this,new SetupCommandExecutor());
+        getProxy().getPluginManager().registerCommand(this, new DBGroupCommandExecutor("dbgroup"));
     }
 
     public void loadBungeeEvents() {
         getProxy().getPluginManager().registerListener(this,new JoinEvent());
         getProxy().getPluginManager().registerListener(this,new LeaveEvent());
         getProxy().getPluginManager().registerListener(this,new ChangedBukkitServerEvent());
-
+        getProxy().getPluginManager().registerListener(this, new ChatEvent());
     }
 
 

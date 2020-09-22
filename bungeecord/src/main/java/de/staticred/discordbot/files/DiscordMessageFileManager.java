@@ -2,6 +2,7 @@ package de.staticred.discordbot.files;
 
 import de.staticred.discordbot.DBVerifier;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -51,46 +52,158 @@ public class DiscordMessageFileManager {
 
     public MessageEmbed getEmbed(String path, String name) {
         JSONObject object = new JSONObject(getString(path).replaceAll("%name%",name));
-        String title = object.getString("title");
-        String description = object.getString("description");
-        String color = object.getString("color");
 
-        Color colorObj;
-        try {
-            Field field = Class.forName("java.awt.Color").getField(color);
-            colorObj = (Color) field.get(null);
-        } catch (Exception e) {
-            colorObj = null; // Not defined
-        }
+        String title;
+        String descirption;
+        Color color;
+        String footer;
 
         EmbedBuilder builder = new EmbedBuilder();
-        builder.setTitle(title);
-        builder.setDescription(description);
-        builder.setColor(colorObj);
+
+        if(object.has("title")) {
+            title = object.getString("title");
+            builder.setTitle(title);
+        }
+        if(object.has("description")) {
+            descirption = object.getString("description");
+            builder.setDescription(descirption);
+        }
+        if(object.has("color")) {
+            String colorInput = object.getString("color");
+
+
+            try {
+                Field field = Class.forName("java.awt.Color").getField(colorInput);
+                color = (Color) field.get(null);
+            } catch (Exception e) {
+                color = null; // Not defined
+            }
+
+            builder.setColor(color);
+        }
+        if(object.has("footer")) {
+            footer = object.getString("footer");
+            builder.setFooter(footer);
+        }
+
+        return builder.build();
+    }
+
+    public MessageEmbed getEmbed(String path, String name, Member meber) {
+        JSONObject object = new JSONObject(getString(path).replaceAll("%name%",name).replaceAll("%member%",meber.getAsMention()));
+
+        String title;
+        String descirption;
+        Color color;
+        String footer;
+
+        EmbedBuilder builder = new EmbedBuilder();
+
+        if(object.has("title")) {
+            title = object.getString("title");
+            builder.setTitle(title);
+        }
+        if(object.has("description")) {
+            descirption = object.getString("description");
+            builder.setDescription(descirption);
+        }
+        if(object.has("color")) {
+            String colorInput = object.getString("color");
+
+
+            try {
+                Field field = Class.forName("java.awt.Color").getField(colorInput);
+                color = (Color) field.get(null);
+            } catch (Exception e) {
+                color = null; // Not defined
+            }
+
+            builder.setColor(color);
+        }
+        if(object.has("footer")) {
+            footer = object.getString("footer");
+            builder.setFooter(footer);
+        }
 
         return builder.build();
     }
 
     public MessageEmbed getEmbed(String path) {
         JSONObject object = new JSONObject(getString(path));
-        String title = object.getString("title");
-        String description = object.getString("description");
-        String color = object.getString("color");
-
-        Color colorObj;
-        try {
-            Field field = Class.forName("java.awt.Color").getField(color);
-            colorObj = (Color) field.get(null);
-        } catch (Exception e) {
-            colorObj = null; // Not defined
-        }
+        String title;
+        String descirption;
+        Color color;
+        String footer;
 
         EmbedBuilder builder = new EmbedBuilder();
-        builder.setTitle(title);
-        builder.setDescription(description);
-        builder.setColor(colorObj);
+
+        if(object.has("title")) {
+            title = object.getString("title");
+            builder.setTitle(title);
+        }
+        if(object.has("description")) {
+            descirption = object.getString("description");
+            builder.setDescription(descirption);
+        }
+        if(object.has("color")) {
+            String colorInput = object.getString("color");
+
+
+            try {
+                Field field = Class.forName("java.awt.Color").getField(colorInput);
+                color = (Color) field.get(null);
+            } catch (Exception e) {
+                color = null; // Not defined
+            }
+
+            builder.setColor(color);
+        }
+        if(object.has("footer")) {
+            footer = object.getString("footer");
+            builder.setFooter(footer);
+        }
 
         return builder.build();
+    }
+
+    public MessageEmbed getEmbed(String path, Member member) {
+        JSONObject object = new JSONObject(getString(path).replaceAll("%member%",member.getAsMention()));
+        String title;
+        String descirption;
+        Color color;
+        String footer;
+
+        EmbedBuilder builder = new EmbedBuilder();
+
+        if(object.has("title")) {
+            title = object.getString("title");
+            builder.setTitle(title);
+        }
+        if(object.has("description")) {
+            descirption = object.getString("description");
+            builder.setDescription(descirption);
+        }
+        if(object.has("color")) {
+            String colorInput = object.getString("color");
+
+
+            try {
+                Field field = Class.forName("java.awt.Color").getField(colorInput);
+                color = (Color) field.get(null);
+            } catch (Exception e) {
+                color = null; // Not defined
+            }
+
+            builder.setColor(color);
+        }
+        if(object.has("footer")) {
+            footer = object.getString("footer");
+            builder.setFooter(footer);
+        }
+
+        return builder.build();
+
+
     }
 
     public MessageEmbed getEmbedInformationMember(String path, String name, String id, String uuid, String memberName, String memberTag) {

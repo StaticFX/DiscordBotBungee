@@ -1,7 +1,10 @@
 package de.staticred.discordbot.discordevents;
 
+import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.discordcommands.*;
+import de.staticred.discordbot.files.AliasesFileManager;
 import de.staticred.discordbot.files.ConfigFileManager;
+import de.staticred.discordbot.util.Debugger;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -22,19 +25,22 @@ public class MessageEvent extends ListenerAdapter {
             return;
         }
 
-        if(args[0].equalsIgnoreCase( ConfigFileManager.INSTANCE.getCommandPrefix() + "verify") || args[0].equalsIgnoreCase(ConfigFileManager.INSTANCE.getCommandPrefix() + "sync")) {
+        if(!args[0].startsWith(ConfigFileManager.INSTANCE.getCommandPrefix())) return;
+
+
+        if(args[0].equalsIgnoreCase( ConfigFileManager.INSTANCE.getCommandPrefix() + "verify") || AliasesFileManager.INSTANCE.getVerifyAliases().contains(args[0].substring(ConfigFileManager.INSTANCE.getCommandPrefix().length()))) {
             new VerifyCommandExecutor(m,e.getChannel(),message,args);
             return;
-        }else if(args[0].equalsIgnoreCase(ConfigFileManager.INSTANCE.getCommandPrefix() + "unlink")) {
+        }else if(args[0].equalsIgnoreCase(ConfigFileManager.INSTANCE.getCommandPrefix() + "unlink") || AliasesFileManager.INSTANCE.getUnlinkAliases().contains(args[0].substring(ConfigFileManager.INSTANCE.getCommandPrefix().length()))) {
             new UnlinkCommandExecutor(m,e.getChannel(),message,args);
             return;
-        }else if(args[0].equalsIgnoreCase(ConfigFileManager.INSTANCE.getCommandPrefix() + "help")) {
+        }else if(args[0].equalsIgnoreCase(ConfigFileManager.INSTANCE.getCommandPrefix() + "help") || AliasesFileManager.INSTANCE.getHelpAliases().contains(args[0].substring(ConfigFileManager.INSTANCE.getCommandPrefix().length()))) {
             new HelpCommandExecutor(m,e.getChannel(),message,args);
             return;
-        } else if (args[0].equalsIgnoreCase(ConfigFileManager.INSTANCE.getCommandPrefix() + "update")) {
+        } else if (args[0].equalsIgnoreCase(ConfigFileManager.INSTANCE.getCommandPrefix() + "update") || AliasesFileManager.INSTANCE.getUpdateAliases().contains(args[0].substring(ConfigFileManager.INSTANCE.getCommandPrefix().length()))) {
             new UpdateCommandExecutor(m, e.getChannel(), message, args);
             return;
-        } else if  (args[0].equalsIgnoreCase(ConfigFileManager.INSTANCE.getCommandPrefix() + "info")) {
+        } else if  (args[0].equalsIgnoreCase(ConfigFileManager.INSTANCE.getCommandPrefix() + "info") || AliasesFileManager.INSTANCE.getInfoAliases().contains(args[0].substring(ConfigFileManager.INSTANCE.getCommandPrefix().length()))) {
             new InfoCommandExecutor(m,e.getChannel(),message,args);
             return;
         }else{

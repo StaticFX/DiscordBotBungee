@@ -1,0 +1,15 @@
+#!verify command
+verify:
+  - "sync"
+#!update command
+update:
+  - "roleUpdate"
+#!unlink
+unlink:
+  - "unsync"
+#!help
+help:
+  - "dbverifier"
+#!info
+info:
+  - "information"

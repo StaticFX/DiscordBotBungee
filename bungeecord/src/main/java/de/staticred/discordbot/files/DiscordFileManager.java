@@ -1,6 +1,7 @@
 package de.staticred.discordbot.files;
 
 import de.staticred.discordbot.DBVerifier;
+import de.staticred.discordbot.util.GroupInfo;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -45,6 +46,14 @@ public class DiscordFileManager {
         }
     }
 
+    public void deleteGroup(String group) {
+        List<String> groups = getAllGroups();
+        groups.remove(group);
+        conf.set("Groups",groups);
+        conf.set(group,null);
+        saveFile();
+    }
+
     public String getPrefix(String group) {
         return conf.getString(group + ".prefix");
     }
@@ -57,11 +66,16 @@ public class DiscordFileManager {
         return conf.getStringList(group);
     }
 
+    public boolean doesGroupExist(String group) {
+        return conf.contains(group);
+    }
+
     public void generateGroupConfig() {
         for(String string : getAllGroups()) {
             conf.set(string + ".groupName", string);
             conf.set(string + ".permission", "perm." + string);
             conf.set(string + ".dynamicGroup",false);
+            conf.set(string + ".prefix",string + " | %player%");
         }
         saveFile();
     }
@@ -74,6 +88,24 @@ public class DiscordFileManager {
         }
 
         return permissions;
+    }
+
+    public void createGroup(GroupInfo info) {
+        List<String> groups = getAllGroups();
+        groups.add(info.getName());
+        conf.set("Groups",groups);
+        String name = info.getName();
+
+        if(ConfigFileManager.INSTANCE.useTokens()) {
+            conf.set(name + ".groupName",Long.parseLong(info.getDiscordGroup()));
+        }else{
+            conf.set(name + ".groupName",(info.getDiscordGroup()));
+        }
+
+        conf.set(name + ".permission", info.getPermission());
+        conf.set(name + ".dynamicGroup",info.isDynamic());
+        conf.set(name + ".prefix",info.getPrefix());
+        saveFile();
     }
 
     public String getPermissionsForGroup(String group) {

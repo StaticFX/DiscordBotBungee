@@ -8,20 +8,19 @@ import net.md_5.bungee.config.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.util.List;
 
-public class BlockedServerFileManager {
+public class AliasesFileManager {
 
-    private File file = new File(DBVerifier.getInstance().getDataFolder().getAbsolutePath(), "blockedservers.yml");
+    private File file = new File(DBVerifier.getInstance().getDataFolder().getAbsolutePath(), "aliases.yml");
     private Configuration conf;
-    public static BlockedServerFileManager INSTANCE = new BlockedServerFileManager();
+    public static AliasesFileManager INSTANCE = new AliasesFileManager();
 
     public void loadFile() {
         if(!file.exists()) {
             file.getParentFile().mkdirs();
-            try(InputStream in = getClass().getClassLoader().getResourceAsStream("blockedservers.yml")) {
+            try(InputStream in = getClass().getClassLoader().getResourceAsStream("aliases.yml")) {
                 Files.copy(in,file.toPath());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -39,8 +38,24 @@ public class BlockedServerFileManager {
         saveFile();
     }
 
-    public List<String> getBlockedServers() {
-        return conf.getStringList("blockedservers");
+    public List<String> getVerifyAliases() {
+        return conf.getStringList("verify");
+    }
+
+    public List<String> getUnlinkAliases() {
+        return conf.getStringList("unlink");
+    }
+
+    public List<String> getUpdateAliases() {
+        return conf.getStringList("update");
+    }
+
+    public List<String> getHelpAliases() {
+        return conf.getStringList("help");
+    }
+
+    public List<String> getInfoAliases() {
+        return conf.getStringList("info");
     }
 
 

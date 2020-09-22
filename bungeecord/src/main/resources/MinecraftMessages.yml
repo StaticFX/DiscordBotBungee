@@ -28,4 +28,14 @@ CantUnlink: "&cYou can´t unlink yourself because you are the §cowner of the se
 UnlinkedYourSelf: "&aYou successfully unlinked yourself."
 VerifyPrefix: "&cUse /discord ACCEPT/DECLINE/UPDATE/UNLINK"
 ResetPlayer: "&aThe player has been reset."
-version: 1.0.3
+NoGroupsYet: "&cThere are no groups yet."
+GroupsDoesntExist: "&cThe group youre looking for does not exist."
+RoleFound: "&aRole found for %group%: §e%role%"
+GroupsRegenerated: "&aThe discord.yml has been regenerated."
+GroupAlreadyExists: "&aThe given group does already exist"
+NeedToBeAPlayer: "&cYou need to be a player for this command!"
+AlreadyCreatingGroup: "§cYou are already creating a group"
+GroupDeleted: "§cThe given group got deleted."
+AcceptMessage: "&a&lAccept"
+DeclineMessage: "&c&lDecline"
+version: 1.6.0

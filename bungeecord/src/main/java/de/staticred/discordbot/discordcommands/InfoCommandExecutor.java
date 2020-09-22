@@ -31,18 +31,18 @@ public class InfoCommandExecutor {
 
         if(!m.getRoles().contains(ConfigFileManager.INSTANCE.getPermissionRole())) {
             if(time != -1) {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NoPermissions")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NoPermissions", m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
             } else {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NoPermissions")).queue();
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NoPermissions", m)).queue();
             }
             return;
         }
 
         if(args.length != 2) {
             if(time != -1) {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("InfoSyntax")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("InfoSyntax", m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
             } else {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("InfoSyntax")).queue();
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("InfoSyntax", m)).queue();
             }
             return;
         }
@@ -64,9 +64,9 @@ public class InfoCommandExecutor {
 
             if(!VerifyDAO.INSTANCE.isDiscordIDInUse(id)) {
                 if(time != -1) {
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifed")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifed", m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 } else {
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifed")).queue();
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifed", m)).queue();
                 }
                 return;
             }
@@ -87,18 +87,18 @@ public class InfoCommandExecutor {
 
             if(uuid == null) {
                 if(time != -1) {
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("PlayerNotRegisteredOnMojang")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("PlayerNotRegisteredOnMojang", m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 } else {
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("PlayerNotRegisteredOnMojang")).queue();
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("PlayerNotRegisteredOnMojang", m)).queue();
                 }
                 return;
             }
 
             if(!VerifyDAO.INSTANCE.isPlayerVerified(uuid)) {
                 if(time != -1) {
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedPlayer")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedPlayer", m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 } else {
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedPlayer")).queue();
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedPlayer", m)).queue();
                 }
                 return;
             }

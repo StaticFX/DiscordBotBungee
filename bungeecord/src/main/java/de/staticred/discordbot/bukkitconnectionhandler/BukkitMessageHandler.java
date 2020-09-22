@@ -44,6 +44,14 @@ public class BukkitMessageHandler implements Listener {
         player.getServer().getInfo().sendData(DBVerifier.PLUGIN_CHANNEL_NAME, out.toByteArray());
     }
 
+    public void sendCommand(ProxiedPlayer player, String command) {
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF( "command");
+        out.writeUTF("{\"name\": \"" + player.getName() + "\", \"uuid\": \"" + player.getUniqueId().toString() + "\",\"command\":\"" + command + "\"\n}");
+        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Sending message to bukkit " + player.getServer().getInfo().getName() + " content: " + "{\"name\": \"" + player.getName() + "\", \"uuid\": \"" + player.getUniqueId().toString() + "\",\"command\":\"" + command + "\n}");
+        player.getServer().getInfo().sendData(DBVerifier.PLUGIN_CHANNEL_NAME, out.toByteArray());
+    }
+
     public void sendPlayerVerifedRequest(ProxiedPlayer player) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF( "request");

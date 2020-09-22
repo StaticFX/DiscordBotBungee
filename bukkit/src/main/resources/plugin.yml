@@ -2,4 +2,3 @@ name: DBVerifierLinker
 version: 1.0.0
 author: StaticRed
 main: de.staticred.dbverifier.DBVerifier
-depend: [DiscordSRV]

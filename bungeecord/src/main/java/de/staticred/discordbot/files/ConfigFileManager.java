@@ -51,6 +51,7 @@ public class ConfigFileManager {
         return conf.getString("SQL_DATABASE");
     }
 
+    public boolean autoUpdate() {return conf.getBoolean("autoUpdateOnJoin");}
 
     public boolean useSQL() {
         return conf.getBoolean("UseSQL");
@@ -82,6 +83,7 @@ public class ConfigFileManager {
         return conf.getString("verifyRole");
     }
 
+    public boolean igrnoreRewardState() { return conf.getBoolean("ignoreRewardState"); }
 
     public Role getPermissionRole() {
 
@@ -94,10 +96,12 @@ public class ConfigFileManager {
     }
 
     public boolean hasVerifyRole() {
-        if(!conf.getString("verifyRole").isEmpty()) return true;
-        if(conf.getLong("verifyRole") != 0) return true;
-        if(conf.getString("verifyRole") != null) return true;
-        return false;
+
+        if(useTokens()) {
+            return conf.getLong("verifyRole") != 0;
+        }else{
+            return !conf.getString("verifyRole").isEmpty() || conf.getString("verifyRole") != null;
+        }
     }
 
     public String getCommandPrefix() {

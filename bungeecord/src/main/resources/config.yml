@@ -27,7 +27,7 @@ streamingLink: ""
 #command for ingame /discord accept for example
 verifycommand: "discord"
 
-#if the bot should sync nicknames between mc and dc
+#if the bot should sync nicknames between mc -> dc
 syncNickName: true
 
 #if the bot should use id/tokens for discord-roles
@@ -37,9 +37,12 @@ useTokens: false
 verifyRole: ""
 
 #the channel id where the bot will listen for commands
+#leave empty for no specific channel
 channelID: ""
 
 #if the command channel should be clean or not
+#all messages which are not commands will be deleted
+#requires channelID
 forceCleanChannel: false
 
 #messagePrefix for the discord bot
@@ -51,9 +54,15 @@ commandPrefix: "!"
 # above 0 for waiting
 deleteMessages: 10
 
+#this will define if the bot will update your dicord role if you join the server. (audit log will be spammed, but you can disable the bot message)
+autoUpdateOnJoin: true
+
+#set this to true if a player should always get a reward when he verifies himself.
+ignoreRewardState: false
+
 #this is a need to set, otherwise no admin commands on the discord will work
 #whatever group you set here, it will have the permission to execute the included admincommands
-#this also behaves bases on the useTokens rule
+#this also behaves based on the useTokens rule
 permissedRole: ""
 #never edit!
-configVersion: "1.1.3"
+configVersion: "1.6.0"

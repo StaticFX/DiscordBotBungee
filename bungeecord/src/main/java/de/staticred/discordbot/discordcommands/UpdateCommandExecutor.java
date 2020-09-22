@@ -28,10 +28,10 @@ public class UpdateCommandExecutor {
             int time = ConfigFileManager.INSTANCE.getTime();
 
             if(time != -1) {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UpdateDiscordSyntax")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UpdateDiscordSyntax", m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 command.delete().queueAfter(time,TimeUnit.SECONDS);
             }else {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UpdateDiscordSyntax")).queue();
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UpdateDiscordSyntax", m)).queue();
             }
             return;
         }
@@ -42,10 +42,10 @@ public class UpdateCommandExecutor {
                 int time = ConfigFileManager.INSTANCE.getTime();
 
                 if(time != -1) {
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedYet")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedYet",m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                     command.delete().queueAfter(time,TimeUnit.SECONDS);
                 }else {
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedYet")).queue();
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifiedYet",m)).queue();
                 }
                 return;
             }
@@ -65,10 +65,10 @@ public class UpdateCommandExecutor {
 
         if(target == null) {
             if(time != -1) {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("MustBeOnServer")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("MustBeOnServer",m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                 command.delete().queueAfter(time,TimeUnit.SECONDS);
             }else {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("MustBeOnServer")).queue();
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("MustBeOnServer",m)).queue();
             }
             return;
         }
@@ -81,10 +81,10 @@ public class UpdateCommandExecutor {
             if(m.isOwner()) {
 
                 if(time != -1) {
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NoInquiries")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NoInquiries",m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
                     command.delete().queueAfter(time,TimeUnit.SECONDS);
                 }else {
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NoInquiries")).queue();
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NoInquiries",m)).queue();
                 }
             }else {
                 m.getGuild().modifyNickname(m,target.getName()).queue();
@@ -93,10 +93,10 @@ public class UpdateCommandExecutor {
 
 
         if(time != -1) {
-            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UpdatedRank")).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UpdatedRank",m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
             command.delete().queueAfter(time,TimeUnit.SECONDS);
         }else {
-            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UpdatedRank")).queue();
+            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("UpdatedRank",m)).queue();
         }
     }
 }
