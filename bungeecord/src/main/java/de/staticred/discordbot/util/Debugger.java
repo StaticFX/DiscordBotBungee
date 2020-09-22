@@ -9,6 +9,7 @@ public class Debugger {
 
     public static void debugMessage(String string) {
         System.out.println("[DBVerifier] [DEBUG] " + string);
+        if(!DBVerifier.getInstance().debugMode) return;
         for(ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
             if(player.hasPermission("db.debug") || player.hasPermission("db.*")) {
                 if(DBVerifier.getInstance().debugMode) {

@@ -174,12 +174,15 @@ public class DBVerifier extends Plugin {
         useSQL = ConfigFileManager.INSTANCE.useSQL();
 
         token = ConfigFileManager.INSTANCE.getString("bot-token");
+
         loadBungeeEvents();
+
         VerifyAPI.getInstance().registerEvent(new TestUserVerifiedEvent());
 
         String activity = ConfigFileManager.INSTANCE.getString("discordBotActivityType");
         String type = ConfigFileManager.INSTANCE.getString("discordBotActivity");
         String link = ConfigFileManager.INSTANCE.getString("streamingLink");
+
 
         Metrics metrics = new Metrics(this, 	5843);
         metrics.addCustomChart(new Metrics.SingleLineChart("groups_registered", () -> DiscordFileManager.INSTANCE.getAllGroups().size()));
@@ -221,12 +224,6 @@ public class DBVerifier extends Plugin {
             }
         }
 
-
-        if(getAmountOfGroupsTokens() != 0 && !ConfigFileManager.INSTANCE.useTokens()) {
-            Debugger.debugMessage("[WARNING] " + getAmountOfGroupsTokens() + " groups are using tokens (IDS), but you set the 'useTokes' option to false in your config.");
-        }
-
-
         String command = ConfigFileManager.INSTANCE.getString("verifycommand");
 
         syncNickname = ConfigFileManager.INSTANCE.getSyncName();
@@ -258,9 +255,8 @@ public class DBVerifier extends Plugin {
     private int getAmountOfGroupsTokens() {
         int amount = 0;
         for(String group : DiscordFileManager.INSTANCE.getAllGroups()) {
-            long tempTest;
             try {
-                tempTest = Long.parseLong(DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(group));
+                DiscordFileManager.INSTANCE.getDiscordGroupIDForGroup(group);
                 amount++;
             }catch (Exception ignore) {
             }
@@ -270,7 +266,6 @@ public class DBVerifier extends Plugin {
 
     @Override
     public void onDisable() {
-
         if(jda != null)
             jda.shutdownNow();
         if(SettingsFileManager.INSTANCE.isSetup()) {
@@ -292,7 +287,7 @@ public class DBVerifier extends Plugin {
         getProxy().getPluginManager().registerListener(this,new JoinEvent());
         getProxy().getPluginManager().registerListener(this,new LeaveEvent());
         getProxy().getPluginManager().registerListener(this,new ChangedBukkitServerEvent());
-        getProxy().getPluginManager().registerListener(this, new ChatEvent());
+
     }
 
 
@@ -318,167 +313,7 @@ public class DBVerifier extends Plugin {
     }
 
 
-    //method used to give the players the role he needs
-    public void updateRoles(Member m, ProxiedPlayer p) {
-        List<Member> addedNonDynamicGroups = new ArrayList<>();
-        List<String> roles = new ArrayList<>();
-
-
-        if(debugMode) Debugger.debugMessage("Updating groups for player: " + p.getName() + " Member: " + m.getEffectiveName());
-
-        //when the admin sets a verify role the member will get the role
-        if(debugMode) Debugger.debugMessage("Checking if verify role is empty");
-
-        if(ConfigFileManager.INSTANCE.hasVerifyRole()) {
-            if(debugMode) Debugger.debugMessage("Role is not empty");
-
-            try {
-                if(debugMode) Debugger.debugMessage("Checking if tokens are used");
-
-                if(ConfigFileManager.INSTANCE.useTokens()) {
-                    if(debugMode) Debugger.debugMessage("Tokens are used");
-                    if(debugMode) Debugger.debugMessage("Token found for group: verify - " + ConfigFileManager.INSTANCE.getVerifyRole());
-                    if(debugMode) Debugger.debugMessage("Trying to give role to the player");
-                    if(debugMode) Debugger.debugMessage("Is role null? " + (m.getGuild().getRoleById((ConfigFileManager.INSTANCE.getVerifyRole())) == null));
-
-                    m.getGuild().addRoleToMember(m,m.getGuild().getRoleById((ConfigFileManager.INSTANCE.getVerifyRole()))).queue();
-                }else{
-                    if(debugMode) Debugger.debugMessage("Tokens are not used");
-                    if(debugMode) Debugger.debugMessage("Name found for group: verify - " + ConfigFileManager.INSTANCE.getVerifyRole());
-                    if(debugMode) Debugger.debugMessage("Trying to give role to the player");
-                    if(debugMode) Debugger.debugMessage("Is role null? " + (m.getGuild().getRolesByName(ConfigFileManager.INSTANCE.getVerifyRole(),true).get(0) == null));
-
-                    m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(ConfigFileManager.INSTANCE.getVerifyRole(),true).get(0)).queue();
-                }
-
-                if(DBVerifier.INSTANCE.syncNickname) {
-                    if(debugMode) Debugger.debugMessage("Renaming " + m.getNickname() + " to " + p.getName());
-                    if(!m.isOwner())
-                        m.getGuild().modifyNickname(m,p.getName()).queue();
-                }
-
-            }catch (NullPointerException | IndexOutOfBoundsException exception) {
-                Debugger.debugMessage("The Bot can't find the given Role. The Role the problem has occured: verify");
-                Debugger.debugMessage("UseIDs: " + ConfigFileManager.INSTANCE.useTokens());
-            }
-
-        }
-
-        if(debugMode) Debugger.debugMessage("Starting group loop");
-        for(String group : DiscordFileManager.INSTANCE.getAllGroups()) {
-            if(debugMode) Debugger.debugMessage("Checking if group " + group + " is a dynamic group.");
-            if(!DiscordFileManager.INSTANCE.isDynamicGroup(group)) {
-                if(debugMode) Debugger.debugMessage("Group is not dynamic.");
-                if(debugMode) Debugger.debugMessage("Checking if the player already has a dynamic group.");
-                if(addedNonDynamicGroups.contains(m)) {
-                    if(debugMode) Debugger.debugMessage("Player already has a dynamic group. Skipping to next group.");
-                    continue;
-                }
-
-                if(debugMode) Debugger.debugMessage("Player does not have dynamic group.");
-                if(debugMode) Debugger.debugMessage("Checking if players has permission: " + DiscordFileManager.INSTANCE.getPermissionsForGroup(group));
-                if(p.hasPermission(DiscordFileManager.INSTANCE.getPermissionsForGroup(group))) {
-                    if(debugMode) Debugger.debugMessage("Player has permission.");
-
-                    try {
-                        if(debugMode) Debugger.debugMessage("Checking if tokens are used");
-                        if(ConfigFileManager.INSTANCE.useTokens()) {
-                            if(debugMode) Debugger.debugMessage("Tokens are used");
-                            if(debugMode) Debugger.debugMessage("Token found for group: " + group + "-" +DiscordFileManager.INSTANCE.getDiscordGroupIDForGroup(group));
-                            if(debugMode) Debugger.debugMessage("Trying to give role to the player");
-                            m.getGuild().addRoleToMember(m,m.getGuild().getRoleById(DiscordFileManager.INSTANCE.getDiscordGroupIDForGroup(group))).queue();
-                        }else{
-                            if(debugMode) Debugger.debugMessage("Tokens are not used");
-                            if(debugMode) Debugger.debugMessage("Token found for group: " + group + "-" + DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(group));
-                            if(debugMode) Debugger.debugMessage("Trying to give role to the player");
-                            m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(group),true).get(0)).queue();
-                        }
-
-                        if(DBVerifier.INSTANCE.syncNickname) {
-                            if(debugMode) Debugger.debugMessage("Renaming " + m.getEffectiveName() + " to " + DiscordFileManager.INSTANCE.getPrefix(group).replaceAll("%name%",p.getName()));
-                            if(!m.isOwner()) {
-                                m.getGuild().modifyNickname(m,DiscordFileManager.INSTANCE.getPrefix(group).replaceAll("%name%",p.getName())).queue();
-                            }
-                        }
-
-                        if(debugMode) Debugger.debugMessage("Adding nondynamic role to player");
-                        roles.add(group);
-                        addedNonDynamicGroups.add(m);
-                    }catch (NullPointerException | IndexOutOfBoundsException exception) {
-                        Debugger.debugMessage("The Bot can't find the given Role. The Role the problem has occured: " + group);
-                        Debugger.debugMessage("UseIDs: " + ConfigFileManager.INSTANCE.useTokens());
-                        return;
-                    }
-
-
-                } else {
-                    if(debugMode) Debugger.debugMessage("Player does not have permission.");
-                }
-
-            }else{
-                if(debugMode) Debugger.debugMessage("Group is dynamic");
-                if(debugMode) Debugger.debugMessage("Checking if players has permission: " + DiscordFileManager.INSTANCE.getPermissionsForGroup(group));
-
-                if(p.hasPermission(DiscordFileManager.INSTANCE.getPermissionsForGroup(group))) {
-                    if(debugMode) Debugger.debugMessage("Player has permission.");
-
-                    if(debugMode) Debugger.debugMessage("Checking if tokens are used");
-                    try {
-
-                        if(ConfigFileManager.INSTANCE.useTokens()) {
-                            if(debugMode) Debugger.debugMessage("Tokens are used");
-                            if(debugMode) Debugger.debugMessage("Token found for group: " + group + "-" + DiscordFileManager.INSTANCE.getDiscordGroupIDForGroup(group));
-                            if(debugMode) Debugger.debugMessage("Trying to give role to the player");
-                            m.getGuild().addRoleToMember(m,m.getGuild().getRoleById(DiscordFileManager.INSTANCE.getDiscordGroupIDForGroup(group))).queue();
-                        }else{
-                            if(debugMode) Debugger.debugMessage("Tokens are not used");
-                            if(debugMode) Debugger.debugMessage("Token found for group: " + group + "-" + DiscordFileManager.INSTANCE.getDiscordGroupIDForGroup(group));
-                            if(debugMode) Debugger.debugMessage("Trying to give role to the player");
-                            m.getGuild().addRoleToMember(m,m.getGuild().getRolesByName(DiscordFileManager.INSTANCE.getDiscordGroupNameForGroup(group),true).get(0)).queue();
-                        }
-                        roles.add(group);
-                    }catch (NullPointerException | IndexOutOfBoundsException exception) {
-                        Debugger.debugMessage("The Bot can't find the given Role. The Role the problem has occured: " + group);
-                        Debugger.debugMessage("UseIDs: " + ConfigFileManager.INSTANCE.useTokens());
-                        return;
-                    }
-                }
-            }
-        }
-        EventManager.instance.fireEvent(new UserUpdatedRolesEvent(m,p,roles));
-    }
-
-    public List<String> getTheoreticalRoles(Member m, ProxiedPlayer p) {
-        List<Member> addedNonDynamicGroups = new ArrayList<>();
-        List<String> roles = new ArrayList<>();
-
-        for(String group : DiscordFileManager.INSTANCE.getAllGroups()) {
-            if(!DiscordFileManager.INSTANCE.isDynamicGroup(group)) {
-                if(addedNonDynamicGroups.contains(m)) {
-                    continue;
-                }
-
-                if(p.hasPermission(DiscordFileManager.INSTANCE.getPermissionsForGroup(group))) {
-                    roles.add(group);
-                    addedNonDynamicGroups.add(m);
-                }
-
-            }else{
-                if(p.hasPermission(DiscordFileManager.INSTANCE.getPermissionsForGroup(group))) {
-                    roles.add(group);
-                }
-            }
-        }
-        EventManager.instance.fireEvent(new UserUpdatedRolesEvent(m,p,roles));
-        return roles;
-    }
-
-    public String getRank(ProxiedPlayer p) {
-        return "none";
-    }
-
     public void removeAllRolesFromMember(Member m) {
-
 
         for(Role role : m.getRoles()) {
                 if(ConfigFileManager.INSTANCE.useTokens()) {
