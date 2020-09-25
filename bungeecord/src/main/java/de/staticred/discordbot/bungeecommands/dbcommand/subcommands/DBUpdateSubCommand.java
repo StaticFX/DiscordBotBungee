@@ -36,7 +36,7 @@ public class DBUpdateSubCommand extends SubCommand {
         }
 
         try {
-            DBVerifier.getInstance().updateRoles(MemberManager.getMemberFromPlayer(target.getUniqueId()),target);
+            MemberManager.updateRoles(MemberManager.getMemberFromPlayer(target.getUniqueId()),target);
         } catch (SQLException e) {
             e.printStackTrace();
             return;

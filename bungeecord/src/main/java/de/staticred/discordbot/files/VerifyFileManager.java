@@ -153,7 +153,7 @@ public class VerifyFileManager {
     }
 
     public void updateRank(ProxiedPlayer p) {
-        conf.set(p.getUniqueId().toString() + ".rank", DBVerifier.getInstance().getRank(p));
+        conf.set(p.getUniqueId().toString() + ".rank", "none");
         saveFile();
     }
 

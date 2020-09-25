@@ -4,6 +4,7 @@ import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.DiscordMessageFileManager;
+import de.staticred.discordbot.util.MemberManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -75,7 +76,7 @@ public class UpdateCommandExecutor {
 
 
         DBVerifier.getInstance().removeAllRolesFromMember(m);
-        DBVerifier.getInstance().updateRoles(m,target);
+        MemberManager.updateRoles(m,target);
 
         if(DBVerifier.INSTANCE.syncNickname) {
             if(m.isOwner()) {

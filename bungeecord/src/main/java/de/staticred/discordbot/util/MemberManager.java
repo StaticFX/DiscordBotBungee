@@ -38,7 +38,7 @@ public class MemberManager {
         return m;
     }
 
-    public void updateRoles(Member m, ProxiedPlayer p) {
+    public static void updateRoles(Member m, ProxiedPlayer p) {
         List<Member> addedNonDynamicGroups = new ArrayList<>();
         List<String> roles = new ArrayList<>();
 

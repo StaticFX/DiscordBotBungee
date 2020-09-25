@@ -84,7 +84,7 @@ public class MCVerifyCommandExecutor extends Command {
 
                 VerifyDAO.INSTANCE.setPlayerAsVerified(p.getUniqueId());
                 VerifyDAO.INSTANCE.addDiscordID(p, m);
-                DBVerifier.INSTANCE.updateRoles(m,p);
+                MemberManager.updateRoles(m,p);
             } catch (SQLException e) {
                 p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("InternalError",true)));
                 e.printStackTrace();
@@ -183,7 +183,7 @@ public class MCVerifyCommandExecutor extends Command {
             }
 
             DBVerifier.INSTANCE.removeAllRolesFromMember(m);
-            DBVerifier.INSTANCE.updateRoles(m,p);
+            MemberManager.updateRoles(m,p);
 
             if(DBVerifier.INSTANCE.syncNickname) {
 
@@ -220,18 +220,10 @@ public class MCVerifyCommandExecutor extends Command {
             }
 
             Member m = null;
-
-            if (!DBVerifier.getInstance().jda.getGuilds().isEmpty()) {
-                for (Guild guild : DBVerifier.getInstance().jda.getGuilds()) {
-                    if (u != null)
-                        m = guild.getMember(u);
-                }
-            } else {
-                return;
-            }
-
-
-            if (m == null) {
+            try {
+                m = MemberManager.getMemberFromPlayer(p.getUniqueId());
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
                 p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("InternalError",true)));
                 return;
             }
@@ -263,12 +255,23 @@ public class MCVerifyCommandExecutor extends Command {
                 return;
             }
 
-            for(String command : RewardsFileManager.INSTANCE.getCommandsOnUnVerifiedBungee()) {
-                ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), command.replace("%player%",p.getName()));
-            }
+            try {
+                if(!RewardsDAO.INSTANCE.hasPlayerBeenRewarded(p.getUniqueId())) {
+                    for(String command2 : RewardsFileManager.INSTANCE.getCommandsOnUnVerifiedBungee()) {
+                        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Execute bungeecord cmd: " + command2);
+                        ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), command2.replace("%player%",p.getName()));
+                    }
 
-            for(String command : RewardsFileManager.INSTANCE.getCommandsOnUnVerifiedBukkit()) {
-                DBVerifier.getInstance().bukkitMessageHandler.sendCommand(p,command);
+                    for(String command2 : RewardsFileManager.INSTANCE.getCommandsOnUnVerifiedBukkit()) {
+                        DBVerifier.getInstance().bukkitMessageHandler.sendCommand(p,command2);
+                        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Execute bukkit cmd: " + command2);
+                    }
+
+                    if(!ConfigFileManager.INSTANCE.igrnoreRewardState())
+                        RewardsDAO.INSTANCE.setPlayerRewardState(p.getUniqueId(),true);
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
             }
 
             p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("UnlinkedYourSelf",true)));

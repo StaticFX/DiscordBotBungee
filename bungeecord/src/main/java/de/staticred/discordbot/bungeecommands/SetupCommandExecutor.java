@@ -111,6 +111,8 @@ public class SetupCommandExecutor extends Command {
                 groupCheck(sender);
 
             }
+        }else{
+            groupCheck(sender);
         }
 
 

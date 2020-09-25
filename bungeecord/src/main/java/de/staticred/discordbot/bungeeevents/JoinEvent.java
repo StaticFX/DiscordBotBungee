@@ -137,7 +137,7 @@ public class JoinEvent implements Listener {
 
                 if(ConfigFileManager.INSTANCE.autoUpdate()) {
                     DBVerifier.getInstance().removeAllRolesFromMember(m);
-                    DBVerifier.getInstance().updateRoles(m,player);
+                    MemberManager.updateRoles(m,player);
                 }
 
 
