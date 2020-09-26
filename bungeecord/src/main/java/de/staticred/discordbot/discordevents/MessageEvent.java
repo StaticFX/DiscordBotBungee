@@ -44,19 +44,10 @@ public class MessageEvent extends ListenerAdapter {
             new InfoCommandExecutor(m,e.getChannel(),message,args);
             return;
         }else{
-            if(!ConfigFileManager.INSTANCE.getVerifyChannel().isEmpty()) {
-                if(e.getChannel().getId().equals(ConfigFileManager.INSTANCE.getVerifyChannel())) {
-                    if(!e.getMember().getUser().isBot()) {
-                        if(ConfigFileManager.INSTANCE.forceCleanMode())
-                            e.getMessage().delete().queue();
-                    }
-                }
+            if(!e.getMember().getUser().isBot()) {
+                if(ConfigFileManager.INSTANCE.forceCleanMode())
+                    e.getMessage().delete().queue();
             }
         }
-
-
-
     }
-
-
 }

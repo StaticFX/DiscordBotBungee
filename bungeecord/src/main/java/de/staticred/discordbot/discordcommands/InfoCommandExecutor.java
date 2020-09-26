@@ -30,6 +30,10 @@ public class InfoCommandExecutor {
 
         int time = ConfigFileManager.INSTANCE.getTime();
 
+        if(time != -1)
+            command.delete().queueAfter(time,TimeUnit.SECONDS);
+
+
         if(!m.getRoles().contains(ConfigFileManager.INSTANCE.getPermissionRole())) {
             if(time != -1) {
                 tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NoPermissions", m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
@@ -97,7 +101,19 @@ public class InfoCommandExecutor {
                 return;
             }
 
-            User givenDiscordUser = tc.getJDA().retrieveUserById(id).complete();
+            User givenDiscordUser;
+
+            try {
+                givenDiscordUser = tc.getJDA().retrieveUserById(id).complete();
+            }catch (Exception e) {
+                if(time != -1) {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("CantFindMember", m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                } else {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("CantFindMember", m)).queue();
+                }
+                return;
+            }
+
 
             if(givenDiscordUser == null) {
                 if(time != -1) {
@@ -108,7 +124,19 @@ public class InfoCommandExecutor {
                 return;
             }
 
-            Member member = tc.getJDA().getGuilds().get(0).retrieveMember(givenDiscordUser).complete();
+            Member member;
+
+            try{
+                 member = tc.getJDA().getGuilds().get(0).retrieveMember(givenDiscordUser).complete();
+            }catch (Exception e) {
+                if(time != -1) {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("CantFindMemberOnDiscord", m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                } else {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("CantFindMemberOnDiscord", m)).queue();
+                }
+                return;
+            }
+
 
             if(member == null) {
                 if(time != -1) {
@@ -133,9 +161,9 @@ public class InfoCommandExecutor {
             Member target = MemberManager.getMemberFromPlayer(uuid);
 
             if(time != -1) {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationMemberOverID("InformationAboutAsMember",name,member.getId(),uuid.toString(),target.getEffectiveName(),target.getAsMention())).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationMemberOverID("InformationAboutAsMemberID",name,member.getId(),uuid.toString(),target.getEffectiveName(),target.getAsMention())).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
             } else {
-                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationMemberOverID("InformationAboutAsMember",name,member.getId(),uuid.toString(),target.getEffectiveName(),target.getAsMention())).queue();
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationMemberOverID("InformationAboutAsMemberID",name,member.getId(),uuid.toString(),target.getEffectiveName(),target.getAsMention())).queue();
             }
 
         } else {

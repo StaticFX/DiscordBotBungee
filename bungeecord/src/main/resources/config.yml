@@ -64,5 +64,9 @@ ignoreRewardState: false
 #whatever group you set here, it will have the permission to execute the included admincommands
 #this also behaves based on the useTokens rule
 permissedRole: ""
+
+#when this is set to true and the login is canceled (e.g. by a antibotsystem) the plugin wont register a player in the database or similar.
+#WARNING: If this is set to true, it can come to errors, if a player still connect even if the event is canceled. The player will then not be able to do anything about this plugin.
+cancelJoinEvent: false
 #never edit!
 configVersion: "1.6.0"

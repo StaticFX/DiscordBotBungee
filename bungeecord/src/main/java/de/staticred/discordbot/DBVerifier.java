@@ -7,10 +7,7 @@ import de.staticred.discordbot.bungeecommands.dbcommand.DBCommandExecutor;
 import de.staticred.discordbot.bungeecommands.MCVerifyCommandExecutor;
 import de.staticred.discordbot.bungeecommands.SetupCommandExecutor;
 import de.staticred.discordbot.bungeecommands.dbgroupcommand.DBGroupCommandExecutor;
-import de.staticred.discordbot.bungeeevents.ChangedBukkitServerEvent;
-import de.staticred.discordbot.bungeeevents.ChatEvent;
-import de.staticred.discordbot.bungeeevents.JoinEvent;
-import de.staticred.discordbot.bungeeevents.LeaveEvent;
+import de.staticred.discordbot.bungeeevents.*;
 import de.staticred.discordbot.db.*;
 import de.staticred.discordbot.discordevents.GuildJoinEvent;
 import de.staticred.discordbot.discordevents.GuildLeftEvent;
@@ -285,7 +282,7 @@ public class DBVerifier extends Plugin {
         getProxy().getPluginManager().registerListener(this,new JoinEvent());
         getProxy().getPluginManager().registerListener(this,new LeaveEvent());
         getProxy().getPluginManager().registerListener(this,new ChangedBukkitServerEvent());
-
+        getProxy().getPluginManager().registerListener(this,new PostLoginEvent());
     }
 
 

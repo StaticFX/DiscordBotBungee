@@ -7,9 +7,11 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 public class HelpCommandExecutor {
 
@@ -37,19 +39,17 @@ public class HelpCommandExecutor {
             return;
         }
 
-        String prefix = ConfigFileManager.INSTANCE.getCommandPrefix();
-
-        embedBuilder.setDescription( prefix + "help -> list of all commands\n" + prefix + "verify -> synchronise your discord rank with your minecraft rank\n" + prefix +"unlink -> unlink from your mc account\n" + prefix + "update -> update your discord rank\n" + prefix + "info -> gives information about a linked player/member");
-        embedBuilder.setFooter("DBVerifier " + DBVerifier.pluginVersion + " by StaticRed.");
-        embedBuilder.setColor(Color.GREEN);
 
         int time = ConfigFileManager.INSTANCE.getTime();
 
+        String oldprefix = ConfigFileManager.INSTANCE.getCommandPrefix();
+        String prefix = StringEscapeUtils.escapeJava(oldprefix);
+
         if(time != -1) {
-            tc.sendMessage(embedBuilder.build()).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getHelpEmbed(prefix)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
             command.delete().queueAfter(10,TimeUnit.SECONDS);
         }else {
-            tc.sendMessage(embedBuilder.build()).queue();
+            tc.sendMessage(DiscordMessageFileManager.INSTANCE.getHelpEmbed(prefix)).queue();
         }
 
     }

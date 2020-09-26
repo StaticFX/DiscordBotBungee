@@ -1,6 +1,7 @@
 package de.staticred.discordbot.files;
 
 import de.staticred.discordbot.DBVerifier;
+import de.staticred.discordbot.util.Debugger;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -54,20 +55,27 @@ public class VerifyFileManager {
 
     public UUID getUUIDByPlayerName(String name) {
 
-        for(String iteradedUUID : conf.getKeys()) {
-            if(iteradedUUID.matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")) {
-                //is a uuid
+        Debugger.debugMessage("Iterating UUID from verify.yml");
 
-                if(getName(iteradedUUID).equals(name)) {
+        for(String iteradedUUID : conf.getKeys()) {
+            Debugger.debugMessage("found " + iteradedUUID);
+            Debugger.debugMessage("Is uuid?");
+            if(iteradedUUID.matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[34][0-9a-fA-F]{3}-[89ab][0-9a-fA-F]{3}-[0-9a-fA-F]{12}")) {
+                //is a uuid
+                Debugger.debugMessage("Found UUID!");
+
+                Debugger.debugMessage("Name fitting to the uuid: "+ getName(UUID.fromString(iteradedUUID)));
+                Debugger.debugMessage("Is it the same name?");
+                if(getName(UUID.fromString(iteradedUUID)).equals(name)) {
+                    Debugger.debugMessage("Yes");
                     return UUID.fromString(iteradedUUID);
                 }
-                return null;
+                Debugger.debugMessage("No -> Next UUID");
             }
-
-
         }
-        return null;
 
+        Debugger.debugMessage("Finished loop. No UUID found!");
+        return null;
     }
 
     public void removePlayerData(UUID uuid) {
@@ -77,6 +85,10 @@ public class VerifyFileManager {
 
     public boolean isPlayerInFile(ProxiedPlayer p) {
         return conf.getKeys().contains(p.getUniqueId().toString());
+    }
+
+    public boolean isPlayerInFile(UUID uuid) {
+        return conf.getKeys().contains(uuid.toString());
     }
 
     public String getName(UUID uuid) {
@@ -90,7 +102,16 @@ public class VerifyFileManager {
         conf.set(uuid + ".discordid","nothing");
         conf.set(uuid + ".verified",false);
         conf.set(uuid + ".rewarded",false);
-        updateRank(p);
+        saveFile();
+    }
+
+    public void addPlayerAsUnverified(UUID givenUuid) {
+        String uuid = givenUuid.toString();
+        conf.set(uuid + ".uuid",uuid);
+        conf.set(uuid + ".name","unknown");
+        conf.set(uuid + ".discordid","nothing");
+        conf.set(uuid + ".verified",false);
+        conf.set(uuid + ".rewarded",false);
         saveFile();
     }
 
@@ -143,17 +164,7 @@ public class VerifyFileManager {
     }
 
     public void updateUserName(ProxiedPlayer p) {
-        conf.set(p.getUniqueId().toString() + ".name",p.getName());
-
-        if(!conf.contains(p.getUniqueId().toString() + ".rewarded")) {
-            conf.set(p.getUniqueId().toString() + ".rewarded", false);
-        }
-
-        saveFile();
-    }
-
-    public void updateRank(ProxiedPlayer p) {
-        conf.set(p.getUniqueId().toString() + ".rank", "none");
+        conf.set(p.getUniqueId().toString() + ".name", p.getName());
         saveFile();
     }
 

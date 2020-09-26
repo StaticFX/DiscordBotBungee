@@ -1,6 +1,7 @@
 package de.staticred.discordbot.files;
 
 import de.staticred.discordbot.DBVerifier;
+import de.staticred.discordbot.util.Debugger;
 import net.dv8tion.jda.api.entities.Role;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -85,6 +86,8 @@ public class ConfigFileManager {
 
     public boolean igrnoreRewardState() { return conf.getBoolean("ignoreRewardState"); }
 
+    public boolean cancelJoinEvent() {return conf.getBoolean("cancelJoinEvent");}
+
     public Role getPermissionRole() {
 
         if(useTokens()) {
@@ -97,11 +100,24 @@ public class ConfigFileManager {
 
     public boolean hasVerifyRole() {
 
+
+        if(!conf.getString("verifyRole").isEmpty()) return true;
+
         if(useTokens()) {
-            return conf.getLong("verifyRole") != 0;
-        }else{
-            return !conf.getString("verifyRole").isEmpty() || conf.getString("verifyRole") != null;
+            long id;
+
+            try{
+                id = conf.getLong("verifyRole");
+            }catch (Exception e) {
+                return false;
+            }
+
+            if(id == 0) return false;
+
+            Debugger.debugMessage("Your ID set for the verifyRole is a raw long. Please put a \" \" it.");
+            return false;
         }
+        return false;
     }
 
     public String getCommandPrefix() {

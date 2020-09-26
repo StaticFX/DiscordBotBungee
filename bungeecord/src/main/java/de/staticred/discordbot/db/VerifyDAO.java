@@ -171,6 +171,27 @@ public class VerifyDAO {
         return false;
     }
 
+    public boolean isPlayerInDataBase(UUID uuid) throws SQLException {
+
+        if(!sql) return VerifyFileManager.INSTANCE.isPlayerInFile(uuid);
+
+        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.isPlayerInDatabase");
+        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify WHERE UUID = ?");
+        ps.setString(1,uuid.toString());
+
+        ResultSet rs = ps.executeQuery();
+
+        if(rs.next()) {
+            rs.close();
+            ps.close();
+            return true;
+        }
+        ps.close();
+        rs.close();
+        return false;
+    }
+
 
     public String getName(String discordID) throws SQLException {
         if(!sql) return VerifyFileManager.INSTANCE.getName(discordID);
@@ -214,6 +235,18 @@ public class VerifyDAO {
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.addPlayerAsUnverified");
         con.executeUpdate("INSERT INTO verify(UUID,PlayerName,Verified,DiscordID,Version) VALUES(?,?,?,?,?)", player.getUniqueId().toString(), player.getName() ,false,null, DBVerifier.DATABASE_VERSION);
+    }
+
+    public void addPlayerAsUnverified(UUID uuid) throws SQLException {
+
+        if(!sql) {
+            VerifyFileManager.INSTANCE.addPlayerAsUnverified(uuid);
+            return;
+        }
+
+        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.addPlayerAsUnverified");
+        con.executeUpdate("INSERT INTO verify(UUID,PlayerName,Verified,DiscordID,Version) VALUES(?,?,?,?,?)", uuid.toString(), "unknown" ,false,null, DBVerifier.DATABASE_VERSION);
     }
 
     public String getDiscordID(UUID uuid) throws SQLException {

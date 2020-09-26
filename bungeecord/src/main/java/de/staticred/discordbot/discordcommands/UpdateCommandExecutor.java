@@ -78,19 +78,6 @@ public class UpdateCommandExecutor {
         DBVerifier.getInstance().removeAllRolesFromMember(m);
         MemberManager.updateRoles(m,target);
 
-        if(DBVerifier.INSTANCE.syncNickname) {
-            if(m.isOwner()) {
-
-                if(time != -1) {
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NoInquiries",m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
-                    command.delete().queueAfter(time,TimeUnit.SECONDS);
-                }else {
-                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NoInquiries",m)).queue();
-                }
-            }else {
-                m.getGuild().modifyNickname(m,target.getName()).queue();
-            }
-        }
 
 
         if(time != -1) {
