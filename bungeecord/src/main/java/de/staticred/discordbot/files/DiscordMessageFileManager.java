@@ -230,6 +230,30 @@ public class DiscordMessageFileManager {
         return builder.build();
     }
 
+    public MessageEmbed getEmbedInformationMemberOverID(String path, String name, String id, String uuid, String memberName, String memberTag) {
+        JSONObject object = new JSONObject(getString(path).replaceAll("%name%",name).replaceAll("%id%", id).replaceAll("%uuid%",uuid).replaceAll("%memberID%",memberName).replaceAll("%memberAsTag%",memberTag));
+        String title = object.getString("title");
+        String description = object.getString("description");
+        String color = object.getString("color");
+        String footer = object.getString("footer");
+
+        Color colorObj;
+        try {
+            Field field = Class.forName("java.awt.Color").getField(color);
+            colorObj = (Color) field.get(null);
+        } catch (Exception e) {
+            colorObj = null; // Not defined
+        }
+
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setTitle(title);
+        builder.setDescription(description);
+        builder.setColor(colorObj);
+        builder.setFooter(footer);
+
+        return builder.build();
+    }
+
     public MessageEmbed getEmbedInformationPlayer(String path, String name, String id, String uuid, String tagline, String member) {
         JSONObject object = new JSONObject(getString(path).replaceAll("%name%",name).replaceAll("%id%", id).replaceAll("%uuid%",uuid).replaceAll("%tag%",tagline).replaceAll("%memberAsTag%",member));
         String title = object.getString("title");

@@ -56,11 +56,11 @@
     </build>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/net.md-5/bungeecord-api -->
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
-            <version>1.16-R0.2-SNAPSHOT</version>
-            <type>jar</type>
+            <version>1.16-R0.3</version>
             <scope>provided</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.zaxxer/HikariCP -->

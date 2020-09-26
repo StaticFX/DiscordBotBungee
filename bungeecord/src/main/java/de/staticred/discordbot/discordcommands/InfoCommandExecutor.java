@@ -10,6 +10,7 @@ import de.staticred.discordbot.util.UUIDFetcher;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 
 import java.sql.SQLException;
 import java.util.UUID;
@@ -81,6 +82,62 @@ public class InfoCommandExecutor {
                 tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationMember("InformationAboutAsMember",name,id,uuid.toString(),target.getEffectiveName(),target.getAsMention())).queue();
             }
             return;
+        } else if (player.length() > 16) {
+
+            long id;
+
+            try {
+                id = Long.parseLong(player);
+            }catch (Exception e) {
+                if(time != -1) {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("MustBeOver16Chars", m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                } else {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("MustBeOver16Chars", m)).queue();
+                }
+                return;
+            }
+
+            User givenDiscordUser = tc.getJDA().retrieveUserById(id).complete();
+
+            if(givenDiscordUser == null) {
+                if(time != -1) {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("CantFindMember", m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                } else {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("CantFindMember", m)).queue();
+                }
+                return;
+            }
+
+            Member member = tc.getJDA().getGuilds().get(0).retrieveMember(givenDiscordUser).complete();
+
+            if(member == null) {
+                if(time != -1) {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("CantFindMemberOnDiscord", m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                } else {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("CantFindMemberOnDiscord", m)).queue();
+                }
+                return;
+            }
+
+            if(!VerifyDAO.INSTANCE.isDiscordIDInUse(member.getId())) {
+                if(time != -1) {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifed", m)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+                } else {
+                    tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbed("NotVerifed", m)).queue();
+                }
+                return;
+            }
+
+            UUID uuid = UUID.fromString(VerifyDAO.INSTANCE.getUUIDByDiscordID(member.getId()));
+            String name = VerifyDAO.INSTANCE.getName(member.getId());
+            Member target = MemberManager.getMemberFromPlayer(uuid);
+
+            if(time != -1) {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationMemberOverID("InformationAboutAsMember",name,member.getId(),uuid.toString(),target.getEffectiveName(),target.getAsMention())).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));
+            } else {
+                tc.sendMessage(DiscordMessageFileManager.INSTANCE.getEmbedInformationMemberOverID("InformationAboutAsMember",name,member.getId(),uuid.toString(),target.getEffectiveName(),target.getAsMention())).queue();
+            }
+
         } else {
 
             UUID uuid = VerifyDAO.INSTANCE.getUUIDByName(player);

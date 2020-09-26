@@ -43,8 +43,6 @@ import java.util.UUID;
 public class DBVerifier extends Plugin {
 
 
-    //TODO: Add a DiscordCommand (!info), gives everything the plugin knows about the discord member
-
     //the instance of this howl plugin
     public static DBVerifier INSTANCE;
 
