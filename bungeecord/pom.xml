@@ -6,7 +6,7 @@
 
     <groupId>org.example</groupId>
     <artifactId>DBVerifier-Bungeecord</artifactId>
-    <version>1.6.0 BetaBuild 129</version>
+    <version>1.6.0</version>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>

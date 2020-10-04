@@ -89,7 +89,7 @@ public class PostLoginEvent implements Listener {
 
             VerifyDAO.INSTANCE.updateUserName(player);
 
-            if(!verified) {
+            if(!verified && !DBVerifier.getInstance().getStringFromConfig("DiscordLinkColored",false).isEmpty()) {
                 TextComponent tc = new TextComponent();
                 tc.setText(DBVerifier.getInstance().getStringFromConfig("DiscordLinkColored",false));
                 tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(DBVerifier.getInstance().getStringFromConfig("JoinOurDiscord",false)).create()));

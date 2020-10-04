@@ -1,4 +1,4 @@
-package de.staticred.discordbot.event;
+package de.staticred.discordbot.api.event;
 
 import de.staticred.discordbot.api.Event;
 import net.dv8tion.jda.api.entities.Member;

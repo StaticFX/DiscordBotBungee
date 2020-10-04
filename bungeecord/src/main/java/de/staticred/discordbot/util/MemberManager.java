@@ -3,7 +3,7 @@ package de.staticred.discordbot.util;
 import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.api.EventManager;
 import de.staticred.discordbot.db.VerifyDAO;
-import de.staticred.discordbot.event.UserUpdatedRolesEvent;
+import de.staticred.discordbot.api.event.UserUpdatedRolesEvent;
 import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.DiscordFileManager;
 import net.dv8tion.jda.api.entities.Guild;

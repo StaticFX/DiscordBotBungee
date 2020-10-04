@@ -25,7 +25,12 @@ public class MessageEvent extends ListenerAdapter {
             return;
         }
 
-        if(!args[0].startsWith(ConfigFileManager.INSTANCE.getCommandPrefix())) return;
+        if(!args[0].startsWith(ConfigFileManager.INSTANCE.getCommandPrefix())) {
+            if(ConfigFileManager.INSTANCE.forceCleanMode() && !e.getMember().getUser().isBot())
+                e.getMessage().delete().queue();
+
+            return;
+        }
 
 
         if(args[0].equalsIgnoreCase( ConfigFileManager.INSTANCE.getCommandPrefix() + "verify") || AliasesFileManager.INSTANCE.getVerifyAliases().contains(args[0].substring(ConfigFileManager.INSTANCE.getCommandPrefix().length()))) {

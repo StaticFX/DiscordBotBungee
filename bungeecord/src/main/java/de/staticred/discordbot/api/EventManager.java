@@ -7,7 +7,7 @@ import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventManager {
+public class    EventManager {
 
     List<Listener> eventList = new ArrayList<>();
 

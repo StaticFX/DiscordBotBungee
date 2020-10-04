@@ -1,6 +1,5 @@
 package de.staticred.discordbot;
 
-import de.staticred.discordbot.api.EventManager;
 import de.staticred.discordbot.api.VerifyAPI;
 import de.staticred.discordbot.bukkitconnectionhandler.BukkitMessageHandler;
 import de.staticred.discordbot.bungeecommands.dbcommand.DBCommandExecutor;
@@ -12,29 +11,22 @@ import de.staticred.discordbot.db.*;
 import de.staticred.discordbot.discordevents.GuildJoinEvent;
 import de.staticred.discordbot.discordevents.GuildLeftEvent;
 import de.staticred.discordbot.discordevents.MessageEvent;
-import de.staticred.discordbot.event.UserUpdatedRolesEvent;
 import de.staticred.discordbot.files.*;
 import de.staticred.discordbot.test.TestUserVerifiedEvent;
 import de.staticred.discordbot.util.Debugger;
 import de.staticred.discordbot.util.GroupInfo;
-import io.netty.util.internal.logging.Log4J2LoggerFactory;
-import io.netty.util.internal.logging.Log4JLoggerFactory;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
-import org.apache.log4j.lf5.Log4JLogRecord;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 public class DBVerifier extends Plugin {

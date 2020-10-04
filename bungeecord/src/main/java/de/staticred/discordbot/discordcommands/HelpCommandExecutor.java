@@ -7,10 +7,9 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class HelpCommandExecutor {
@@ -43,7 +42,7 @@ public class HelpCommandExecutor {
         int time = ConfigFileManager.INSTANCE.getTime();
 
         String oldprefix = ConfigFileManager.INSTANCE.getCommandPrefix();
-        String prefix = StringEscapeUtils.escapeJava(oldprefix);
+        String prefix = Matcher.quoteReplacement(oldprefix);
 
         if(time != -1) {
             tc.sendMessage(DiscordMessageFileManager.INSTANCE.getHelpEmbed(prefix)).queue(msg -> msg.delete().queueAfter(time, TimeUnit.SECONDS));

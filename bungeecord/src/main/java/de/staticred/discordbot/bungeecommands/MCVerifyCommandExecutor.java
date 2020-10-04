@@ -2,20 +2,17 @@ package de.staticred.discordbot.bungeecommands;
 
 import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.api.EventManager;
-import de.staticred.discordbot.bukkitconnectionhandler.BukkitMessageHandler;
 import de.staticred.discordbot.db.RewardsDAO;
 import de.staticred.discordbot.db.VerifyDAO;
-import de.staticred.discordbot.event.UserClickedMessageEvent;
-import de.staticred.discordbot.event.UserUnverifiedEvent;
-import de.staticred.discordbot.event.UserVerifiedEvent;
+import de.staticred.discordbot.api.event.UserClickedMessageEvent;
+import de.staticred.discordbot.api.event.UserUnverifiedEvent;
+import de.staticred.discordbot.api.event.UserVerifiedEvent;
 import de.staticred.discordbot.files.BlockedServerFileManager;
 import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.DiscordMessageFileManager;
 import de.staticred.discordbot.files.RewardsFileManager;
 import de.staticred.discordbot.util.Debugger;
 import de.staticred.discordbot.util.MemberManager;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -25,7 +22,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
-import java.awt.*;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
