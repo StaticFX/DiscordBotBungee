@@ -9,6 +9,7 @@ import de.staticred.discordbot.files.DiscordFileManager;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.sql.SQLException;
@@ -79,6 +80,8 @@ public class MemberManager {
             }catch (NullPointerException | IndexOutOfBoundsException exception) {
                 Debugger.debugMessage("The Bot can't find the given Role. The Role the problem has occured: verify");
                 Debugger.debugMessage("UseIDs: " + ConfigFileManager.INSTANCE.useTokens());
+            } catch (HierarchyException e) {
+                Debugger.debugMessage("Can't modify a member with higher or equal highest role than the bot! Can't modify " + m.getNickname());
             }
 
         }
@@ -127,6 +130,8 @@ public class MemberManager {
                         Debugger.debugMessage("The Bot can't find the given Role. The Role the problem has occured: " + group);
                         Debugger.debugMessage("UseIDs: " + ConfigFileManager.INSTANCE.useTokens());
                         return;
+                    } catch (HierarchyException e) {
+                        Debugger.debugMessage("Can't modify a member with higher or equal highest role than the bot! Can't modify " + m.getNickname());
                     }
 
                 } else {
