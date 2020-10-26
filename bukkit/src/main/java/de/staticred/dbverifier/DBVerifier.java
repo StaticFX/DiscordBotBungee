@@ -63,6 +63,10 @@ public class DBVerifier extends JavaPlugin implements PluginMessageListener {
             String uuid = jsonObject.getString("uuid");
             String discordID = jsonObject.getString("discordID");
 
+            if(srv.getAccountLinkManager().getDiscordId(UUID.fromString(uuid)) != null && srv.getAccountLinkManager().getDiscordId(UUID.fromString(uuid)).equals(discordID)){
+                return;
+            }
+
             srv.getAccountLinkManager().link(discordID, UUID.fromString(uuid));
             System.out.println("Linked " + name + " in srv");
         }
