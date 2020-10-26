@@ -81,7 +81,7 @@ public class DBVerifier extends JavaPlugin implements PluginMessageListener {
             String uuid = jsonObject.getString("uuid");
 
             boolean verified = srv.getAccountLinkManager().getDiscordId(UUID.fromString(uuid)) == null;
-            sendToBungee(player,"test","{\"uuid\": \"" + uuid + "\", \"verified\": " + verified + "}");
+            sendToBungee(player, "requestAnswer", "{\"uuid\": \"" + uuid + "\", \"verified\": " + verified + "}");
 
 
         }
