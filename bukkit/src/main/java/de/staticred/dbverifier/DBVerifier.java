@@ -16,13 +16,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.UUID;
 
 public class DBVerifier extends JavaPlugin implements PluginMessageListener {
 
     DiscordSRV srv;
     YamlConfiguration conf;
+    boolean useSRV;
 
     //the name of the channel which is used to communicate with the bukkit subserver for a discordsrv connection
     public static final String PLUGIN_CHANNEL_NAME = "dbv:bungeecord";
@@ -32,8 +32,14 @@ public class DBVerifier extends JavaPlugin implements PluginMessageListener {
 
         loadConfig();
 
-        if(conf.getBoolean("useSRV")) {
-            srv = DiscordSRV.getPlugin();
+        useSRV = conf.getBoolean("useSRV");
+        if(useSRV) {
+            try {
+                srv = DiscordSRV.getPlugin();
+            }catch (NoClassDefFoundError e){
+                useSRV = false;
+                System.out.println("§c[DBVerifierLinker] DiscordSRV is not installed!");
+            }
         }
 
 
@@ -51,12 +57,13 @@ public class DBVerifier extends JavaPlugin implements PluginMessageListener {
 
         ByteArrayDataInput in = ByteStreams.newDataInput(message);
 
-        String subchannel = in.readUTF();
+        String subChannel = in.readUTF();
         String data = in.readUTF();
 
-        System.out.println("Received Data by BungeeCord: " + data + " SubChannel: " + subchannel);
+        System.out.println("Received Data by BungeeCord: " + data + " SubChannel: " + subChannel);
 
-        if (subchannel.equals("verified")) {
+        if (subChannel.equals("verified")) {
+            if(!useSRV) return;
             JSONObject jsonObject = new JSONObject(data);
 
             String name = jsonObject.getString("name");
@@ -70,7 +77,8 @@ public class DBVerifier extends JavaPlugin implements PluginMessageListener {
             srv.getAccountLinkManager().link(discordID, UUID.fromString(uuid));
             System.out.println("Linked " + name + " in srv");
         }
-        if(subchannel.equals("unlink")) {
+        if(subChannel.equals("unlink")) {
+            if(!useSRV) return;
             JSONObject jsonObject = new JSONObject(data);
 
             String name = jsonObject.getString("name");
@@ -80,26 +88,30 @@ public class DBVerifier extends JavaPlugin implements PluginMessageListener {
             System.out.println("unlinked " + name + " in srv");
         }
 
-        if(subchannel.equals("request")) {
+        if(subChannel.equals("request")) {
             JSONObject jsonObject = new JSONObject(data);
             String uuid = jsonObject.getString("uuid");
 
-            boolean verified = srv.getAccountLinkManager().getDiscordId(UUID.fromString(uuid)) == null;
+            boolean verified = true;
+            if(useSRV) {
+                verified = srv.getAccountLinkManager().getDiscordId(UUID.fromString(uuid)) == null;
+            }
             sendToBungee(player, "requestAnswer", "{\"uuid\": \"" + uuid + "\", \"verified\": " + verified + "}");
 
 
         }
 
-        if(subchannel.equals("command")) {
+        if(subChannel.equals("command")) {
             JSONObject jsonObject = new JSONObject(data);
             String uuid = jsonObject.getString("uuid");
             String command = jsonObject.getString("command");
+            if(command.equals("")) return;
             String name = jsonObject.getString("name");
             System.out.println("Received command from bungeecord: " + command);
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(),command.replaceAll("%player%",name));
         }
 
-        if (subchannel.equals("test")) {
+        if (subChannel.equals("test")) {
             sendToBungee(player,"test","{\"test\":true}");
         }
     }
