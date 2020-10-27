@@ -110,7 +110,7 @@ public class DBVerifier extends JavaPlugin implements PluginMessageListener {
             if (useSRV) {
                 verified = srv.getAccountLinkManager().getDiscordId(UUID.fromString(uuid)) == null;
             }
-            if (debugMode) System.out.println("§c[DBVerifierLinker] Send request Answer to BungeeCord");
+            if (debugMode) System.out.println("§c[DBVerifierLinker] Send the response from the request to BungeeCord");
             sendToBungee(player, "requestAnswer", "{\"uuid\": \"" + uuid + "\", \"verified\": " + verified + "}");
         }
 
