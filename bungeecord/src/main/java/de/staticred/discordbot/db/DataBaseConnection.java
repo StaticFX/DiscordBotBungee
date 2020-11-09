@@ -15,7 +15,7 @@ public class DataBaseConnection {
     String url, host, port;
 
     public final static DataBaseConnection INSTANCE = new DataBaseConnection();
-    private HikariDataSource  source;
+    public HikariDataSource dataSource;
     private HikariConfig config = new HikariConfig();
 
     private DataBaseConnection() {
@@ -24,39 +24,14 @@ public class DataBaseConnection {
         config.addDataSourceProperty( "cachePrepStmts" , "true" );
         config.addDataSourceProperty( "prepStmtCacheSize" , "250" );
         config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
-        config.setMaxLifetime(50000);
+        config.setMaximumPoolSize(10);
+        config.setMinimumIdle(3);
         url = ConfigFileManager.INSTANCE.getDataBase();
         host = ConfigFileManager.INSTANCE.getHost();
         port = ConfigFileManager.INSTANCE.getPort();
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("jdbc:mysql://" + host + ":" + port + "/" + url);
         config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + url);
-    }
-
-    public void connect() {
-        try {
-            if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection");
-            source = new HikariDataSource(config);
-            connection = source.getConnection();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public boolean connectTest() {
-        try {
-            connect();
-            closeConnection();
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-
-    public void closeConnection() {
-        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Closing DB Connection");
-        if(source.isRunning())
-            source.close();
+        dataSource = new HikariDataSource(config);
     }
 
     public boolean isConnectionOpened() {
@@ -69,12 +44,23 @@ public class DataBaseConnection {
 
     public void executeUpdate(String string, Object... obj) throws SQLException {
 
-        PreparedStatement ps = getConnection().prepareStatement(string);
+        Connection connection = dataSource.getConnection();
+
+        PreparedStatement ps = connection.prepareStatement(string);
         for(int i = 0; i < obj.length; i++) {
             ps.setObject(i + 1, obj[i]);
         }
         ps.executeUpdate();
         ps.close();
+        connection.close();
     }
 
+    public boolean connectTest() {
+        try {
+            Connection connection = dataSource.getConnection();
+        } catch (SQLException throwables) {
+            return false;
+        }
+        return true;
+    }
 }

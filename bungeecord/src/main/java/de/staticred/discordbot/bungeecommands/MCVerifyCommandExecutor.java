@@ -2,22 +2,19 @@ package de.staticred.discordbot.bungeecommands;
 
 import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.api.EventManager;
-import de.staticred.discordbot.db.RewardsDAO;
-import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.api.event.UserClickedMessageEvent;
 import de.staticred.discordbot.api.event.UserUnverifiedEvent;
 import de.staticred.discordbot.api.event.UserVerifiedEvent;
+import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.files.BlockedServerFileManager;
 import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.DiscordMessageFileManager;
-import de.staticred.discordbot.files.RewardsFileManager;
-import de.staticred.discordbot.util.Debugger;
 import de.staticred.discordbot.util.MemberManager;
+import de.staticred.discordbot.util.manager.RewardManager;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
@@ -65,11 +62,7 @@ public class MCVerifyCommandExecutor extends Command {
             Member m = DBVerifier.getInstance().playerMemberHashMap.get(p);
             TextChannel tc = DBVerifier.getInstance().playerChannelHashMap.get(p);
 
-
-
-
             try {
-
                 UserVerifiedEvent event2 = new UserVerifiedEvent(m,p,tc);
                 EventManager.instance.fireEvent(event2);
                 if(event2.isCanceled()) return;
@@ -104,28 +97,7 @@ public class MCVerifyCommandExecutor extends Command {
                 }
             }
 
-
-            try {
-                if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Checking if player got rewarded");
-                if(!RewardsDAO.INSTANCE.hasPlayerBeenRewarded(p.getUniqueId())) {
-                    if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Player has not been rewarded or ignoring");
-                    if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Execute all Bungeecord commands");
-                    for(String command : RewardsFileManager.INSTANCE.getCommandsOnVerifiedBungee()) {
-                        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Execute bungeecord cmd: " + command);
-                        ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), command.replace("%player%",p.getName()));
-                    }
-                    if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Execute all Bukkit commands");
-                    for(String command : RewardsFileManager.INSTANCE.getCommandsOnVerifiedBukkit()) {
-                        DBVerifier.getInstance().bukkitMessageHandler.sendCommand(p,command);
-                        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Execute bukkit cmd: " + command);
-                    }
-
-                    if(!ConfigFileManager.INSTANCE.igrnoreRewardState())
-                        RewardsDAO.INSTANCE.setPlayerRewardState(p.getUniqueId(),true);
-                }
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
+            RewardManager.executeVerifyRewardProcess(p);
 
             p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("Verified",true)));
             return;
@@ -215,7 +187,7 @@ public class MCVerifyCommandExecutor extends Command {
                 return;
             }
 
-            Member m = null;
+            Member m;
             try {
                 m = MemberManager.getMemberFromPlayer(p.getUniqueId());
             } catch (SQLException throwables) {
@@ -251,24 +223,8 @@ public class MCVerifyCommandExecutor extends Command {
                 return;
             }
 
-            try {
-                if(!RewardsDAO.INSTANCE.hasPlayerBeenRewarded(p.getUniqueId())) {
-                    for(String command2 : RewardsFileManager.INSTANCE.getCommandsOnUnVerifiedBungee()) {
-                        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Execute bungeecord cmd: " + command2);
-                        ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), command2.replace("%player%",p.getName()));
-                    }
+            RewardManager.executeVerifyUnlinkProcess(p);
 
-                    for(String command2 : RewardsFileManager.INSTANCE.getCommandsOnUnVerifiedBukkit()) {
-                        DBVerifier.getInstance().bukkitMessageHandler.sendCommand(p,command2);
-                        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Execute bukkit cmd: " + command2);
-                    }
-
-                    if(!ConfigFileManager.INSTANCE.igrnoreRewardState())
-                        RewardsDAO.INSTANCE.setPlayerRewardState(p.getUniqueId(),true);
-                }
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
 
             p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("UnlinkedYourSelf",true)));
             return;

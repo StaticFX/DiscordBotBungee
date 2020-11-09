@@ -63,10 +63,10 @@ public class DBCommandExecutor extends Command {
         }
 
         sender.sendMessage(new TextComponent("§8---§aDCVerifier§8---"));
-        sender.sendMessage(new TextComponent("§a/db reload &7- &eReload all files."));
-        sender.sendMessage(new TextComponent("§a/db debug &7- &eTurn on/off debug mode."));
-        sender.sendMessage(new TextComponent("§a/db info &7- &eGives all information of from a linked player."));
-        sender.sendMessage(new TextComponent("§a/db unlink &7- &eUnlinks a player."));
-        sender.sendMessage(new TextComponent("§a/db update &7- &eForce a player rankupdate."));
+        sender.sendMessage(new TextComponent("§a/db reload §7- §eReload all files."));
+        sender.sendMessage(new TextComponent("§a/db debug §7- §eTurn on/off debug mode."));
+        sender.sendMessage(new TextComponent("§a/db info §7- §eGives all information of from a linked player."));
+        sender.sendMessage(new TextComponent("§a/db unlink §7- §eUnlinks a player."));
+        sender.sendMessage(new TextComponent("§a/db update §7- §eForce a player rankupdate."));
     }
 }

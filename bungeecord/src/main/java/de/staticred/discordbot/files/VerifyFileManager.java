@@ -7,9 +7,9 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
 
 public class VerifyFileManager {
@@ -56,6 +56,8 @@ public class VerifyFileManager {
     public UUID getUUIDByPlayerName(String name) {
 
         Debugger.debugMessage("Iterating UUID from verify.yml");
+
+
 
         for(String iteradedUUID : conf.getKeys()) {
             Debugger.debugMessage("found " + iteradedUUID);
@@ -136,6 +138,12 @@ public class VerifyFileManager {
     public void removeDiscordID(ProxiedPlayer p) {
         removeDiscordIDUUIDLink(getDiscordID(p.getUniqueId()));
         conf.set(p.getUniqueId().toString() + ".discordid","nothing");
+        saveFile();
+    }
+
+    public void removeDiscordID(UUID p) {
+        removeDiscordIDUUIDLink(getDiscordID(p));
+        conf.set(p.toString() + ".discordid","nothing");
         saveFile();
     }
 

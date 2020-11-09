@@ -7,10 +7,7 @@ import de.staticred.discordbot.util.Debugger;
 import net.dv8tion.jda.api.entities.Member;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.UUID;
 
 public class VerifyDAO {
@@ -66,16 +63,15 @@ public class VerifyDAO {
         }
 
         Debugger.debugMessage("SQL Connect test success!");
-
     }
 
     public int getAmountOfVerifiedPlayers() throws SQLException {
 
         if(!sql) return VerifyFileManager.INSTANCE.getAmountOfVerifiedPlayers();
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        Connection con = DataBaseConnection.INSTANCE.dataSource.getConnection();
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.getAmoundOfVerifedPlayers");
-        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify WHERE Verified = 1");
+        PreparedStatement ps = con.prepareStatement("SELECT * FROM verify WHERE Verified = 1");
         ResultSet rs = ps.executeQuery();
 
         int amount = 0;
@@ -86,13 +82,14 @@ public class VerifyDAO {
 
         ps.close();
         rs.close();
+        con.close();
         return amount;
     }
 
     public boolean doesColumnExist(String column) throws SQLException {
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        Connection con = DataBaseConnection.INSTANCE.dataSource.getConnection();
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.doesColumnExist");
-        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify");
+        PreparedStatement ps = con.prepareStatement("SELECT * FROM verify");
 
         ResultSet rs = ps.executeQuery();
         ResultSetMetaData rsmd = rs.getMetaData();
@@ -107,13 +104,15 @@ public class VerifyDAO {
         }
         ps.close();
         rs.close();
+        con.close();
+
         return false;
     }
 
     public boolean hasUsersInDataBase() throws SQLException {
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        Connection con = DataBaseConnection.INSTANCE.dataSource.getConnection();
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.hasUserInDataBase");
-        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify");
+        PreparedStatement ps = con.prepareStatement("SELECT * FROM verify");
 
         ResultSet rs = ps.executeQuery();
 
@@ -124,15 +123,16 @@ public class VerifyDAO {
         }
         ps.close();
         rs.close();
+        con.close();
         return false;
     }
 
     public String getDataBaseVersion() {
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.getDataBaseVersion");
 
         try {
-            PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify");
+            Connection con = DataBaseConnection.INSTANCE.dataSource.getConnection();
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM verify");
 
             ResultSet rs = ps.executeQuery();
 
@@ -140,10 +140,12 @@ public class VerifyDAO {
                 String version = rs.getString("Version");
                 rs.close();
                 ps.close();
+                con.close();
                 return version;
             }
             ps.close();
             rs.close();
+            con.close();
             return null;
         }catch (Exception e) {
             return null;
@@ -154,9 +156,9 @@ public class VerifyDAO {
 
         if(!sql) return VerifyFileManager.INSTANCE.isPlayerInFile(p);
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        Connection con = DataBaseConnection.INSTANCE.dataSource.getConnection();
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.isPlayerInDatabase");
-        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify WHERE UUID = ?");
+        PreparedStatement ps = con.prepareStatement("SELECT * FROM verify WHERE UUID = ?");
         ps.setString(1,p.getUniqueId().toString());
 
         ResultSet rs = ps.executeQuery();
@@ -164,10 +166,12 @@ public class VerifyDAO {
         if(rs.next()) {
             rs.close();
             ps.close();
+            con.close();
             return true;
         }
         ps.close();
         rs.close();
+        con.close();
         return false;
     }
 
@@ -175,9 +179,9 @@ public class VerifyDAO {
 
         if(!sql) return VerifyFileManager.INSTANCE.isPlayerInFile(uuid);
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        Connection con = DataBaseConnection.INSTANCE.dataSource.getConnection();
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.isPlayerInDatabase");
-        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify WHERE UUID = ?");
+        PreparedStatement ps = con.prepareStatement("SELECT * FROM verify WHERE UUID = ?");
         ps.setString(1,uuid.toString());
 
         ResultSet rs = ps.executeQuery();
@@ -185,10 +189,12 @@ public class VerifyDAO {
         if(rs.next()) {
             rs.close();
             ps.close();
+            con.close();
             return true;
         }
         ps.close();
         rs.close();
+        con.close();
         return false;
     }
 
@@ -196,9 +202,9 @@ public class VerifyDAO {
     public String getName(String discordID) throws SQLException {
         if(!sql) return VerifyFileManager.INSTANCE.getName(discordID);
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        Connection con = DataBaseConnection.INSTANCE.dataSource.getConnection();
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.getName");
-        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify WHERE DiscordID = ?");
+        PreparedStatement ps = con.prepareStatement("SELECT * FROM verify WHERE DiscordID = ?");
         ps.setString(1,discordID);
 
         ResultSet rs = ps.executeQuery();
@@ -207,10 +213,12 @@ public class VerifyDAO {
             String name = rs.getString("PlayerName");
             rs.close();
             ps.close();
+            con.close();
             return name;
         }
         ps.close();
         rs.close();
+        con.close();
         return null;
     }
 
@@ -220,9 +228,8 @@ public class VerifyDAO {
             return;
         }
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.removePlayerData");
-        con.executeUpdate("DELETE FROM verify WHERE UUID = ?",uuid.toString());
+        DataBaseConnection.INSTANCE.executeUpdate("DELETE FROM verify WHERE UUID = ?",uuid.toString());
     }
 
     public void addPlayerAsUnverified(ProxiedPlayer player) throws SQLException {
@@ -232,9 +239,8 @@ public class VerifyDAO {
             return;
         }
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.addPlayerAsUnverified");
-        con.executeUpdate("INSERT INTO verify(UUID,PlayerName,Verified,DiscordID,Version) VALUES(?,?,?,?,?)", player.getUniqueId().toString(), player.getName() ,false,null, DBVerifier.DATABASE_VERSION);
+        DataBaseConnection.INSTANCE.executeUpdate("INSERT INTO verify(UUID,PlayerName,Verified,DiscordID,Version) VALUES(?,?,?,?,?)", player.getUniqueId().toString(), player.getName() ,false,null, DBVerifier.DATABASE_VERSION);
     }
 
     public void addPlayerAsUnverified(UUID uuid) throws SQLException {
@@ -244,9 +250,8 @@ public class VerifyDAO {
             return;
         }
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.addPlayerAsUnverified");
-        con.executeUpdate("INSERT INTO verify(UUID,PlayerName,Verified,DiscordID,Version) VALUES(?,?,?,?,?)", uuid.toString(), "unknown" ,false,null, DBVerifier.DATABASE_VERSION);
+        DataBaseConnection.INSTANCE.executeUpdate("INSERT INTO verify(UUID,PlayerName,Verified,DiscordID,Version) VALUES(?,?,?,?,?)", uuid.toString(), "unknown" ,false,null, DBVerifier.DATABASE_VERSION);
     }
 
     public String getDiscordID(UUID uuid) throws SQLException {
@@ -255,9 +260,9 @@ public class VerifyDAO {
             return  VerifyFileManager.INSTANCE.getDiscordID(uuid);
         }
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        Connection con = DataBaseConnection.INSTANCE.dataSource.getConnection();
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.getDiscordID");
-        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify WHERE UUID = ?");
+        PreparedStatement ps = con.prepareStatement("SELECT * FROM verify WHERE UUID = ?");
         ps.setString(1,uuid.toString());
 
         ResultSet rs = ps.executeQuery();
@@ -266,10 +271,12 @@ public class VerifyDAO {
             String discordID = rs.getString("DiscordID");
             rs.close();
             ps.close();
+            con.close();
             return discordID;
         }
         ps.close();
         rs.close();
+        con.close();
         return null;
     }
 
@@ -279,9 +286,9 @@ public class VerifyDAO {
             return VerifyFileManager.INSTANCE.hasDiscordID(p);
         }
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        Connection con = DataBaseConnection.INSTANCE.dataSource.getConnection();
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.hasDiscordID");
-        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify WHERE UUID = ?");
+        PreparedStatement ps = con.prepareStatement("SELECT * FROM verify WHERE UUID = ?");
         ps.setString(1,p.getUniqueId().toString());
 
         ResultSet rs = ps.executeQuery();
@@ -290,10 +297,12 @@ public class VerifyDAO {
             String discordID = rs.getString("DiscordID");
             rs.close();
             ps.close();
+            con.close();
             return (discordID != null);
         }
         ps.close();
         rs.close();
+        con.close();
         return false;
     }
 
@@ -304,9 +313,8 @@ public class VerifyDAO {
             return;
         }
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.addDiscordID");
-        con.executeUpdate("UPDATE verify SET DiscordID = ? WHERE UUID = ?", member.getUser().getId(), player.getUniqueId().toString());
+        DataBaseConnection.INSTANCE.executeUpdate("UPDATE verify SET DiscordID = ? WHERE UUID = ?", member.getUser().getId(), player.getUniqueId().toString());
     }
 
     public void removeDiscordID(ProxiedPlayer player) throws SQLException {
@@ -316,9 +324,19 @@ public class VerifyDAO {
             return;
         }
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.removeDiscordID");
-        con.executeUpdate("UPDATE verify SET DiscordID = ? WHERE UUID = ?",null, player.getUniqueId().toString());
+        DataBaseConnection.INSTANCE.executeUpdate("UPDATE verify SET DiscordID = ? WHERE UUID = ?",null, player.getUniqueId().toString());
+    }
+
+    public void removeDiscordID(UUID player) throws SQLException {
+
+        if(!sql) {
+            VerifyFileManager.INSTANCE.removeDiscordID(player);
+            return;
+        }
+
+        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.removeDiscordID");
+        DataBaseConnection.INSTANCE.executeUpdate("UPDATE verify SET DiscordID = ? WHERE UUID = ?",null, player.toString());
     }
 
     public void setPlayerAsVerified(UUID uuid) throws SQLException {
@@ -328,9 +346,8 @@ public class VerifyDAO {
             return;
         }
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.setPlayerAsVerified");
-        con.executeUpdate("UPDATE verify SET Verified = true WHERE UUID = ?", uuid.toString());
+        DataBaseConnection.INSTANCE.executeUpdate("UPDATE verify SET Verified = true WHERE UUID = ?", uuid.toString());
     }
 
     public void setPlayerAsUnVerified(UUID uuid) throws SQLException {
@@ -340,9 +357,8 @@ public class VerifyDAO {
             return;
         }
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.setPlayerAsUnVerified");
-        con.executeUpdate("UPDATE verify SET Verified = false WHERE UUID = ?", uuid.toString());
+        DataBaseConnection.INSTANCE.executeUpdate("UPDATE verify SET Verified = false WHERE UUID = ?", uuid.toString());
     }
 
     public void setPlayerAsUnverified(String discordID) throws SQLException {
@@ -352,9 +368,8 @@ public class VerifyDAO {
             return;
         }
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.setPlayerAsUnverifiedUUID");
-        con.executeUpdate("UPDATE verify SET Verified = false WHERE DiscordID = ?", discordID);
+        DataBaseConnection.INSTANCE.executeUpdate("UPDATE verify SET Verified = false WHERE DiscordID = ?", discordID);
     }
 
     public void removeDiscordIDByDiscordID(Member m) throws SQLException {
@@ -364,9 +379,8 @@ public class VerifyDAO {
             return;
         }
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.removeDiscordIDByDiscordID");
-        con.executeUpdate("UPDATE verify SET DiscordID = ? WHERE DiscordID = ?", null,m.getId());
+        DataBaseConnection.INSTANCE.executeUpdate("UPDATE verify SET DiscordID = ? WHERE DiscordID = ?", null,m.getId());
     }
 
 
@@ -378,9 +392,8 @@ public class VerifyDAO {
             return;
         }
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.updateUserName");
-        con.executeUpdate("UPDATE verify SET PlayerName = ? WHERE UUID = ?", player.getName(), player.getUniqueId().toString());
+        DataBaseConnection.INSTANCE.executeUpdate("UPDATE verify SET PlayerName = ? WHERE UUID = ?", player.getName(), player.getUniqueId().toString());
     }
 
 
@@ -391,9 +404,9 @@ public class VerifyDAO {
             return VerifyFileManager.INSTANCE.isPlayerVerified(uuid);
         }
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        Connection con = DataBaseConnection.INSTANCE.dataSource.getConnection();
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.isPlayerVerified");
-        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify WHERE UUID = ?");
+        PreparedStatement ps = con.prepareStatement("SELECT * FROM verify WHERE UUID = ?");
         ps.setString(1,uuid.toString());
 
         ResultSet rs = ps.executeQuery();
@@ -402,10 +415,12 @@ public class VerifyDAO {
             boolean online = rs.getBoolean("Verified");
             rs.close();
             ps.close();
+            con.close();
             return online;
         }
         ps.close();
         rs.close();
+        con.close();
         return false;
     }
 
@@ -414,9 +429,9 @@ public class VerifyDAO {
             return VerifyFileManager.INSTANCE.getUUIDByPlayerName(name);
         }
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        Connection con = DataBaseConnection.INSTANCE.dataSource.getConnection();
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.getUUIDByName");
-        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify WHERE PlayerName = ?");
+        PreparedStatement ps = con.prepareStatement("SELECT * FROM verify WHERE PlayerName = ?");
         ps.setString(1,name);
 
         ResultSet rs = ps.executeQuery();
@@ -425,10 +440,12 @@ public class VerifyDAO {
             UUID online = UUID.fromString(rs.getString("UUID"));
             rs.close();
             ps.close();
+            con.close();
             return online;
         }
         ps.close();
         rs.close();
+        con.close();
         return null;
     }
 
@@ -439,9 +456,9 @@ public class VerifyDAO {
             return VerifyFileManager.INSTANCE.isIsDiscordIDInUse(discordID);
         }
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
+        Connection con = DataBaseConnection.INSTANCE.dataSource.getConnection();
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.isDiscordIDInUse");
-        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify WHERE DiscordID = ?");
+        PreparedStatement ps = con.prepareStatement("SELECT * FROM verify WHERE DiscordID = ?");
         ps.setString(1,discordID);
 
         ResultSet rs = ps.executeQuery();
@@ -449,10 +466,12 @@ public class VerifyDAO {
         if(rs.next()) {
             rs.close();
             ps.close();
+            con.close();
             return true;
         }
         ps.close();
         rs.close();
+        con.close();
         return false;
     }
 
@@ -462,9 +481,8 @@ public class VerifyDAO {
             return VerifyFileManager.INSTANCE.getUUIDFromDiscordID(discordID);
         }
 
-        DataBaseConnection con = DataBaseConnection.INSTANCE;
-        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.getUUIDByDiscordID");
-        PreparedStatement ps = con.getConnection().prepareStatement("SELECT * FROM verify WHERE DiscordID = ?");
+        Connection con = DataBaseConnection.INSTANCE.dataSource.getConnection();
+        PreparedStatement ps = con.prepareStatement("SELECT * FROM verify WHERE DiscordID = ?");
         ps.setString(1,discordID);
 
         ResultSet rs = ps.executeQuery();
@@ -473,10 +491,12 @@ public class VerifyDAO {
             String uuid = rs.getString("UUID");
             rs.close();
             ps.close();
+            con.close();
             return uuid;
         }
         ps.close();
         rs.close();
+        con.close();
         return null;
 
     }
