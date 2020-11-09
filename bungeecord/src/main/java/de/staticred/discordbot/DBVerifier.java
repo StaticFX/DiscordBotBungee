@@ -14,10 +14,12 @@ import de.staticred.discordbot.discordevents.MessageEvent;
 import de.staticred.discordbot.files.*;
 import de.staticred.discordbot.test.TestUserVerifiedEvent;
 import de.staticred.discordbot.util.Debugger;
+import de.staticred.discordbot.util.FileAndDataBaseManager;
 import de.staticred.discordbot.util.GroupInfo;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -98,61 +100,47 @@ public class DBVerifier extends Plugin {
     //hashmap used to save the values the player gave
     public HashMap<UUID, GroupInfo> playerGroupInfoHashMap = new HashMap<>();
 
+    //main start method
     @Override
     public void onEnable() {
 
         INSTANCE = this;
 
+        //updating files
         if(!fileUpdater()) {
             Debugger.debugMessage("Error new FileSystem already exists. Please move your Files manually from 'DiscordBotBungee' to 'DBVerifier'");
         }
 
+
+
         VerifyAPI.instance = new VerifyAPI();
 
-        ConfigFileManager.INSTANCE.loadFile();
 
-        VerifyFileManager.INSTANCE.loadFile();
+        //loading all files
+        FileAndDataBaseManager.loadAllFilesAndDatabases();
 
-        MessagesFileManager.INSTANCE.loadFile();
-
-        DiscordFileManager.INSTANCE.loadFile();
-
-        RewardsFileManager.INSTANCE.loadFile();
-
-        BlockedServerFileManager.INSTANCE.loadFile();
-
-        DiscordMessageFileManager.INSTANCE.loadFile();
-
-        SettingsFileManager.INSTANCE.loadFile();
-
-        DiscordFileManager.INSTANCE.update();
-
-        AliasesFileManager.INSTANCE.loadFile();
-
+        //settings used variables so they wont change in the middle of usage
         debugMode = SettingsFileManager.INSTANCE.isDebug();
 
         setuped = SettingsFileManager.INSTANCE.isSetup();
 
+        //instance for handling bukkit incoming messages.
         bukkitMessageHandler = new BukkitMessageHandler();
 
+        //registering plugin channel
         getProxy().registerChannel(PLUGIN_CHANNEL_NAME);
         getProxy().getPluginManager().registerListener(this, bukkitMessageHandler);
 
         pluginVersion = getDescription().getVersion();
 
+        //loading databases.
         if(ConfigFileManager.INSTANCE.useSQL() && setuped) {
-            if(!DataBaseConnection.INSTANCE.connectTest())  {
-                Debugger.debugMessage("Can't connect to database.");
-                return;
-            }
-            DataBaseConnection.INSTANCE.connect();
+
             try {
                 RewardsDAO.INSTANCE.loadTable();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
-
-
             VerifyDAO.INSTANCE.loadDataBase();
         }
 
@@ -219,7 +207,7 @@ public class DBVerifier extends Plugin {
         Debugger.debugMessage("Plugin loaded.");
     }
 
-
+    //this will update filesystem before 1.5.0
     private boolean fileUpdater() {
         File oldFile = new File(getDataFolder().getParentFile().getAbsoluteFile() + "/DiscordBotBungee");
 
@@ -239,36 +227,23 @@ public class DBVerifier extends Plugin {
         return true;
     }
 
-    private int getAmountOfGroupsTokens() {
-        int amount = 0;
-        for(String group : DiscordFileManager.INSTANCE.getAllGroups()) {
-            try {
-                DiscordFileManager.INSTANCE.getDiscordGroupIDForGroup(group);
-                amount++;
-            }catch (Exception ignore) {
-            }
-        }
-        return amount;
-    }
+
 
     @Override
     public void onDisable() {
+        //shutting down jda to prevent multiple bot instances
         if(jda != null)
             jda.shutdownNow();
-        if(SettingsFileManager.INSTANCE.isSetup()) {
-            if(useSQL) {
-                DataBaseConnection.INSTANCE.closeConnection();
-            }
-        }
-
     }
 
+    //bungeecord command
     public void loadBungeeCommands(String command) {
         getProxy().getPluginManager().registerCommand(this,new MCVerifyCommandExecutor(command));
         getProxy().getPluginManager().registerCommand(this,new DBCommandExecutor("db"));
         getProxy().getPluginManager().registerCommand(this,new SetupCommandExecutor());
         getProxy().getPluginManager().registerCommand(this, new DBGroupCommandExecutor("dbgroup"));
     }
+
 
     public void loadBungeeEvents() {
         getProxy().getPluginManager().registerListener(this,new JoinEvent());
@@ -278,16 +253,17 @@ public class DBVerifier extends Plugin {
     }
 
 
-
+    //get a string from the minecraftmessages.yml file
     public String getStringFromConfig(String string, boolean prefix) {
         if(prefix)
             return ConfigFileManager.INSTANCE.getString("prefix").replaceAll("&","§") + MessagesFileManager.INSTANCE.getString(string).replaceAll("&","§");
         return MessagesFileManager.INSTANCE.getString(string).replaceAll("&","§");
     }
 
+    //connecting and starting to the bot
     public void initBot(String token, Activity activity) throws LoginException {
         Debugger.debugMessage("Trying to init bot");
-        jda = JDABuilder.createDefault(token).build();
+        jda = JDABuilder.create(token, GatewayIntent.GUILD_MEMBERS, GatewayIntent.DIRECT_MESSAGE_REACTIONS, GatewayIntent.DIRECT_MESSAGE_TYPING, GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_BANS, GatewayIntent.GUILD_EMOJIS, GatewayIntent.GUILD_EMOJIS, GatewayIntent.GUILD_INVITES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_PRESENCES, GatewayIntent.GUILD_VOICE_STATES).build();
         jda.getPresence().setPresence(activity,true);
         jda.addEventListener(new MessageEvent());
         jda.addEventListener(new GuildJoinEvent());
@@ -300,6 +276,7 @@ public class DBVerifier extends Plugin {
     }
 
 
+    //removes all the roles from a member (only removes registered roles)
     public void removeAllRolesFromMember(Member m) {
 
         for(Role role : m.getRoles()) {

@@ -67,7 +67,6 @@ public class SetupCommandExecutor extends Command {
                 DBVerifier.getInstance().settingUp.clear();
                 return;
             }
-            DataBaseConnection.INSTANCE.connect();
             if(DBVerifier.getInstance().useSRV) {
                 sender.sendMessage(new TextComponent("§aNow let´s test the SRV connection"));
                 sender.sendMessage(new TextComponent("§aTesting Connection:"));

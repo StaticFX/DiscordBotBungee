@@ -5,8 +5,11 @@ import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.util.MemberManager;
 import de.staticred.discordbot.util.SubCommand;
 import de.staticred.discordbot.util.UUIDFetcher;
+import de.staticred.discordbot.util.manager.RewardManager;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.sql.SQLException;
 import java.util.UUID;
@@ -53,8 +56,13 @@ public class DBUnlinkSubCommand extends SubCommand {
             return;
         }
 
+        ProxiedPlayer target = ProxyServer.getInstance().getPlayer(uuid);
+
+        if(target != null) RewardManager.executeVerifyUnlinkProcess(target);
+
         try {
             VerifyDAO.INSTANCE.setPlayerAsUnVerified(uuid);
+            VerifyDAO.INSTANCE.removeDiscordID(uuid);
             DBVerifier.getInstance().removeAllRolesFromMember(MemberManager.getMemberFromPlayer(uuid));
             sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("UnlinkedPlayer",true)));
         } catch (SQLException e) {

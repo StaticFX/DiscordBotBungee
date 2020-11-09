@@ -7,6 +7,7 @@ import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.DiscordMessageFileManager;
 import de.staticred.discordbot.files.RewardsFileManager;
 import de.staticred.discordbot.util.Debugger;
+import de.staticred.discordbot.util.manager.RewardManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -91,42 +92,11 @@ public class UnlinkCommandExecutor {
 
             if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Executing reward process");
 
-
-            try {
-                if(!RewardsDAO.INSTANCE.hasPlayerBeenRewarded(uuid)) {
-                    for(String command2 : RewardsFileManager.INSTANCE.getCommandsOnUnVerifiedBungee()) {
-                        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Execute bungeecord cmd: " + command2);
-                        ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), command2.replace("%player%",name));
-                    }
-
-                    for(String command2 : RewardsFileManager.INSTANCE.getCommandsOnUnVerifiedBukkit()) {
-                        DBVerifier.getInstance().bukkitMessageHandler.sendCommand(player,command2);
-                        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Execute bukkit cmd: " + command2);
-                    }
-
-                    if(!ConfigFileManager.INSTANCE.igrnoreRewardState())
-                        RewardsDAO.INSTANCE.setPlayerRewardState(uuid,true);
-                }
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
+            RewardManager.executeVerifyUnlinkProcess(player);
         }else{
-            if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Player is not on the network");
-            if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Executing reward process");
-            try {
-                if(!RewardsDAO.INSTANCE.hasPlayerBeenRewarded(uuid)) {
-                    for(String command2 : RewardsFileManager.INSTANCE.getCommandsOnUnVerifiedBungee()) {
-                        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Execute bungeecord cmd: " + command2);
-                        ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), command2.replace("%player%",name));
-                    }
-                    if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Can't execute bukkit command if the user is offline from the network.");
-                    if(!ConfigFileManager.INSTANCE.igrnoreRewardState())
-                        RewardsDAO.INSTANCE.setPlayerRewardState(uuid,true);
-                }
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
 
+
+            RewardManager.executeVerifyUnlinkProcessBungeeCord(name);
             Debugger.debugMessage("A member unlinked himself from a account which is not present on the network. The player will get unlinked on the next reconnect.");
         }
 
