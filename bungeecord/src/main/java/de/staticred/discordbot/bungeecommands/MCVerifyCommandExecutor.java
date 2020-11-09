@@ -14,7 +14,6 @@ import de.staticred.discordbot.util.manager.RewardManager;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -159,11 +158,7 @@ public class MCVerifyCommandExecutor extends Command {
                 if (m.isOwner()) {
                     p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("MemberIsOwner", false)));
                 } else {
-                    try {
-                        m.getGuild().modifyNickname(m, p.getName()).queue();
-                    } catch (HierarchyException e) {
-                        Debugger.debugMessage("Can't modify a member with higher or equal highest role than the bot! Can't modify " + m.getNickname());
-                    }
+                    m.getGuild().modifyNickname(m, p.getName()).queue();
                 }
 
             }
