@@ -9,6 +9,7 @@ import de.staticred.discordbot.files.SettingsFileManager;
 import de.staticred.discordbot.util.Debugger;
 import de.staticred.discordbot.util.MemberManager;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -123,8 +124,12 @@ public class PostLoginEvent implements Listener {
 
 
                 if(DBVerifier.INSTANCE.syncNickname) {
-                    if(!m.isOwner()) {
-                        m.getGuild().modifyNickname(m, player.getName()).queue();
+                    try {
+                        if (!m.isOwner()) {
+                            m.getGuild().modifyNickname(m, player.getName()).queue();
+                        }
+                    } catch (HierarchyException e) {
+                        Debugger.debugMessage("Can't modify a member with higher or equal highest role than the bot! Can't modify " + m.getNickname());
                     }
                 }
 
