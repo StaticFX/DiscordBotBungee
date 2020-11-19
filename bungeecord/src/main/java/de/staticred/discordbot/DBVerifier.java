@@ -38,15 +38,10 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public class DBVerifier extends Plugin {
 
@@ -88,9 +83,9 @@ public class DBVerifier extends Plugin {
     public static String spigotVersion;
 
     //the version of the internal file system
-    public final static String configVersion = "1.6.0";
-    public final static String msgVersion = "1.6.0";
-    public final static String dcMSGVersion  = "1.6.0";
+    public final static String configVersion = "1.6.1";
+    public final static String msgVersion = "1.6.1";
+    public final static String dcMSGVersion  = "1.6.1";
 
     public static String pluginVersion;
 
@@ -99,6 +94,9 @@ public class DBVerifier extends Plugin {
 
     //debug mode of the plugin
     public boolean debugMode;
+
+    //if there is a update on the spigot site
+    public boolean isUpdateAvailable;
 
     //the name of the channel which is used to communicate with the bukkit subserver for a discordsrv connection
     public static final String PLUGIN_CHANNEL_NAME = "dbv:bungeecord";
@@ -224,7 +222,33 @@ public class DBVerifier extends Plugin {
         syncNickname = ConfigFileManager.INSTANCE.getSyncName();
         loadBungeeCommands(command);
 
+        isUpdateAvailable();
+
         Debugger.debugMessage("Plugin loaded.");
+
+
+
+
+
+        if(!SettingsFileManager.INSTANCE.isSetup()) {
+            System.out.println("§b----------------------------------------------------");
+            System.out.println("§b ___   ___ __   __           _   __  _           ");
+            System.out.println("§b|   \\ | _ )\\ \\ / / ___  _ _ (_) / _|(_) ___  _ _ ");
+            System.out.println("§b| |) || _ \\ \\   / / -_)| '_|| ||  _|| |/ -_)| '_|");
+            System.out.println("§b|___/ |___/  \\_/  \\___||_|  |_||_|  |_|\\___||_|  ");
+            System.out.println("§cPlugin not setup yet\n§aJoin our Support-Discord: §ediscord.gg/djqVDdx\n§aInstallation guide: §ehttps://github.com/StaticFX/DiscordBotBungee/wiki");
+            System.out.println("§b------------DBVerifier " + pluginVersion + " by StaticRed------------");
+        }else {
+            System.out.println("§b----------------------------------------------------");
+            System.out.println("§b ___   ___ __   __           _   __  _           ");
+            System.out.println("§b|   \\ | _ )\\ \\ / / ___  _ _ (_) / _|(_) ___  _ _ ");
+            System.out.println("§b| |) || _ \\ \\   / / -_)| '_|| ||  _|| |/ -_)| '_|");
+            System.out.println("§b|___/ |___/  \\_/  \\___||_|  |_||_|  |_|\\___||_|  ");
+            System.out.println("§b------------DBVerifier " + pluginVersion + " by StaticRed------------");
+        }
+
+
+
     }
 
     //this will update filesystem before 1.5.0
@@ -320,11 +344,12 @@ public class DBVerifier extends Plugin {
     public boolean isUpdateAvailable() {
         new UpdateChecker(this, 72232).getVersion(version -> {
             if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
-                sout("There is not a new update available.");
+                DBVerifier.getInstance().isUpdateAvailable = false;
             } else {
-                logger.info("There is a new update available.");
+                DBVerifier.getInstance().isUpdateAvailable = true;
             }
         });
+        return false;
     }
 
 

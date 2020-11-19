@@ -88,6 +88,8 @@ public class ConfigFileManager {
 
     public boolean cancelJoinEvent() {return conf.getBoolean("cancelJoinEvent");}
 
+    public boolean disableUpdateChecker() {return conf.getBoolean("disableUpdateChecker");}
+
     public Role getPermissionRole() {
 
         if(useTokens()) {

@@ -28,8 +28,16 @@ public class PostLoginEvent implements Listener {
 
         ProxiedPlayer player = event.getPlayer();
 
+
+        if(event.getPlayer().hasPermission("db.debug")) {
+            if(!ConfigFileManager.INSTANCE.disableUpdateChecker()) {
+                if(DBVerifier.getInstance().isUpdateAvailable)
+                    player.sendMessage(new TextComponent("§8[§bDBVerifier§8] There is a new version available on the spigot.org\n§ahttps://www.spigotmc.org/resources/dbverifier-bungeecord-discord-verify-plugin.72232/"));
+            }
+        }
+
         if(!DBVerifier.configVersion.equals(ConfigFileManager.INSTANCE.getConfigVersion())) {
-            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Your config version is not compatible with the §4plugin-config version."));
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Your config.yml version is not compatible with the §4plugin-config version."));
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Config version: §l" + ConfigFileManager.INSTANCE.getConfigVersion()));
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Plugin version: §l" + DBVerifier.configVersion));
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4It may come to errors."));
@@ -50,7 +58,7 @@ public class PostLoginEvent implements Listener {
         }
 
         if(!DBVerifier.msgVersion.equals(MessagesFileManager.getInstance().getVersion())) {
-            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Your message version is not compatible with the §4plugin-config version."));
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Your minecraftmessages.yml version is not compatible with the §4plugin-config version."));
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Config version: §l" + MessagesFileManager.INSTANCE.getVersion()));
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Plugin version: §l" + DBVerifier.msgVersion));
 
@@ -67,7 +75,7 @@ public class PostLoginEvent implements Listener {
         }
 
         if(!DBVerifier.dcMSGVersion.equals(DiscordMessageFileManager.INSTANCE.getVersion())) {
-            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Your message version is not compatible with the §4plugin-config version."));
+            player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Your discordmessages.yml version is not compatible with the §4plugin-config version."));
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Config version: §l" + MessagesFileManager.INSTANCE.getVersion()));
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4Plugin version: §l" + DBVerifier.dcMSGVersion));
 
@@ -82,6 +90,12 @@ public class PostLoginEvent implements Listener {
 
             player.sendMessage(new TextComponent("§8[§aDiscordBot§8] §4It may come to errors."));
         }
+
+        if(!SettingsFileManager.INSTANCE.isSetup()) {
+            System.out.println("§8[§bDBVerifier§8] §aPlease setup the Plugin to make it work!");
+            return;
+        }
+
 
 
 

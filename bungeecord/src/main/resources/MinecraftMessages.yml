@@ -38,4 +38,4 @@ AlreadyCreatingGroup: "§cYou are already creating a group"
 GroupDeleted: "§cThe given group got deleted."
 AcceptMessage: "&a&lAccept"
 DeclineMessage: "&c&lDecline"
-version: 1.6.0
+version: 1.6.1
