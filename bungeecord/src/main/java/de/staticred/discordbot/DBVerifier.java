@@ -2,23 +2,35 @@ package de.staticred.discordbot;
 
 import de.staticred.discordbot.api.VerifyAPI;
 import de.staticred.discordbot.bukkitconnectionhandler.BukkitMessageHandler;
-import de.staticred.discordbot.bungeecommands.dbcommand.DBCommandExecutor;
 import de.staticred.discordbot.bungeecommands.MCVerifyCommandExecutor;
 import de.staticred.discordbot.bungeecommands.SetupCommandExecutor;
+import de.staticred.discordbot.bungeecommands.dbcommand.DBCommandExecutor;
 import de.staticred.discordbot.bungeecommands.dbgroupcommand.DBGroupCommandExecutor;
-import de.staticred.discordbot.bungeeevents.*;
-import de.staticred.discordbot.db.*;
+import de.staticred.discordbot.bungeeevents.ChangedBukkitServerEvent;
+import de.staticred.discordbot.bungeeevents.JoinEvent;
+import de.staticred.discordbot.bungeeevents.LeaveEvent;
+import de.staticred.discordbot.bungeeevents.PostLoginEvent;
+import de.staticred.discordbot.db.Metrics;
+import de.staticred.discordbot.db.RewardsDAO;
+import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.discordevents.GuildJoinEvent;
 import de.staticred.discordbot.discordevents.GuildLeftEvent;
 import de.staticred.discordbot.discordevents.MessageEvent;
-import de.staticred.discordbot.files.*;
+import de.staticred.discordbot.files.ConfigFileManager;
+import de.staticred.discordbot.files.DiscordFileManager;
+import de.staticred.discordbot.files.MessagesFileManager;
+import de.staticred.discordbot.files.SettingsFileManager;
 import de.staticred.discordbot.test.TestUserVerifiedEvent;
 import de.staticred.discordbot.util.Debugger;
 import de.staticred.discordbot.util.FileAndDataBaseManager;
 import de.staticred.discordbot.util.GroupInfo;
+import de.staticred.discordbot.util.UpdateChecker;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -26,10 +38,15 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class DBVerifier extends Plugin {
 
@@ -66,6 +83,9 @@ public class DBVerifier extends Plugin {
 
     //the activity of the bot
     public Activity activity;
+
+    //version from the plugin on the spigot site.
+    public static String spigotVersion;
 
     //the version of the internal file system
     public final static String configVersion = "1.6.0";
@@ -295,4 +315,17 @@ public class DBVerifier extends Plugin {
             }
         }
     }
+
+
+    public boolean isUpdateAvailable() {
+        new UpdateChecker(this, 72232).getVersion(version -> {
+            if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
+                sout("There is not a new update available.");
+            } else {
+                logger.info("There is a new update available.");
+            }
+        });
+    }
+
+
 }
