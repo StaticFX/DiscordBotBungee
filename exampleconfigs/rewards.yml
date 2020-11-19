@@ -1,0 +1,14 @@
+#This commands will be executed when a player successfully links his account 
+verified:
+  commands:
+    bungee:
+      - "lpb user %player% parent add discord"
+    bukkit:
+      - "give %player% diamond 1"
+#This commands will be executed when a player unlinks his account or leaves the discord server
+unlinked:
+  commands:
+    bungee:
+      - "lpb user %player% parent remove discord"
+    bukkit:
+      - ""
