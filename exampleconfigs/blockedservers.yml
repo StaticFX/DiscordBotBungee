@@ -1,3 +1,0 @@
-#Servers where the plugin will not execute any actions
-blockedservers:
-- auth
