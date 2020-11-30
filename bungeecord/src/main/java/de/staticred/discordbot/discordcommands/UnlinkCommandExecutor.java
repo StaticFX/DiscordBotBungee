@@ -3,6 +3,7 @@ package de.staticred.discordbot.discordcommands;
 import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.db.RewardsDAO;
 import de.staticred.discordbot.db.VerifyDAO;
+import de.staticred.discordbot.exceptions.UserAccessException;
 import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.DiscordMessageFileManager;
 import de.staticred.discordbot.files.RewardsFileManager;
@@ -96,7 +97,11 @@ public class UnlinkCommandExecutor {
         }else{
 
 
-            RewardManager.executeVerifyUnlinkProcessBungeeCord(name);
+            try {
+                RewardManager.executeVerifyUnlinkProcessBungeeCord(name);
+            } catch (UserAccessException e) {
+                e.printStackTrace();
+            }
             Debugger.debugMessage("A member unlinked himself from a account which is not present on the network. The player will get unlinked on the next reconnect.");
         }
 

@@ -3,6 +3,7 @@ package de.staticred.discordbot.util.manager;
 import de.staticred.discordbot.DBVerifier;
 import de.staticred.discordbot.db.RewardsDAO;
 import de.staticred.discordbot.db.VerifyDAO;
+import de.staticred.discordbot.exceptions.UserAccessException;
 import de.staticred.discordbot.files.ConfigFileManager;
 import de.staticred.discordbot.files.RewardsFileManager;
 import de.staticred.discordbot.util.Debugger;
@@ -60,7 +61,12 @@ public class RewardManager {
 
     }
 
-    public static void executeVerifyUnlinkProcessBungeeCord(String name) {
+    public static void executeVerifyUnlinkProcessBungeeCord(String name) throws UserAccessException {
+
+        if(name == null) {
+            throw new UserAccessException("Can't access a user the plugin should unlinked");
+        }
+
         try {
 
             if(!RewardsDAO.INSTANCE.hasPlayerBeenRewarded(VerifyDAO.INSTANCE.getUUIDByName(name)) || ConfigFileManager.INSTANCE.igrnoreRewardState()) {
