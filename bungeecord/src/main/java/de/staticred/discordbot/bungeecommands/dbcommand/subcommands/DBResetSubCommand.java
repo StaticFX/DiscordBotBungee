@@ -23,6 +23,8 @@ public class DBResetSubCommand extends SubCommand {
             return;
         }
 
+
+
         if(args.length != 2) {
             sender.sendMessage(new TextComponent("§cUse: /db reset <player>"));
             return;
