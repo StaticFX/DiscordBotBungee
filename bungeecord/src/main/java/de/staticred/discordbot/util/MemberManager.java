@@ -20,18 +20,17 @@ import java.util.UUID;
 public class MemberManager {
 
     public static Member getMemberFromPlayer(UUID uuid) throws SQLException {
-        User u;
-
+        
         String id = VerifyDAO.INSTANCE.getDiscordID(uuid);
-
-        u = DBVerifier.getInstance().jda.retrieveUserById(id).complete();
+        User u = DBVerifier.getInstance().jda.retrieveUserById(id).complete();
         Member m = null;
+        
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage(id);
 
         if (!DBVerifier.getInstance().jda.getGuilds().isEmpty()) {
             for (Guild guild : DBVerifier.getInstance().jda.getGuilds()) {
                 if (u != null)
-                    m = guild.retrieveMember(u).complete();
+                    m = guild.getMemberById(id);
             }
         } else {
             throw new SQLException("There was an internal error! The member of the player can´t be found. Please contact the developer of this plugin.") ;
