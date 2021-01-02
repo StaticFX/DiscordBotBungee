@@ -61,9 +61,9 @@ public class DBUnlinkSubCommand extends SubCommand {
         if(target != null) RewardManager.executeVerifyUnlinkProcess(target);
 
         try {
+            DBVerifier.getInstance().removeAllRolesFromMember(MemberManager.getMemberFromPlayer(uuid));
             VerifyDAO.INSTANCE.setPlayerAsUnVerified(uuid);
             VerifyDAO.INSTANCE.removeDiscordID(uuid);
-            DBVerifier.getInstance().removeAllRolesFromMember(MemberManager.getMemberFromPlayer(uuid));
             sender.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("UnlinkedPlayer",true)));
         } catch (SQLException e) {
             e.printStackTrace();

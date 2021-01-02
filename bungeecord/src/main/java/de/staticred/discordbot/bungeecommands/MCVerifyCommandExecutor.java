@@ -8,6 +8,7 @@ import de.staticred.discordbot.api.event.UserVerifiedEvent;
 import de.staticred.discordbot.db.VerifyDAO;
 import de.staticred.discordbot.files.BlockedServerFileManager;
 import de.staticred.discordbot.files.ConfigFileManager;
+import de.staticred.discordbot.files.DiscordFileManager;
 import de.staticred.discordbot.files.DiscordMessageFileManager;
 import de.staticred.discordbot.util.Debugger;
 import de.staticred.discordbot.util.MemberManager;

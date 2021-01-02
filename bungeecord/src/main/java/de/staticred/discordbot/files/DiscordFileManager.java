@@ -75,7 +75,7 @@ public class DiscordFileManager {
             conf.set(string + ".groupName", string);
             conf.set(string + ".permission", "perm." + string);
             conf.set(string + ".dynamicGroup",false);
-            conf.set(string + ".prefix",string + " | %player%");
+            conf.set(string + ".prefix",string + " | %name%");
         }
         saveFile();
     }
