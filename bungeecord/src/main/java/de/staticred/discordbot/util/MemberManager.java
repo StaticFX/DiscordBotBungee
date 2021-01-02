@@ -51,7 +51,6 @@ public class MemberManager {
 
         if(ConfigFileManager.INSTANCE.hasVerifyRole()) {
             Debugger.debugMessage("Role is not empty");
-
             try {
                 Debugger.debugMessage("Checking if tokens are used");
 
@@ -62,7 +61,7 @@ public class MemberManager {
                     Debugger.debugMessage("Is role null? " + (m.getGuild().getRoleById((ConfigFileManager.INSTANCE.getVerifyRole())) == null));
 
                     m.getGuild().addRoleToMember(m,m.getGuild().getRoleById((ConfigFileManager.INSTANCE.getVerifyRole()))).queue();
-                }else{
+                } else {
                     Debugger.debugMessage("Tokens are not used");
                     Debugger.debugMessage("Name found for group: verify - " + ConfigFileManager.INSTANCE.getVerifyRole());
                     Debugger.debugMessage("Trying to give role to the player");
@@ -101,7 +100,6 @@ public class MemberManager {
                 Debugger.debugMessage("Checking if players has permission: " + DiscordFileManager.INSTANCE.getPermissionsForGroup(group));
                 if(p.hasPermission(DiscordFileManager.INSTANCE.getPermissionsForGroup(group))) {
                     Debugger.debugMessage("Player has permission.");
-
                     try {
                         Debugger.debugMessage("Checking if tokens are used");
                         if(ConfigFileManager.INSTANCE.useTokens()) {
@@ -119,7 +117,7 @@ public class MemberManager {
                         if(DBVerifier.INSTANCE.syncNickname) {
                             Debugger.debugMessage("Renaming " + m.getEffectiveName() + " to " + DiscordFileManager.INSTANCE.getPrefix(group).replaceAll("%name%",p.getName()));
                             if(!m.isOwner()) {
-                                m.getGuild().modifyNickname(m,DiscordFileManager.INSTANCE.getPrefix(group).replaceAll("%name%",p.getName())).queue();
+                                m.getGuild().modifyNickname(m,DiscordFileManager.INSTANCE.getPrefix(group).replaceAll("%name%",p.getName()).replaceAll("%player%",p.getName())).queue();
                             }
                         }
 

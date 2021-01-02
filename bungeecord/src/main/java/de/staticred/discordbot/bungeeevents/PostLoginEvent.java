@@ -136,17 +136,6 @@ public class PostLoginEvent implements Listener {
                     MemberManager.updateRoles(m,player);
                 }
 
-
-                if(DBVerifier.INSTANCE.syncNickname) {
-                    try {
-                        if (!m.isOwner()) {
-                            m.getGuild().modifyNickname(m, player.getName()).queue();
-                        }
-                    } catch (HierarchyException e) {
-                        Debugger.debugMessage("Can't modify a member with higher or equal highest role than the bot! Can't modify " + m.getNickname());
-                    }
-                }
-
                 DBVerifier.getInstance().playerSRVVerifiedHashMap.put(player.getUniqueId(), verified);
             });
 
