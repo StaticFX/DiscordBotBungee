@@ -115,6 +115,8 @@ public class PostLoginEvent implements Listener {
                 return;
             }
 
+            if (!verified) return;
+
 
             ProxyServer.getInstance().getScheduler().runAsync(DBVerifier.getInstance(),() -> {
                 Member m;
