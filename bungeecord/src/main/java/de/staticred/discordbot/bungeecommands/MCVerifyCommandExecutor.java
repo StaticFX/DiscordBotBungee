@@ -127,6 +127,13 @@ public class MCVerifyCommandExecutor extends Command {
             }
             return;
         } else if (args[0].equalsIgnoreCase("update")) {
+
+            if(BlockedServerFileManager.INSTANCE.getBlockedServers().contains(p.getServer().getInfo().getName())) {
+                p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("CantVerifyOnThisServer",true)));
+                return;
+            }
+
+
             try {
                 if (!VerifyDAO.INSTANCE.hasDiscordID(p)) {
                     p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("NotLinkedYet",true)));
@@ -173,6 +180,11 @@ public class MCVerifyCommandExecutor extends Command {
             p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("UpdatedRankMC",true)));
             return;
         }else if(args[0].equalsIgnoreCase("unlink")) {
+
+            if(BlockedServerFileManager.INSTANCE.getBlockedServers().contains(p.getServer().getInfo().getName())) {
+                p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("CantVerifyOnThisServer",true)));
+                return;
+            }
 
             try {
                 if (!VerifyDAO.INSTANCE.hasDiscordID(p)) {

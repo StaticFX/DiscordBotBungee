@@ -29,6 +29,7 @@ public class DBCommandExecutor extends Command {
             sender.sendMessage(new TextComponent("§a/db unlink §7- §eUnlinks a player."));
             sender.sendMessage(new TextComponent("§a/db update §7- §eForce a player rankupdate."));
             sender.sendMessage(new TextComponent("§a/db version §7- §eInfo about the version of the plugin."));
+            sender.sendMessage(new TextComponent("§a/db portTo §7- §e.Ports all data from file to sql or otherwise"));
             return;
         }
 
@@ -65,6 +66,10 @@ public class DBCommandExecutor extends Command {
                 new DBVersionSubCommand("dbversion",sender,args).execute("dbversion",sender,args);
                 return;
             }
+            case "PORTTO": {
+                new DBPortSubCommand("portto", sender, args).execute("portto", sender, args);
+                return;
+            }
         }
 
         sender.sendMessage(new TextComponent("§8---§aDCVerifier§8---"));
@@ -74,6 +79,7 @@ public class DBCommandExecutor extends Command {
         sender.sendMessage(new TextComponent("§a/db unlink §7- §eUnlinks a player."));
         sender.sendMessage(new TextComponent("§a/db update §7- §eForce a player rankupdate."));
         sender.sendMessage(new TextComponent("§a/db version §7- §eInfo about the version of the plugin."));
+        sender.sendMessage(new TextComponent("§a/db portTo §7- §e.Ports all data from file to sql or otherwise"));
 
     }
 }

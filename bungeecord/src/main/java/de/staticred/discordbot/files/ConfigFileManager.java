@@ -91,10 +91,9 @@ public class ConfigFileManager {
     public boolean disableUpdateChecker() {return conf.getBoolean("disableUpdateChecker");}
 
     public Role getPermissionRole() {
-
         if(useTokens()) {
             return DBVerifier.getInstance().jda.getRoleById(conf.getString("permissedRole"));
-        }else{
+        } else {
             return DBVerifier.getInstance().jda.getRolesByName(conf.getString("permissedRole"),false).get(0);
         }
 

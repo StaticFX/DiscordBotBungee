@@ -38,4 +38,5 @@ AlreadyCreatingGroup: "§cYou are already creating a group"
 GroupDeleted: "§cThe given group got deleted."
 AcceptMessage: "&a&lAccept"
 DeclineMessage: "&c&lDecline"
-version: 1.6.1
+Unverfied: "&cYour mc account was unverified, because your discord account was not found on the guild!"
+version: 1.6.5

@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.entities.Member;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.sql.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class VerifyDAO {
@@ -317,6 +319,17 @@ public class VerifyDAO {
         DataBaseConnection.INSTANCE.executeUpdate("UPDATE verify SET DiscordID = ? WHERE UUID = ?", member.getUser().getId(), player.getUniqueId().toString());
     }
 
+    public void addDiscordID(UUID player, String id) throws SQLException {
+
+        if(!sql) {
+            VerifyFileManager.INSTANCE.addDiscordID(player, id);
+            return;
+        }
+
+        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.addDiscordID");
+        DataBaseConnection.INSTANCE.executeUpdate("UPDATE verify SET DiscordID = ? WHERE UUID = ?", id, player.toString());
+    }
+
     public void removeDiscordID(ProxiedPlayer player) throws SQLException {
 
         if(!sql) {
@@ -394,6 +407,17 @@ public class VerifyDAO {
 
         if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.updateUserName");
         DataBaseConnection.INSTANCE.executeUpdate("UPDATE verify SET PlayerName = ? WHERE UUID = ?", player.getName(), player.getUniqueId().toString());
+    }
+
+    public void updateUserName(UUID uuid, String player) throws SQLException {
+
+        if(!sql) {
+            VerifyFileManager.INSTANCE.updateUserName(uuid, player);
+            return;
+        }
+
+        if(DBVerifier.getInstance().debugMode) Debugger.debugMessage("Opening DB Connection from: VerifyDAO.updateUserName");
+        DataBaseConnection.INSTANCE.executeUpdate("UPDATE verify SET PlayerName = ? WHERE UUID = ?", player, uuid.toString());
     }
 
 
@@ -501,4 +525,25 @@ public class VerifyDAO {
 
     }
 
+    public Set<UUID> getAllUsers() throws SQLException {
+
+        if(!sql) {
+            return VerifyFileManager.INSTANCE.getAllUsers();
+        }
+
+        Connection con = DataBaseConnection.INSTANCE.dataSource.getConnection();
+        PreparedStatement ps = con.prepareStatement("SELECT * FROM verify");
+
+        ResultSet rs = ps.executeQuery();
+
+        Set<UUID> ids = new HashSet<>();
+
+        while(rs.next()) {
+            ids.add(UUID.fromString(rs.getString("UUID")));
+        }
+        ps.close();
+        rs.close();
+        con.close();
+        return ids;
+    }
 }

@@ -129,7 +129,7 @@ public class PostLoginEvent implements Listener {
                     return;
                 }
                 if (m == null) {
-                    player.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("InternalError",true)));
+                    player.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("Unverified",true)));
                     return;
                 }
 

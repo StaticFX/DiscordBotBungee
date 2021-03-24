@@ -10,6 +10,8 @@ import net.md_5.bungee.config.YamlConfiguration;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class VerifyFileManager {
@@ -135,6 +137,12 @@ public class VerifyFileManager {
         saveFile();
     }
 
+    public void addDiscordID(UUID p, String discordID) {
+        addDiscordIDToUUID(discordID,p);
+        conf.set(p.toString() + ".discordid",discordID);
+        saveFile();
+    }
+
     public void removeDiscordID(ProxiedPlayer p) {
         removeDiscordIDUUIDLink(getDiscordID(p.getUniqueId()));
         conf.set(p.getUniqueId().toString() + ".discordid","nothing");
@@ -176,6 +184,11 @@ public class VerifyFileManager {
         saveFile();
     }
 
+    public void updateUserName(UUID user, String name) {
+        conf.set(user.toString() + ".name", name);
+        saveFile();
+    }
+
     public boolean isPlayerVerified(UUID uuid) {
         return conf.getBoolean(uuid.toString() + ".verified");
     }
@@ -205,5 +218,14 @@ public class VerifyFileManager {
 
     public int getAmountOfVerifiedPlayers() {
        return 0;
+    }
+
+    public Set<UUID> getAllUsers() {
+        Set<UUID> ids = new HashSet<>();
+
+        for (String uuid : conf.getKeys()) {
+            ids.add(UUID.fromString(uuid));
+        }
+        return ids;
     }
 }

@@ -20,9 +20,9 @@ public class ChangedBukkitServerEvent implements Listener {
         ProxiedPlayer switcher = event.getPlayer();
 
 
-        if(ConfigFileManager.INSTANCE.useSRV())
-
-        DBVerifier.getInstance().bukkitMessageHandler.sendPlayerVerifedRequest(switcher);
+        if(ConfigFileManager.INSTANCE.useSRV()) {
+            DBVerifier.getInstance().bukkitMessageHandler.sendPlayerVerifedRequest(switcher);
+        }
 
         if(!DBVerifier.getInstance().setuped) return;
 
