@@ -6,7 +6,7 @@
 
     <groupId>org.example</groupId>
     <artifactId>DBV-Bukkit-Extension</artifactId>
-    <version>1.6.4</version>
+    <version>1.6.5</version>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>

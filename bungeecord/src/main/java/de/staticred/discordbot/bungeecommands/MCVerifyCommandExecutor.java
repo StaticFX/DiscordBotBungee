@@ -197,15 +197,6 @@ public class MCVerifyCommandExecutor extends Command {
                 return;
             }
 
-            User u;
-            try {
-                u = DBVerifier.getInstance().jda.getUserById(VerifyDAO.INSTANCE.getDiscordID(p.getUniqueId()));
-            } catch (SQLException e) {
-                e.printStackTrace();
-                p.sendMessage(new TextComponent(DBVerifier.getInstance().getStringFromConfig("InternalError",true)));
-                return;
-            }
-
             Member m;
             try {
                 m = MemberManager.getMemberFromPlayer(p.getUniqueId());
