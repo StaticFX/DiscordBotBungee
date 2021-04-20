@@ -28,7 +28,7 @@ public class ChangedBukkitServerEvent implements Listener {
 
         if(switcher == null) return;
 
-        if(DBVerifier.getInstance().playerSRVVerifiedHashMap.containsKey(switcher.getUniqueId())) return;
+        if(!DBVerifier.getInstance().playerSRVVerifiedHashMap.containsKey(switcher.getUniqueId())) return;
 
         if(!ConfigFileManager.INSTANCE.useSRV()) return;
         
